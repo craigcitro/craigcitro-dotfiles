@@ -1,0 +1,70 @@
+#
+# .inputrc - readline configuration file
+#
+
+# include system-wide settings by default
+# $include /etc/inputrc
+# (2010 Oct 23) temporarily off.
+
+# one more reminder about emacs-mode for keys
+set editing-mode emacs
+
+set show-all-if-ambiguous On
+set bell-style Off
+set visible-stats On
+# the horizontal scroll mode is often useful, but I don't know if I love it. off for now.
+#set horizontal-scroll-mode On
+
+set completion-ignore-case Off
+# make mid-word completion smart
+set skip-completed-text On
+
+# delete -> delete character
+"\e[3~": delete-char
+
+# ctrl left/right
+"\e[5C": forward-word
+"\e[5D": backward-word
+
+# I like a *huge* history.
+set history-size 100000000
+
+# history completion based on current word
+"\e[B": history-search-forward
+"\e[A": history-search-backward
+# also for the emacs keys
+"\C-s": history-search-forward
+"\C-r": history-search-backward
+# These are necessary when XTerm*eightBitInput is set to false, which
+# I currently do based on some mac config issues. I'd like to find a
+# way to include a conditional construct in this file that lets me
+# decide based on *OS*, not just the name of the running program.
+# "^[[A": history-search-backward
+# "^[[B": history-search-forward
+# (2010 Oct 23) I continue to have problems with these bits -- I
+# discovered that ^ (caret, name included for finding this file when
+# searching) was behaving oddly, all because of (1) these two bindings
+# and (2) possibly the $include /etc/inputrc.
+
+# I kind of want to try out the incremental forward/reverse search,
+# but I like the current behavior I have. Maybe M-r, M-s?
+# Meta-r: reverse-search-history
+# Meta-s: forward-search-history
+# I don't know why, but these don't seem to work. Figure it out later.
+
+# kill word backwards ... figure this out at some point.
+# "\C-\B": kill-word
+
+# At some point meta started giving me trouble in XTerm; 
+# I found some advice here:
+#   http://www.emacswiki.org/emacs/MetaKeyProblems
+# These changes are paired with some in my .Xdefaults.
+set meta-flag on
+set convert-meta off
+set output-meta on
+
+# These are useful for debugging purposes: remember that C-x C-r
+# rereads the .inputrc.
+#
+#"\C-f": dump-variables
+#"\C-f": dump-functions

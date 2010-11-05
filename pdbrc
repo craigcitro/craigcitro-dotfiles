@@ -1,0 +1,14 @@
+
+import os, sys
+# import rlcompleter early, as it contains side effects.
+import rlcompleter as _rlcompleter
+
+# refresh the terminal
+_ = os.system("stty sane")
+# this rc file takes single lines, so define our complete function here
+_ = execfile(os.path.expanduser("~/.pdbrc.py"))
+# replace the Pdb class's complete method with ours
+_ = sys._getframe(1).f_globals['Pdb'].complete = complete
+# set use_rawinput to 1 as tab completion relies on rawinput being used
+_ = sys._getframe(1).f_locals['self'].use_rawinput = 1
+del os, sys 

@@ -1,0 +1,8 @@
+[user]
+	name = Craig Citro
+	email = craigcitro@gmail.com
+[color]
+	status = auto
+	branch = auto
+	interactive = auto
+	diff = auto

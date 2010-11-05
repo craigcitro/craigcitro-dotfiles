@@ -1,0 +1,443 @@
+#!/bin/bash
+##
+## .bashrc
+## Craig Citro
+##
+## ==================================================
+## CHANGES:
+##
+## [2010.06.15] Wow, I never update these comments.
+## 
+## [2007.12.19] Removing all the fink-related stuff, because
+## I'm at least temporarily not using fink.
+##
+## [2006.02.08] Stole ryan's .bashrc, finally editing it. To
+## be fair, it was once mine. :)
+##
+## [2005.09.24] Tried to unify the code in my .bashrc_laptop 
+## and start switch my laptop over to this script.  
+## Still have some path problems.
+##
+## [2005.09.29] I like the append_path and prepend_path
+## functions defined in /sw/bin/init.sh.  They prevent duplicates.
+## I'm going to use them myself.
+##
+## ==================================================
+
+##################
+## Basics
+
+if [ $(uname -s) == "Linux" ]; then
+  SYSTEM='Linux'
+elif [ $(uname -s) == "Darwin" ]; then
+  SYSTEM='Darwin'
+else
+  SYSTEM='unknown'
+fi
+
+# if [ -f /etc/bashrc ] ;  then (source /etc/bashrc); fi
+
+# Stolen from: 
+# http://www.linuxfromscratch.org/blfs/view/svn/postlfs/profile.html
+# Functions to help us manage paths.  Second argument is the name of the
+# path variable to be modified (default: PATH)
+pathremove () {
+  local IFS=':'
+  local NEWPATH
+  local DIR
+  local PATHVARIABLE=${2:-PATH}
+  for DIR in ${!PATHVARIABLE} ; do
+    if [ "$DIR" != "$1" ] ; then
+      NEWPATH=${NEWPATH:+$NEWPATH:}$DIR
+    fi
+  done
+  export $PATHVARIABLE="$NEWPATH"
+}
+
+pathprepend () {
+  if [ -d $1 ]; then
+    pathremove $1 $2
+    local PATHVARIABLE=${2:-PATH}
+    export $PATHVARIABLE="$1${!PATHVARIABLE:+:${!PATHVARIABLE}}"
+  fi
+}
+
+pathappend () {
+  if [ -d $1 ]; then
+    pathremove $1 $2
+    local PATHVARIABLE=${2:-PATH}
+    export $PATHVARIABLE="${!PATHVARIABLE:+${!PATHVARIABLE}:}$1"
+  fi
+}
+
+# BE VERY CAREFUL MUNGING YOUR PATH, YOUNG PADAWAN! Don't forget
+# the nsscache snafu from your first week at Google.
+if [ "$SYSTEM" == "Darwin" ]; then
+  if [ "$LD_LIBRARY_PATH" = "" ]; then
+    LD_LIBRARY_PATH="/usr/lib"
+  fi
+  
+  pathappend /usr/local/lib LD_LIBRARY_PATH;
+  # Why is this here? It at least causes some confusing problems with
+  # loading libpng.dylib in sage, because sage stupidly copies the
+  # LD_LIBRARY_PATH into DYLD_LIBRARY_PATH. I wonder why I put it here
+  # in the first place, though?
+  pathappend /usr/X11/lib LD_LIBRARY_PATH;
+
+  pathprepend /usr/local/bin; 
+  pathappend /opt/subversion/bin;
+  # add git via git-osx-installer
+  pathappend /usr/local/git/bin;
+  pathappend /usr/local/git/share/man MANPATH;
+  
+  export LD_LIBRARY_PATH
+  export MANPATH
+fi
+
+# My additions to $PATH
+pathprepend $HOME/ext/bin;
+pathprepend $HOME/bin; 
+export PATH
+
+###############################
+## ls configuration 
+
+## should I need it ...
+alias realls=$(which ls)
+
+if [ "$SYSTEM" == "Darwin" ]; then
+## darwin/bsd ls formatting
+  export LSCOLORS="Dxfxcxdxexegedabagacad"
+  export BLOCKSIZE=1024
+  alias l='ls -sFG' ## bsd ls
+  alias la='ls -sFGa'
+  alias ll='ls -lFG'
+  alias lla='ls -lFGa'
+else
+  ## gnu ls formatting
+  alias ls='ls --color=always'
+  alias l='ls -BhFvs' ## gnu ls
+  alias la='ls -hFvsA'
+  alias ll='ls -lBhFv'
+  alias lla='ls -lhFvA'
+fi
+
+# (2010 Oct 23) This isn't the perfect alias, but I type this *all*
+# the time ...
+alias lth='ll -t | head'
+
+###############################
+## emacs-related
+
+if [ -d "/Applications/Emacs.app/" ]; then
+  # are there other paths I have to set up? 
+  pathprepend "/Applications/Emacs.app/Contents/MacOS/bin";
+  pathprepend "/Applications/Emacs.app/Contents/MacOS";
+  export PATH;
+fi
+
+# we want everything to route through one central set of emacs
+# commands
+alias emacsdaemon='$(which emacs) --daemon'
+alias emacs="emacsclient -a \'\' -c"
+alias e='emacs'
+alias et='emacs -t'
+
+# how many editors can I set to emacs?
+export EDITOR='emacsclient -c -t'
+export VISUAL='emacsclient -c -t'
+export CVSEDITOR='emacsclient -c -t'
+
+# this line is here in support of my .inputrc: I want
+# to be able to use \C-s and \C-r for interactive history
+# search, but I need to disable xterm's ^S = stop behavior
+# to do so.
+#
+# It causes lots of warning messages whenever something that's *not* a
+# shell sources my .bashrc; found a fix here:
+#  http://www.perlmonks.org/?node_id=534691
+if [ -t 0 ]; then
+  stty stop ^^
+fi
+
+###############################
+## other unix default stuff
+
+# color TERM types.
+# i'm still no expert on this stuff -- but honestly, is there really
+# a point in *not* using a color term type in this day and age?
+if [ "$TERM" = "xterm" ]; then
+  export TERM=xterm-256color
+fi
+if [ "$TERM" = "screen" ]; then
+  export TERM=screen-256color
+fi
+
+# set up less. 
+#  - at some point, i included the '-e' option (which quits less
+#    when you hit EOF the *second* time). it annoyed me, but maybe
+#    i'll change my mind at some point?
+export PAGER='less -qFRX'
+alias less='less -qFRX'
+
+# fix man paths
+pathappend '/usr/local/share/man' MANPATH;
+pathappend '/usr/X11/share/man' MANPATH;
+pathappend '/Developer/usr/share/man' MANPATH;
+pathappend '/usr/share/man' MANPATH;
+
+# Try and save myself from trouble
+alias rm="rm -i"
+alias cp="cp -i"
+alias mv="mv -i"
+
+#######################
+## Play with shopt
+#######################
+# correct spelling in cd
+shopt -s cdspell
+# keep LINES and COLUMNS up to date
+shopt -s checkwinsize
+# include dot names in globs
+shopt -s dotglob
+# better globbing
+shopt -s extglob
+# no completing the empty line
+shopt -s no_empty_cmd_completion
+# don't overwrite history
+shopt -s histappend
+# uniq the history ... I'm not sure, frequency information is pretty
+# good.
+#HISTCONTROL=ignoredups:ignorespace
+# really really large history
+HISTFILESIZE=100000000
+HISTSIZE=100000000
+
+###############################
+## tab completion!
+COMPLETE_BASE='/etc/bash_completion'
+if [ -e $COMPLETE_BASE ]; then
+  source $COMPLETE_BASE
+fi
+
+# I found this clever trick here:
+#   http://www.macosxhints.com/article.php?story=20080317085050719
+# It autocompletes from .ssh/known_hosts, which is pretty useful ...
+# except that it doesn't seem to work on linux, because the format of
+# the known_hosts file is different. I should clean it up at some
+# point.
+if [ "$SYSTEM" == "Darwin" ]; then
+  complete -W "$(echo $(sed -e 's/^  *//' -e '/^#/d' -e 's/[, ].*//' -e '/\[/d' ~/.ssh/known_hosts | sort -u);)" ssh
+fi
+
+# I tried turning this on for scp, but it's annoying because then you
+# can't tab complete the file you want to scp. I guess you can't have
+# it both ways ...
+#complete -W "$(echo $(sed -e 's/^  *//' -e '/^#/d' -e 's/[, ].*//' -e '/\[/d' ~/.ssh/known_hosts | sort -u);)" scp
+
+
+################################
+# Common commands
+alias c=clear
+alias d=date
+# Why isn't this the default?
+alias df='df -h'
+alias g='grep -E'
+alias h=history
+alias ht='history | tail -n 20'
+alias ny=nyxmms2
+alias p=echo
+alias pd=pushd
+alias po=popd
+alias scp='scp -p'
+alias sigh='echo You let out a good, long sigh of relief.'
+# So I'm going to try using emacs as my only editor, just
+# for kicks. 
+# alias v=vim
+# alias vw=view
+# The one thing I'd like is a command-line flag for "open this buffer
+# read-only" in emacsclient, but I don't know if that exists. (TODO?)
+alias v=et
+alias vw=et
+
+# It's better to just overwrite du, and then we can re-specify
+# --max-depth if needed.
+if [ "$SYSTEM" == "Darwin" ]; then
+  alias du='du -h -d 1'
+else
+  alias du='du -h --max-depth 1'
+fi
+
+# ps is in the same boat as du. I always use the same options, so just
+# make those the default.
+alias sps=$(which ps)
+if [ "$SYSTEM" == "Darwin" ]; then
+  # wide by default on OSX
+  alias ps="ps -U $USER"
+  alias psw="ps -U $USER"
+else
+  alias ps="ps w -u $USER"
+  alias psw="ps ww -u $USER"
+fi
+
+# Maybe there's a better name for this?
+alias reup="source $HOME/.bashrc"
+
+# Silly commands for avoiding 'cd ../..': there's 
+# probably a better way, but this is a start.
+alias u='cd ..'
+alias uu='cd ../..'
+alias uuu='cd ../../..'
+alias uuuu='cd ../../../..'
+alias uuuuu='cd ../../../../..'
+alias uuuuuu='cd ../../../../../..'
+alias uuuuuuu='cd ../../../../../../..'
+alias uuuuuuuu='cd ../../../../../../../..'
+alias uuuuuuuuu='cd ../../../../../../../../..'
+alias pu='pd ..'
+alias puu='pd ../..'
+alias puuu='pd ../../..'
+alias puuuu='pd ../../../..'
+alias puuuuu='pd ../../../../..'
+alias puuuuuu='pd ../../../../../..'
+alias puuuuuuu='pd ../../../../../../..'
+alias puuuuuuuu='pd ../../../../../../../..'
+alias puuuuuuuuu='pd ../../../../../../../../..'
+
+# i find i use this alot:
+alias mr='cd $(/bin/ls -BF1t | grep / | head -1)'
+alias mrd='/bin/ls -BF1t | grep / | head -1'
+
+################################
+# Local config
+################################
+
+################################
+# python-related aliases
+alias py='python2.6'
+alias py2='python2.6'
+alias py3='python3.1'
+
+alias lpy=$HOME'/python/local/bin/python2.7'
+alias cpy=$HOME'/cython/local-python/bin/python2.7'
+alias lcy='lpy '$HOME'/cython/devel/cython.py'
+
+PYTHONSTARTUP=$HOME'/.pythonrc'
+export PYTHONSTARTUP
+
+#############
+## Haskell
+
+if [ $SYSTEM == "Darwin" ]; then
+  pathappend '/Library/Frameworks/HaskellPlatform.framework/bin';
+fi
+pathappend $HOME'/ext/cabal/bin';
+pathappend $HOME'/ext/cabal/share/man' MANPATH;
+
+################################################################
+######################## Prompt stuff ##########################
+
+# ANSI colors for displays
+       BLACK_COLOR="\033[0;30m"
+   DARK_GRAY_COLOR="\033[1;30m"
+        BLUE_COLOR="\033[0;34m"
+  LIGHT_BLUE_COLOR="\033[1;34m"
+       GREEN_COLOR="\033[0;32m"
+ LIGHT_GREEN_COLOR="\033[1;32m"
+        CYAN_COLOR="\033[0;36m"
+  LIGHT_CYAN_COLOR="\033[1;36m"
+         RED_COLOR="\033[0;31m"
+   LIGHT_RED_COLOR="\033[1;31m"
+      PURPLE_COLOR="\033[0;35m"
+LIGHT_PURPLE_COLOR="\033[1;35m"
+       BROWN_COLOR="\033[0;33m"
+      YELLOW_COLOR="\033[1;33m"
+  LIGHT_GRAY_COLOR="\033[0;37m"
+       WHITE_COLOR="\033[1;37m"
+
+### ANSI prompt colors
+#  note that the \[ and \] are very important -- if they aren't
+#  present, bash will incorrectly count line length and have 
+#  weird wrapping issues. (see
+#    http://ubuntuforums.org/showthread.php?t=472369 )
+#
+       BLACK_PROMPT_COLOR="\[\033[0;30m\]"
+   DARK_GRAY_PROMPT_COLOR="\[\033[1;30m\]"
+        BLUE_PROMPT_COLOR="\[\033[0;34m\]"
+  LIGHT_BLUE_PROMPT_COLOR="\[\033[1;34m\]"
+       GREEN_PROMPT_COLOR="\[\033[0;32m\]"
+ LIGHT_GREEN_PROMPT_COLOR="\[\033[1;32m\]"
+        CYAN_PROMPT_COLOR="\[\033[0;36m\]"
+  LIGHT_CYAN_PROMPT_COLOR="\[\033[1;36m\]"
+         RED_PROMPT_COLOR="\[\033[0;31m\]"
+   LIGHT_RED_PROMPT_COLOR="\[\033[1;31m\]"
+      PURPLE_PROMPT_COLOR="\[\033[0;35m\]"
+LIGHT_PURPLE_PROMPT_COLOR="\[\033[1;35m\]"
+       BROWN_PROMPT_COLOR="\[\033[0;33m\]"
+      YELLOW_PROMPT_COLOR="\[\033[1;33m\]"
+  LIGHT_GRAY_PROMPT_COLOR="\[\033[0;37m\]"
+       WHITE_PROMPT_COLOR="\[\033[1;37m\]"
+#############################################################
+
+case $HOSTNAME in
+craigcitro-macbookpro.local)
+  BRACKET_COLOR="$PURPLE_PROMPT_COLOR"
+  PROMPT_TEXT="\u@\h \w"
+  PROMPT_TEXT_COLOR="$RED_PROMPT_COLOR"
+  PROMPT_DOLLAR_COLOR="$CYAN_PROMPT_COLOR"
+  ;;
+*)
+  BRACKET_COLOR="$RED_PROMPT_COLOR"
+  PROMPT_TEXT="\u@\h \w"  
+  PROMPT_TEXT_COLOR="$PURPLE_PROMPT_COLOR"
+  PROMPT_DOLLAR_COLOR="$GREEN_PROMPT_COLOR"
+  ;;
+esac
+NORMAL_TEXT_COLOR="$LIGHT_GRAY_PROMPT_COLOR"
+
+
+###################################################
+## Unused config
+###################################################
+
+# Michael Sheldon asked me this: how can you make ^D *not*
+# kill your shell, but still get passed through as EOF for
+# any other program? Here's the answer:
+# export IGNOREEOF=1
+
+####################################################
+# Google config
+####################################################
+
+if [ -e $HOME"/.bashrc.google" ]; then
+  source $HOME"/.bashrc.google"
+fi
+
+####################################################
+# Final config
+####################################################
+
+# Last bits of config -- in particular, anything that has to run after
+# Google-specific config.
+
+export COLOR_PS1="$BRACKET_COLOR[$PROMPT_TEXT_COLOR$PROMPT_TEXT$BRACKET_COLOR] $PROMPT_DOLLAR_COLOR\\$ $NORMAL_TEXT_COLOR"
+export EMACS_PS1="$COLOR_PS1"
+export MONOPS1="[\h \w] \\$ "
+
+alias mono='export PS1=$MONOPS1'   # Means black [and white] mono color
+alias color='export PS1=$COLOR_PS1' # Intended for color on black backgrounds
+export PS1=$COLOR_PS1 # Intended for color on black backgrounds
+
+unset BLACK_COLOR DARK_GRAY_COLOR BLUE_COLOR \
+    LIGHT_BLUE_COLOR GREEN_COLOR LIGHT_GREEN_COLOR \
+    CYAN_COLOR LIGHT_CYAN_COLOR RED_COLOR \
+    LIGHT_RED_COLOR PURPLE_COLOR LIGHT_PURPLE_COLOR \
+    BROWN_COLOR YELLOW_COLOR LIGHT_GRAY_COLOR WHITE_COLOR \
+    BLACK_PROMPT_COLOR DARK_GRAY_PROMPT_COLOR BLUE_PROMPT_COLOR \
+    LIGHT_BLUE_PROMPT_COLOR GREEN_PROMPT_COLOR \
+    LIGHT_GREEN_PROMPT_COLOR CYAN_PROMPT_COLOR \
+    LIGHT_CYAN_PROMPT_COLOR RED_PROMPT_COLOR \
+    LIGHT_RED_PROMPT_COLOR PURPLE_PROMPT_COLOR \
+    LIGHT_PURPLE_PROMPT_COLOR BROWN_PROMPT_COLOR \
+    YELLOW_PROMPT_COLOR LIGHT_GRAY_PROMPT_COLOR WHITE_PROMPT_COLOR 
+

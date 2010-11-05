@@ -1,0 +1,748 @@
+;;
+;; This is my .emacs file -- I stole this from Ryan long, long ago,
+;; and started modifying it a fair bit recently.
+;;
+
+;;=======================================
+;; Global Settings
+;;=======================================
+
+;; ANSI colors FTW!
+(ansi-color-for-comint-mode-on)
+;; Turn on fonts and syntax highlighting *always*
+(global-font-lock-mode t)
+
+;; show matching parens
+(show-paren-mode t)
+;; Automatically wrap over-long lines
+(auto-fill-mode t)
+;; I like seeing the column in the display at the bottom:
+(column-number-mode t)
+;; Don't need the splash screen
+(setq inhibit-splash-screen t)
+;; narrow-to-region sounds annoying
+(put 'narrow-to-region 'disabled nil)
+;; Spaces are better than tabs.
+(setq indent-tabs-mode nil)
+;; Mask password in shell
+(add-hook 'comint-output-filter-functions 'comint-watch-for-password-prompt)
+;; Display the time
+(display-time-mode t)
+
+;; Here's a whole chunk I stole from nweiz. 
+;; Fewer annoying files laying around ...
+(setq make-backup-files nil)
+(setq completion-ignored-extensions '(".a" ".so" ".o" "~" ".bak" ".class"))
+;; Save hitting "y" all the time
+(setq vc-follow-symlinks t)
+;; This is just smart:
+(setq sentence-end-double-space nil)
+;; I think I'm a grown-up.
+(setq disabled-command-function nil)
+
+;; I fiddled with this for a while, but this seems to be the right
+;; setting for my Mac. If this isn't good in X on Ubuntu, I should
+;; configure it based on that. Note that this can be annoying to get
+;; right when a server starts in a terminal, but the clients live in X
+;; (or vice-versa).
+(normal-erase-is-backspace-mode nil)
+;; this was my old code for handling it:
+;; emacs gets easily confused about what backspace should do when the
+;; server is running in a windowing system, but the client is in a
+;; terminal. this teaches it.
+;; (defun configure-backspace-behavior (&optional frame)
+;;   "Tell emacs how to handle backspace."
+;;   (normal-erase-is-backspace-mode (not (in-terminal))))
+;; (add-to-list 'after-make-frame-functions 'configure-backspace-behavior)
+
+;; It's nice when copy-paste is sane
+(setq x-select-enable-clipboard t)
+;; This is just handy
+(fset 'yes-or-no-p 'y-or-n-p)
+
+;; start the server if it's not already up
+(server-start nil)
+
+;; Set up local path for lisp files
+(when (file-exists-p (concat (getenv "HOME") "/.emacs.d/lisp"))
+  (add-to-list 'load-path (concat (getenv "HOME") "/.emacs.d/lisp")))
+
+;; I haven't used this much yet, but it seems like it could be cool.
+;; (2010 Sep 24) Okay, this is exactly as described: you only need it
+;; every so often, but when you do, it's unreasonably good.
+(require 'browse-kill-ring)
+
+;; select-frame is used in after-make-frame-functions, which is
+;; annoying since I can't then run those hooks at startup. Replace it with
+;; this more robust option:
+(defun robust-select-frame (&optional frame norecord)
+  "A version of select-frame that can take no arguments."
+  (when frame
+    (select-frame frame norecord)))
+(when (memq 'select-frame after-make-frame-functions)
+  (setq after-make-frame-functions (cons 'robust-select-frame
+					 (remq 'select-frame
+					       after-make-frame-functions))))
+
+;;------------------------------------------------------------
+;; Better buffer switching -- Nick Alexander showed me this.
+;;------------------------------------------------------------
+(iswitchb-mode t)
+;; \C-x\C-b is too close to \C-xb
+(global-unset-key "\C-x\C-b")
+(global-set-key "\C-x\C-b" 'iswitchb-buffer)
+;; Make arrows work in iswitchb menu, stolen from:
+;;   http://www.emacswiki.org/emacs/IswitchBuffers
+(require 'edmacro)
+(defun iswitchb-local-keys ()
+  (mapc (lambda (K) 
+	  (let* ((key (car K)) (fun (cdr K)))
+	    (define-key iswitchb-mode-map (edmacro-parse-keys key) fun)))
+	'(("<right>" . iswitchb-next-match)
+	  ("<left>"  . iswitchb-prev-match)
+	  ("<up>"    . ignore             )
+	  ("<down>"  . ignore             ))))
+(add-hook 'iswitchb-define-mode-map-hook 'iswitchb-local-keys)
+;; (2010 Oct 01) It's curious to me why I spontaneously started
+;; needing this:
+(setq iswitchb-default-method 'samewindow)
+
+;;------------------------------------------------------------
+;; Buffer naming
+;;------------------------------------------------------------
+;; I'm pretty happy with uniquify and forward naming -- see details
+;; here:
+;;  http://www.gnu.org/software/emacs/manual/html_node/emacs/Uniquify.html
+(require 'uniquify)
+(setq uniquify-buffer-name-style 'forward)
+
+;;-----------------
+;; winner mode!
+;;-----------------
+;; It's a little weird that you have to do this first:
+;;(setq winner-dont-bind-my-keys t)
+(require 'winner)
+;; Change the keybindings ...
+(define-key winner-mode-map "\C-xh" 'winner-undo)
+(define-key winner-mode-map "\C-xn" 'winner-redo)
+;; Turn binding back on
+;;(setq winner-dont-bind-my-keys nil)
+;; and load!
+(winner-mode t)
+
+;;======================================================
+;; Extra config
+;;======================================================
+(let ((gconfig (concat (getenv "HOME") "/.emacs.google")))
+  (if (file-exists-p gconfig)
+      (load-file gconfig)))
+
+;;==============================================================================
+;; Major modes and language-specific config
+;;==============================================================================
+
+;;---------------
+;; text
+;;---------------
+;; Paragraphs get indented
+(add-to-list 'auto-mode-alist '("\\.txt$" . paragraph-indent-text-mode))
+;; Set auto-fill and abbreviation for text
+(setq text-mode-hook 
+      '(lambda nil 
+         (setq fill-column 78)
+         (auto-fill-mode 1)
+	 (abbrev-mode 1)))
+
+;;-------------------
+;; ReST and Markdown
+;;-------------------
+(require 'rst)
+(add-to-list 'auto-mode-alist '("\\.rst$" . rst-mode))
+(add-to-list 'auto-mode-alist '("\\.rest$" . rst-mode))
+(autoload 'markdown-mode "markdown-mode.el"
+          "Major mode for editing Markdown files" t)
+(add-to-list 'auto-mode-alist '("\\.md$" . markdown-mode))
+(add-to-list 'auto-mode-alist '("\\.mdml$" . markdown-mode))
+
+;;------------------
+;; Makefiles
+;;------------------
+(add-to-list 'auto-mode-alist '("^Makefile$" . makefile-bsdmake-mode))
+
+;;---------------------------
+;; Python, Cython
+;;---------------------------
+;; Currently, there are problems with this cython/python mode,
+;; so just ignore them.
+;; (add-to-list 'load-path (expand-file-name "/sage/data/emacs"))
+(require 'python)
+;; (require 'pyrex "pyrex-mode")
+;; (load (concat (getenv "HOME") "/.emacs.d/lisp/cython-mode.el"))
+;; (load (concat (getenv "HOME") "/.emacs.d/lisp/python-mode.el"))
+;; (add-to-list 'auto-mode-alist '("^SConstruct$" . python-mode))
+;; (add-to-list 'auto-mode-alist '("\\.pxi$" . cython-mode))
+;; (add-to-list 'auto-mode-alist '("\\.pxd$" . cython-mode))
+
+;; Unison
+(add-to-list 'auto-mode-alist '("\\.prf$" . python-mode))
+
+;; Nick Alexander and I wrote this at SD12
+(defun bs (name)
+  "Browse the structure of a Python/Cython file."
+  ;; (occur "^\( *def\\|class\\|cdef class\\).*:$"))
+  (interactive "sFind name in hierarchy: ")
+  (occur (format "^\\( *\\(cp\\|c\\)?def.*%s\\|class\\|cdef class\\).*:$" name)))
+
+;;-------------------------
+;; Java
+;;-------------------------
+;; I shouldn't need this ...
+(unless (assoc "\\.java$" auto-mode-alist)
+  (add-to-list 'auto-mode-alist '("\\.java$" . java-mode)))
+
+;;------------------------
+;; Emacs Lisp
+;;------------------------
+(add-to-list 'auto-mode-alist '("\\.emacs$" . emacs-lisp-mode))
+;; This is useful, but it would be nice to make it smarter: the C-e is
+;; hacky and inelegant.
+(defun eval-sexp-and-advance (arg)
+  "Eval sexp ending at the end of this line and continue to the
+  next sexp. (This is basically a poor man's 'step' function in
+  emacs lisp.)"
+  (interactive "P")
+  (end-of-line)
+  (eval-last-sexp nil)
+  (unless arg
+    (forward-sexp)))
+(global-set-key "\C-c\C-e" 'eval-sexp-and-advance)
+
+;; tab completion in the Eval: prompt!
+(define-key read-expression-map [(tab)] 'hippie-expand)
+;; This second binding takes care of console clients.
+(define-key read-expression-map [(control i)] 'hippie-expand)
+;; I really want this keybinding to be "previous completion" ...
+;;(define-key read-expression-map [(shift tab)] 'unexpand)
+
+;;------------------------
+;; Shell scripts
+;;------------------------
+(add-to-list 'auto-mode-alist '("bash[^/]*$" . shell-script-mode))
+(add-to-list 'auto-mode-alist '("rc$" . shell-script-mode))
+
+;;----------------------------------------
+;; JSON-ish
+;;----------------------------------------
+(add-to-list 'auto-mode-alist '("\\.json" . javascript-mode))
+
+;;------------------------
+;; html
+;;------------------------
+
+;; Jump into the late 90s for tag names ... there has to be a better
+;; way to do this.
+(add-hook 'html-mode
+  (lambda ()
+    (assq-delete-all 'bold html-face-tag-alist)
+    (add-to-list 'html-face-tag-alist '(bold . "strong"))
+    (assq-delete-all 'italic html-face-tag-alist)
+    (add-to-list 'html-face-tag-alist '(italic . "em"))
+    (rassq-delete-all 'bold html-tag-face-alist)
+    (add-to-list 'html-tag-face-alist '("strong" . bold))
+    (rassq-delete-all 'italic html-tag-face-alist)
+    (add-to-list 'html-tag-face-alist '("em" . italic))
+    ))
+;; (2010 Sep 25) Does this even work? Investigate something smarter.
+
+;;------------------------
+;; Other stuff
+;;------------------------
+
+;; Honestly, I really prefer newline-and-indent in general. I'm going
+;; to be brave and set it universally, as follows:
+(define-key global-map (kbd "RET") 'newline-and-indent)
+;; That may be too much; if so, something like this is a little more
+;; moderate:
+;;   (defun set-newline-and-indent ()
+;;     (local-set-key (kbd "RET") 'newline-and-indent))
+;;   (add-hook 'lisp-mode-hook 'set-newline-and-indent)
+;;   (add-hook 'html-mode-hook 'set-newline-and-indent)
+
+;; Better indenting! I think that in the long-term I'll probably end
+;; up copying/evolving these functions, but for now, why not just use
+;; the Python macros ...  In particular, I think I'll end up wanting
+;; to switch indent-rigidly for indent-code-rigidly. 
+(require 'python)
+(global-set-key "\C-c<" 'python-shift-left)
+(global-set-key "\C-c>" 'python-shift-right)
+
+;; It probably makes sense to have a default major mode other than
+;; Fundamental (which seems to be unexciting); I'm torn between
+;; text-mode and markdown-mode.
+(setq major-mode 'paragraph-indent-text-mode)
+
+;;==============================================================================
+;; Utility functions
+;;==============================================================================
+
+;; Don't know where this is from -- Ryan had this in his .emacs.
+(defun unfill-region (start end)
+  (interactive "r")
+  (save-excursion
+    (save-restriction
+      (let ((fill-column (point-max)))
+	(fill-region (point-min) (point-max) nil t)
+	(goto-char (point-min))
+	(while (search-forward "\n\n" nil t)
+	  (replace-match "\n"))))))
+
+;; I'm sure this has to exist somewhere in emacs already ...
+(defun get-cursor-position-as-integer ()
+  "Return the current cursor position as an integer."
+  (interactive)
+  (string-to-number (substring (what-line) 5)))
+
+;; Sometimes it's nice to easily find out a keycode: to do this, 
+;; \M-: (read-event "?") or just run this function:
+(defun get-keycode ()
+  "Wrapper around read-event for when I forget it exists."
+  (interactive)
+  (read-event "Hit a key: "))
+
+;; Insert the current date in parentheses. 
+;; TODO: make the parentheses customizable.
+(defun insert-date ()
+  "Insert the current date in parentheses into the buffer."
+  (interactive)
+  (insert (format-time-string "(%Y %b %d)"))
+  (insert " "))
+(global-set-key "\C-c\C-d" 'insert-date)
+
+;; I often find myself wanting to *update* the values in an alist. I'm
+;; sure there's a good way to do this, but I didn't find it: so I'm
+;; going to write something that does it. I'm not doing anything
+;; clever with the implementation. Note that this simply returns an
+;; updated list; for most of my use-cases, I'll actually need to do
+;; `(setq alist (update-alist alist key val))` ...
+(defun update-alist (alist key &optional val)
+  "Update alist to contain (key . val). If key is already a key
+  in alist, we replace the existing entry. If val is nil and key
+  is a list, instead call (update-alist alist k v) for every
+  pair (k . v) in key (i.e. view key as a list of updates)."
+  (if (null key)
+      alist
+    (if (and (null val)
+	     (listp key))
+	(update-alist (update-alist alist (caar key) (cdar key))
+		      (cdr key))
+      (cons (cons key val) (assq-delete-all key alist)))))
+
+;;==============================================================================
+;; MISC KEY SETTINGS
+;; ==============================================================================
+;; (2010 Sep 24) Did something break this? Why did I feel the need to re-bind? 
+(global-unset-key [(control t)])
+(global-set-key [(control t)] 'fill-paragraph)
+
+;; This second binding is pretty good -- I should use it more.
+(global-set-key "\C-c\C-j" 'goto-line)
+(global-set-key "\M-\C-g" 'goto-line)
+(global-set-key "\C-c\C-z" 'shell)
+
+;; because I don't like "key not found" messages?
+(global-set-key "\C-x\C-g" 'keyboard-quit)
+
+;; This is just smart.
+(global-set-key "\M-s" 'isearch-forward-regexp)
+(global-set-key "\M-r" 'isearch-backward-regexp)
+
+;; it's nice to easily comment or uncomment a whole region
+(global-set-key "\C-c#" 'comment-or-uncomment-region)
+;; quickly sort
+(global-set-key "\C-cs" 'sort-lines)
+;; align a whole region (usually after copy-paste)
+(global-set-key "\C-ca" 'indent-region)
+
+;; Transpose!!
+(global-set-key "\C-ct" 'transpose-words)
+(global-set-key "\C-c\C-t" 'transpose-words)
+
+;; this is still experimentation -- but I think I prefer that the
+;; default is copy, and you request cut. this will also match the 
+;; keystrokes in tmux, making it easier on my fingers.
+;; (2010 Sep 24) Man, I totally prefer this. 
+(global-set-key "\C-w" 'kill-ring-save)
+(global-set-key "\M-w" 'kill-region)
+
+;; \M-: is harder to type than \C-:
+(global-set-key [(control :)] 'eval-expression)
+
+;; \C-backspace seems just as good as \M-backspace ...
+(global-set-key [C-backspace] 'backward-kill-word)
+(global-set-key [C-delete] 'backward-kill-word)
+
+;; \C-x\C-o and \C-xo should be the same.
+(global-unset-key [(control x) (control o)])
+(global-set-key "\C-x\C-o" 'other-window)
+
+;; I kind of want a good keystroke for this:
+(global-set-key "\C-xa" 'mark-whole-buffer)
+
+;; I miss vim's J command, and I always seem to mix up this and
+;; "join-above" (i.e. delete-indentation). I'm going to switch them to
+;; what I find most natural.
+(defun join-below ()
+  """Join the next line to the current line."""
+  (interactive)
+  (delete-indentation t))
+(global-set-key "\M-^" 'join-below)
+(global-set-key "\C-^" 'delete-indentation)
+
+;; get that mouse scroll going:
+(defun up-slightly () (interactive) (scroll-up 5))
+(defun down-slightly () (interactive) (scroll-down 5))
+(global-set-key [mouse-4] 'down-slightly)
+(global-set-key [mouse-5] 'up-slightly)
+
+;; M-up and M-down seem like good pageup/pagedown keys
+(global-set-key [M-up] 'scroll-down)
+(global-set-key [M-down] 'scroll-up)
+
+;; It's silly to page up and page down when a page is a bajillion
+;; rows. Instead, make them half a page, capped at 40.
+(defvar largest-page-movement-size '40
+  "Largest reasonable size for pageup/pagedown.")
+(defun up-one-bounded-page ()
+  "Scroll up one manageable page."
+  (interactive)
+  (forward-line (min (/ (frame-height) 2) largest-page-movement-size)))
+(defun down-one-bounded-page ()
+  "Scroll down one manageable page."
+  (interactive)
+  (forward-line (* -1 (min (/ (frame-height) 2) largest-page-movement-size))))
+(defun adjust-pageup-pagedown ()
+  "Adjust page size based on the current frame size."
+  (when (> (frame-height) largest-page-movement-size)
+    (global-set-key "\M-v" 'down-one-bounded-page)
+    (global-set-key "\C-v" 'up-one-bounded-page)
+    (global-set-key [M-up] 'down-one-bounded-page)
+    (global-set-key [M-down] 'up-one-bounded-page)))
+;; I don't know that I need to do this more often than at program
+;; start ...
+(adjust-pageup-pagedown)
+
+(defun up-one () (interactive) (scroll-up 1))
+(defun down-one () (interactive) (scroll-down 1))
+(global-set-key "\M-z" 'down-one)
+(global-set-key "\C-z" 'up-one)
+(global-set-key [C-S-up] 'down-one)
+(global-set-key [C-S-down] 'up-one)
+
+;; transient-mark-mode
+;; turned off by default, but easy to turn on
+(global-set-key "\C-xt" 'transient-mark-mode)
+(setq transient-mark-mode nil)
+
+;; the next time i'm playing with this, i noticed that there's a
+;; "window-start" command. this would probably help with the 
+;; little bit of jitter i get on reload. ... DONE
+(defun reload-buffer ()
+  "Reload the current buffer with the current cursor position."
+  (interactive)
+  (let ((current-window-position (window-start)))
+    (find-alternate-file buffer-file-name)
+    (set-window-start (car (window-list)) current-window-position)
+    (goto-line (get-cursor-position-as-integer))))
+(global-set-key "\C-c\C-r" 'reload-buffer)
+
+;; this is for programmable completion ... maybe one day I'll set that up?
+;; (pcomplete-autolist t)
+
+;;----------------------------------------
+;; frame-related
+;;----------------------------------------
+
+;;; switch kill frame and exit emacs keystrokes
+(global-set-key "\C-x\C-n" 'new-frame)
+(defun crazy-exit-stuff ()
+  (global-set-key "\C-x\C-c" 'delete-frame)
+  (global-set-key "\C-x\C-y" 'save-buffers-kill-emacs))
+(defun normal-exit-stuff ()
+  (global-set-key "\C-x\C-c" 'save-buffers-kill-emacs)
+  (global-set-key "\C-x\C-y" 'delete-frame))
+(crazy-exit-stuff)
+
+;;----------------------------------------
+;; new movement-related stuff
+;;----------------------------------------
+;;
+;; i was talking to nweiz, who does something very clever for vim-like
+;; movement in emacs. basically, he's using meta as the "in command
+;; mode" modifier.  this seems pretty slick -- I thought I'd try
+;; something along these lines, see if i like it. this also gives me
+;; the chance to fix the one broken thing about vim movement -- the
+;; silly four-in-a-row business. I'm thinking I'll use meta+chtn,
+;; which is the right-hand dvorak esdf.
+(defun set-movement-keys ()
+  (global-set-key "\M-c" 'previous-line)
+  (global-set-key "\M-t" 'next-line)
+  (global-set-key "\M-r" 'forward-char)
+  (global-set-key "\M-g" 'backward-char)
+  (global-set-key "\M-n" 'forward-word)
+  (global-set-key "\M-h" 'backward-word)
+  )
+;; should generate the restore dynamically!
+(defun restore-movement-keys ()
+  (global-set-key "\M-c" 'capitalize-word)
+  (global-set-key "\M-h" 'mark-paragraph)
+  (global-set-key "\M-t" 'transpose-words)
+  (global-set-key "\M-r" 'move-to-window-line)
+  (global-unset-key "\M-g")
+  (global-unset-key "\M-n")
+  )
+;; so far, this isn't really exciting for me. disabling for now.
+;;(set-movement-keys)
+
+;; Read about some nice window movement stuff on 
+;; Nathan's blog here:
+;;  http://nex-3.com/posts/45-efficient-window-switching-in-emacs
+(setq windmove-wrap-around t)
+(global-set-key [(control right)] 'windmove-right)
+(global-set-key [(control left)] 'windmove-left)
+(global-set-key [(control up)] 'windmove-up)
+(global-set-key [(control down)] 'windmove-down)
+(global-set-key (kbd "C-c <right>") 'windmove-right)
+(global-set-key (kbd "C-c <left>") 'windmove-left)
+(global-set-key (kbd "C-c <up>") 'windmove-up)
+(global-set-key (kbd "C-c <down>") 'windmove-down)
+;; control+arrows in tmux ... I should figure out exactly what's
+;; going on with these keystrokes.
+(global-set-key "\M-[a" 'windmove-up)
+(global-set-key "\M-[b" 'windmove-down)
+(global-set-key "\M-[c" 'windmove-right)
+(global-set-key "\M-[d" 'windmove-left)
+
+;; get myself in the right habits ... one day, maybe? still not worth
+;; it. 
+(defun unset-arrows ()
+  (interactive)
+  (global-unset-key (kbd "<up>"))
+  (global-unset-key (kbd "<down>"))
+  (global-unset-key (kbd "<left>"))
+  (global-unset-key (kbd "<right>")))
+(defun reset-arrows ()
+  (interactive)
+  (global-set-key (kbd "<up>") 'previous-line)
+  (global-set-key (kbd "<down>") 'next-line)
+  (global-set-key (kbd "<left>") 'backward-char)
+  (global-set-key (kbd "<right>") 'forward-char))
+;; This is still **way** too hardcore for me.
+;;(unset-arrows)
+
+;; This is nice -- a copy of what vim offers with moving the current
+;; line to the top, bottom, or middle.
+(defun move-to-top ()
+  "Scroll the buffer so that the current line is at the top of the
+frame. (Emulates zt in vim.)"
+  (interactive)
+  (recenter-top-bottom 0))
+(defun move-to-middle ()
+  "Scroll the buffer so that the current line is at the
+  middle. (Emulates zz in vim.)" 
+  (interactive)
+  (recenter-top-bottom (/ (frame-height) 2)))
+(defun move-to-bottom ()
+  "Scroll the buffer so that the current line is at the
+  bottom. (Emulates zb in vim.)"
+  (interactive)
+  (recenter-top-bottom (- (window-height) 3)))
+(global-set-key "\C-c\C-g" 'move-to-top)
+(global-set-key "\C-c\C-h" 'move-to-middle)
+(global-set-key "\C-c\C-m" 'move-to-bottom)
+
+;; I work mostly with columns, so I should take advantage of that.
+(defun maximize-window-height ()
+  "Make a window fill the entire column."
+  (interactive)
+  (enlarge-window (frame-height)))
+(global-set-key "\C-c1" 'delete-other-windows)
+(global-set-key "\C-x1" 'maximize-window-height)
+;; want to write a balance-windows-in-column command; 
+;; can just do something with a map/filter over (window-list),
+;; checking the value of (window-edges w).
+
+;; I like a double-wide window. In theory, I might want a smaller one;
+;; this will shrink as necessary.
+(defun toggle-window-width (&optional frame)
+  "Toggle between a single-wide and double-wide window. Ignored
+in terminal windows."
+  (interactive)
+  (when (preferred-frame-width)
+      (unless (in-terminal)
+	(if (eq (preferred-frame-width) (frame-width))
+	    (modify-frame-parameters frame
+				     `((width . ,(* 2 (preferred-frame-width)))))
+	  (modify-frame-parameters frame
+				   `((width . ,(preferred-frame-width))))))))
+(global-set-key "\C-xw" 'toggle-window-width)
+
+;;===========================================
+;; Context-dependent config
+;;===========================================
+
+(defun in-terminal (&optional frame)
+  "Determine whether or not we seem to be in a terminal."
+  (not (display-multi-frame-p (or frame
+				  (selected-frame)))))
+
+(defun various-mac-setup (&optional frame)
+  "Run a handful of Mac-specific configuration commands."
+  (when (eq 'darwin system-type)
+    ;; Is this necessary?
+    ;; (when frame
+    ;;   (select-frame frame))
+    ;; This is documented in the manual, but not in the description of
+    ;; this variable. Set this to nil for option as meta, and non-nil
+    ;; for command as meta. Given that I always use cmd-key-happy on any
+    ;; Mac, nil is the right choice for me.
+    (setq mac-command-key-is-meta nil)
+    ;; Set colors
+    (modify-frame-parameters frame '((foreground-color . "ivory")
+				     (background-color . "black")))))
+(add-to-list 'after-make-frame-functions 'various-mac-setup)
+
+;;===========================================
+;; Set up the window
+;;===========================================
+
+(defun various-window-config (&optional frame)
+  "Various window configuration for non-terminal sessions."
+  ;; Move the window and don't wait for the window manager as 
+  ;; we start up
+  (unless (in-terminal)
+    (modify-frame-parameters frame '((wait-for-wm . nil)
+				     (top . 25)
+				     (left . 0)))))
+(add-to-list 'after-make-frame-functions 'various-window-config)
+
+;; Clean up the window. Each of these sets a global option, so
+;; there's no need to use this as a hook.
+(defun kill-trim (&optional ignored)
+  "Kill all the extras: menu, scrollbar, toolbar. Takes
+an (ignored) optional argument so it can be used as a hook in
+after-make-frame-functions."
+  (menu-bar-mode -1)
+  (scroll-bar-mode -1)
+  (tool-bar-mode -1))
+(kill-trim)
+
+;; Need to change the default frame height depending on whether I'm
+;; launching from X11, on Linux, or actually launching Emacs.app.
+;; (2010 Sep 27) Actually, I only use this from Mac; I should
+;; ultimately implement something that looks at frame
+;; resolution/screen resolution/etc and decides this.
+(defun preferred-frame-height ()
+   (cond
+    ;;((eq window-system 'x) '145)
+    ;;((eq window-system 'mac) '63)
+    ((eq window-system 'ns) '66)
+    ((and (in-terminal) (getenv "LINES")) (getenv "LINES"))
+    (t nil)))
+(defun preferred-frame-width () 
+  (cond
+   ;;((eq window-system 'x) '98)
+   ;;((eq window-system 'mac) '100)
+   ((eq window-system 'ns) 117)
+   ((and (in-terminal) (getenv "COLUMNS")) (getenv "COLUMNS"))
+   (t nil)))
+
+;; setup frame shape
+(defun force-shape (&optional frame)
+  "Force emacs into the right geometry, if we know it."
+  (interactive)
+  (when (preferred-frame-width)
+    (unless (in-terminal)
+      ;; if we're in a windowing system, force the frame shape.
+      (modify-frame-parameters frame
+			       `((height . ,(preferred-frame-height))
+				 (width . ,(preferred-frame-width)))))))
+;; Add a hook to do this on a new frame
+(add-to-list 'after-make-frame-functions 'force-shape)
+
+;;==================================================
+;; edit-server.el
+;;==================================================
+;; Enable editing Chrome textareas with emacs via Edit with Emacs:
+;;   http://github.com/stsquad/emacs_chrome
+(when (and (or (daemonp)
+	     (server-running-p))
+	 (locate-library "edit-server"))
+  (require 'edit-server)
+  (edit-server-start))
+
+;; I really like the convenience of emacs being given focus and
+;; gracefully giving it back when the edit server creates and destroys
+;; a frame for editing. These are some helper functions I wrote to
+;; automate this. They all start with `(unless (in-terminal)` because
+;; I don't want them to do anything if they accidentally fire in a
+;; terminal-based frame. What I really want is to have them say
+;; `(unless (processing-edit-server-hooks-p)` or somesuch ...
+;;  * x-raise-this-frame: Give focus to the current frame. 
+;;  * x-focus-back-to-chrome: Specifically give X focus back to an app
+;;    caled "Google Chrome" ... this is fragile, but I think it's
+;;    easier than the alternative (make edit-server record what
+;;    application it came from). 
+(defun x-raise-this-frame (&optional ignored)
+  "Raise the current frame in X's estimation."
+  (interactive)
+  (unless (in-terminal)
+    (ns-hide-emacs 'activate)
+    ;; This works too:
+    ;;(x-focus-frame (car (frame-list)))
+    ;; but ns-hide-emacs seems like a "better" solution.
+    ))
+(defun x-focus-back-to-chrome (&optional ignored)
+  "Give focus back to Chrome. (Used with edit-server.)"
+  (unless (in-terminal)
+    (ns-do-applescript "tell application \"Google Chrome\" to activate")))
+(add-hook 'edit-server-start-hook 'x-raise-this-frame)
+(add-hook 'edit-server-done-hook 'x-focus-back-to-chrome)
+;; This one seems like it couldn't hurt ... famous last words?
+;;(add-to-list 'after-make-frame-functions 'x-raise-this-frame)
+;; Seems to cause trouble with focus in text-based terminals, which is
+;; odd, since it starts by checking that it's not in a terminal ...
+
+;; I've been annoyed that C-xC-s will close the clients spawned by
+;; the edit server; here's the offending line in edit-server.el:
+;;  (define-key edit-server-text-mode-map (kbd "C-x C-s") 'edit-server-done)
+;; that's easy enough to undo ...
+(define-key edit-server-text-mode-map (kbd "C-x C-s") 'save-buffer)
+;; I had a few problems when I first installed it, but it seems to be
+;; working for now. The other option is yakshave, which isn't as good
+;; for this particular puprose. It's not a bad solution for keyboard
+;; bindings, but I feel like there should be something better ...
+;;
+
+;;-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
+;; NO OTHER CODE BELOW THIS COMMAND
+;;-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
+(run-hooks 'after-make-frame-functions)
+
+;;======================================================
+;; TODO
+;;======================================================
+;;
+;; here's something I'd like to do: make splitting of windows
+;; automatic. for instance, there's no need to manually choose between
+;; splitting horizontally and vertically: i can figure out which one i
+;; want by just looking at (window-tree). then i can have a single
+;; binding for "make a new window in an intelligent way."
+;;
+;; along the same lines, it'd be great to have a keystroke to switch
+;; the two "most reasonable" windows, or forcibly switch the two
+;; columns in C-x 3 view.
+;;
+;; yet another: a better binding to restore a window when something
+;; like *Apropos* pops up. Probably winner-mode could do this for me,
+;; it's just a question of training my brain.
+;;

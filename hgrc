@@ -1,0 +1,28 @@
+[ui]
+username = Craig Citro <craigcitro@gmail.com>
+
+[extensions]
+# selective pull from another branch or repo
+transplant=
+# collate data about entire repo history
+hgext.churn=
+# convert from other VCSs to hg
+hgext.convert=
+# external program for diff
+hgext.extdiff=
+# queues
+hgext.mq=
+# selective record
+hgext.record=
+# color output
+color=
+# syntax highlighting for hgweb
+hgext.highlight=
+# choose a pager for output
+pager=
+
+[extdiff]
+cmd.opendiff = fmdiff
+
+[pager]
+ignore = update, push, pull, merge, convert, record, qrecord, serve

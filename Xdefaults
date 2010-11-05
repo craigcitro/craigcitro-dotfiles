@@ -1,0 +1,35 @@
+! .Xdefaults
+
+! Unfortunately, generically choosing white-on-black gives some 
+! generally unusable windows (think qgit). 
+*background: white
+*foreground: black
+
+! The one true font
+*font: 6x13
+
+! Ask Emacs for the basics
+Emacs*font: 6x13
+Emacs*foreground: white
+Emacs*background: black
+
+! And xterm
+XTerm*font: 6x13
+XTerm*foreground: white
+XTerm*background: black
+XTerm*saveLines: 99999
+! these are to help with meta in xterms, originally copied
+! from here:
+!  http://www.emacswiki.org/emacs/MetaKeyProblems
+! there are complementary changes in my .inputrc.
+XTerm*metaSendsEscape: true
+XTerm*eightBitInput: false
+! this is here for my Mac's configuration; I'm not sure
+! if it'll break anything on linux.
+XTerm*ptySttySize: true
+
+!
+! VT100*translations: #override \
+!  Ctrl <KeyPress> BackSpace: string(0x7f)
+!
+
