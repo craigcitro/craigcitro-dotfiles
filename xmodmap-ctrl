@@ -1,0 +1,17 @@
+!
+! cc qwerty keyboard layout
+! Just turns caps lock into ctrl.
+!
+
+
+!
+! Swap Caps_Lock and Control_L
+!
+remove Lock = Caps_Lock
+remove Control = Control_L
+keysym Control_L = Caps_Lock
+keysym Caps_Lock = Control_L
+! To make ctrl a caps, do:
+! add Lock = Caps_Lock instead of:
+add Control = Caps_Lock
+add Control = Control_L
