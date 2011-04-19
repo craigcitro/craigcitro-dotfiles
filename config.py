@@ -35,7 +35,7 @@ MAC_LINKS = [
 XWINDOWS_LINKS = [
     'ratpoisonrc',
     'ratpoisonrc.ugly',
-    'xmodmap-cc',
+    'xmodmap-ctrl',
     'xsession',
     'xsettingsd',
     ]
