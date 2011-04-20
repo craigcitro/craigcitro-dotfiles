@@ -35,6 +35,9 @@ apps = {
    Terminal = { exclude = Set{ "cmd-t", } },
    -- Can't think of anything I need to override in iTerm ...
    iTerm = { exclude = Set{ } },
+   -- iTerm2 seems smart enough to identify itself as iTerm, but
+   -- just in case ...
+   iTerm2 = { exclude = Set{ } },
    -- Emacs generally knows better: basically don't swap anything.
    Emacs = { exclude = Set{ } }, 
 }

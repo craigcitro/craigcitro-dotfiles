@@ -1,6 +1,12 @@
 [user]
 	name = Craig Citro
 	email = craigcitro@gmail.com
+[alias]
+	stat = status
+	st = status
+	l = log -3
+	br = branch
+	ch = checkout
 [color]
 	status = auto
 	branch = auto

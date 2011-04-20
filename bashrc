@@ -99,6 +99,9 @@ pathprepend $HOME/ext/bin;
 pathprepend $HOME/bin; 
 export PATH
 
+# As Ami says, "Mmmm ... core files are so yummy!"
+ulimit -c unlimited
+
 ###############################
 ## ls configuration 
 
@@ -443,3 +446,11 @@ unset BLACK_COLOR DARK_GRAY_COLOR BLUE_COLOR \
     LIGHT_PURPLE_PROMPT_COLOR BROWN_PROMPT_COLOR \
     YELLOW_PROMPT_COLOR LIGHT_GRAY_PROMPT_COLOR WHITE_PROMPT_COLOR 
 
+
+# tmux-related
+# Currently, tmux uses chdir(2) on creating a new shell, so can't do a cd without
+# inheriting the "feature" of following symlinks. So here's my workaround: have tmux
+# drop a shell var, then let the shell cd (and hence preserve paths).
+if [ "$TMUX_DEFAULT_DIR" ]; then
+  cd $TMUX_DEFAULT_DIR
+fi

@@ -84,6 +84,21 @@
 					 (remq 'select-frame
 					       after-make-frame-functions))))
 
+;; Stole these from a wiki on Emacs 23 vs. 22 compatibility:
+;; Make ^N work based on the document structure. The default setting
+;; of 't' makes it change behavior based on how wide the Emacs window
+;; is.
+(setq line-move-visual nil)
+;; Emacs 23 likes to pop up real X windows for tooltips, which is
+;; highly annoying on slow connections, especially using VNC or NX.
+;; This makes it use the echo-area like it used to.
+(setq tooltip-use-echo-area t)
+;; In some situations Emacs will try to guess whether to split
+;; horizontally or vertically. Put a stop to that by changing
+;; split-window-preferred-function, split-width-threshold, or
+;; split-height-threshold:
+(setq split-width-threshold nil)
+
 ;;------------------------------------------------------------
 ;; Better buffer switching -- Nick Alexander showed me this.
 ;;------------------------------------------------------------
@@ -204,6 +219,9 @@
 ;; Emacs Lisp
 ;;------------------------
 (add-to-list 'auto-mode-alist '("\\.emacs$" . emacs-lisp-mode))
+;; (2010 Dec 02) Now that I rearranged my git repos, this name comes
+;; up differently ...
+(add-to-list 'auto-mode-alist '("/emacs$" . emacs-lisp-mode))
 ;; This is useful, but it would be nice to make it smarter: the C-e is
 ;; hacky and inelegant.
 (defun eval-sexp-and-advance (arg)
@@ -317,6 +335,16 @@
   (insert (format-time-string "(%Y %b %d)"))
   (insert " "))
 (global-set-key "\C-c\C-d" 'insert-date)
+;; (2010 Dec 02) HORRIBLE HACK
+(defun insert-bare-date ()
+  "Insert the current date."
+  (interactive)
+  (let ((date (format-time-string "%Y %b %d")))
+    (insert date)
+    (insert ?\n)
+    (insert (make-string (length date) ?-))
+    (insert ?\n)))
+(global-set-key "\C-c\C-b" 'insert-bare-date)
 
 ;; I often find myself wanting to *update* the values in an alist. I'm
 ;; sure there's a good way to do this, but I didn't find it: so I'm
@@ -696,7 +724,8 @@ after-make-frame-functions."
   "Raise the current frame in X's estimation."
   (interactive)
   (unless (in-terminal)
-    (ns-hide-emacs 'activate)
+    (when (eq window-system 'ns)
+      (ns-hide-emacs 'activate))
     ;; This works too:
     ;;(x-focus-frame (car (frame-list)))
     ;; but ns-hide-emacs seems like a "better" solution.
@@ -704,7 +733,8 @@ after-make-frame-functions."
 (defun x-focus-back-to-chrome (&optional ignored)
   "Give focus back to Chrome. (Used with edit-server.)"
   (unless (in-terminal)
-    (ns-do-applescript "tell application \"Google Chrome\" to activate")))
+    (when (eq window-system 'ns)
+      (ns-do-applescript "tell application \"Google Chrome\" to activate"))))
 (add-hook 'edit-server-start-hook 'x-raise-this-frame)
 (add-hook 'edit-server-done-hook 'x-focus-back-to-chrome)
 ;; This one seems like it couldn't hurt ... famous last words?
