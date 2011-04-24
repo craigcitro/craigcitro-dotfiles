@@ -1,0 +1,3 @@
+[submodule "emacs.d/lisp/haskell-mode"]
+	path = emacs.d/lisp/haskell-mode
+	url = https://github.com/emacsmirror/haskell-mode.git
