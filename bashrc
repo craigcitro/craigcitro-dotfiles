@@ -188,6 +188,8 @@ pathappend '/usr/local/share/man' MANPATH;
 pathappend '/usr/X11/share/man' MANPATH;
 pathappend '/Developer/usr/share/man' MANPATH;
 pathappend '/usr/share/man' MANPATH;
+pathappend '/usr/local/man' MANPATH;
+export MANPATH
 
 # Try and save myself from trouble
 alias rm="rm -i"
@@ -321,7 +323,7 @@ alias py='python2.6'
 alias py2='python2.6'
 alias py3='python3.1'
 
-alias lpy=$HOME'/python/local/bin/python2.7'
+alias lpy=$HOME'/ext/python/bin/python2.7'
 alias cpy=$HOME'/cython/local-python/bin/python2.7'
 alias lcy='lpy '$HOME'/cython/devel/cython.py'
 
