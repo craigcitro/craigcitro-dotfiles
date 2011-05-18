@@ -29,6 +29,10 @@
 ;; Display the time
 (display-time-mode t)
 
+;; Consistently add newlines at end of file
+(setq require-final-newline t)
+(setq next-line-add-newlines t)
+
 ;; Here's a whole chunk I stole from nweiz. 
 ;; Fewer annoying files laying around ...
 (setq make-backup-files nil)
@@ -178,6 +182,7 @@
           "Major mode for editing Markdown files" t)
 (add-to-list 'auto-mode-alist '("\\.md$" . markdown-mode))
 (add-to-list 'auto-mode-alist '("\\.mdml$" . markdown-mode))
+(add-to-list 'auto-mode-alist '("\\.markdown$" . markdown-mode))
 
 ;;------------------
 ;; Makefiles

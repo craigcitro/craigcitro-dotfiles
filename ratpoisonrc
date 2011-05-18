@@ -71,8 +71,10 @@ bind \C-bracketright exec ~/bin/rat-volume PCM 5%+
 # Need a key to lock the screen
 bind BackSpace exec xscreensaver-command -lock
 
-# (2011 Apr 12) Playing with splitting windows in my new configuration; need some keys to switch focus. Still not completely sure.
-bind | hsplit
+# (2011 Apr 12) Playing with splitting windows in my new
+# configuration; need some keys to switch focus. Still not completely
+# sure.
+bind bar hsplit
 bind \C-Right focusright
 bind Right focusright
 bind \C-Left focusleft
