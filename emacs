@@ -31,7 +31,8 @@
 
 ;; Consistently add newlines at end of file
 (setq require-final-newline t)
-(setq next-line-add-newlines t)
+;; (2011 May 18) do not like:
+;; (setq next-line-add-newlines t)
 
 ;; Here's a whole chunk I stole from nweiz. 
 ;; Fewer annoying files laying around ...
@@ -188,6 +189,13 @@
 ;; Makefiles
 ;;------------------
 (add-to-list 'auto-mode-alist '("^Makefile$" . makefile-bsdmake-mode))
+
+;;------------------
+;; Haskell
+;;------------------
+(load "~/.emacs.d/lisp/haskell-mode/haskell-site-file")
+(add-hook 'haskell-mode-hook 'turn-on-haskell-doc-mode)
+(add-hook 'haskell-mode-hook 'turn-on-haskell-indentation)
 
 ;;---------------------------
 ;; Python, Cython
