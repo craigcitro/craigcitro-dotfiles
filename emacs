@@ -29,6 +29,11 @@
 ;; Display the time
 (display-time-mode t)
 
+;; Consistently add newlines at end of file
+(setq require-final-newline t)
+;; (2011 May 18) do not like:
+;; (setq next-line-add-newlines t)
+
 ;; Here's a whole chunk I stole from nweiz. 
 ;; Fewer annoying files laying around ...
 (setq make-backup-files nil)
@@ -178,11 +183,19 @@
           "Major mode for editing Markdown files" t)
 (add-to-list 'auto-mode-alist '("\\.md$" . markdown-mode))
 (add-to-list 'auto-mode-alist '("\\.mdml$" . markdown-mode))
+(add-to-list 'auto-mode-alist '("\\.markdown$" . markdown-mode))
 
 ;;------------------
 ;; Makefiles
 ;;------------------
 (add-to-list 'auto-mode-alist '("^Makefile$" . makefile-bsdmake-mode))
+
+;;------------------
+;; Haskell
+;;------------------
+(load "~/.emacs.d/lisp/haskell-mode/haskell-site-file")
+(add-hook 'haskell-mode-hook 'turn-on-haskell-doc-mode)
+(add-hook 'haskell-mode-hook 'turn-on-haskell-indentation)
 
 ;;---------------------------
 ;; Python, Cython
