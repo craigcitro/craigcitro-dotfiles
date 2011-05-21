@@ -193,9 +193,14 @@
 ;;------------------
 ;; Haskell
 ;;------------------
+;; Generic bit
 (load "~/.emacs.d/lisp/haskell-mode/haskell-site-file")
+(add-to-list 'auto-mode-alist '("\\.hs$" . haskell-mode))
 (add-hook 'haskell-mode-hook 'turn-on-haskell-doc-mode)
+;; Add indentation mode: not sure which I'll like.
 (add-hook 'haskell-mode-hook 'turn-on-haskell-indentation)
+;; (add-hook 'haskell-mode-hook 'turn-on-haskell-indent)
+;; (add-hook 'haskell-mode-hook 'turn-on-haskell-simple-indent)
 
 ;;---------------------------
 ;; Python, Cython
@@ -254,21 +259,6 @@
 (define-key read-expression-map [(control i)] 'hippie-expand)
 ;; I really want this keybinding to be "previous completion" ...
 ;;(define-key read-expression-map [(shift tab)] 'unexpand)
-
-;;----------------
-;; Haskell
-;;----------------
-;; Generic bit
-(load "~/.emacs.d/lisp/haskell-mode/haskell-site-file")
-(add-to-list 'auto-mode-alist '("\\.hs$" . haskell-mode))
-(add-hook 'haskell-mode-hook 'turn-on-haskell-doc-mode)
-;; Add indentation mode: not sure which I'll like.
-(add-hook 'haskell-mode-hook 'turn-on-haskell-indentation)
-;; (add-hook 'haskell-mode-hook 'turn-on-haskell-indent)
-;; (add-hook 'haskell-mode-hook 'turn-on-haskell-simple-indent)
-
-
-
 
 ;;------------------------
 ;; Shell scripts
