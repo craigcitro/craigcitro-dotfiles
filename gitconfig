@@ -12,3 +12,5 @@
 	branch = auto
 	interactive = auto
 	diff = auto
+[core]
+	excludesfile = ~/.gitignore
