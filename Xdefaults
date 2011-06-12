@@ -15,6 +15,10 @@ Emacs*background: black
 
 ! And xterm
 XTerm*font: 6x13
+! (2011 May 31) Unfortunately, this doesn't look good: bad
+! font hinting?
+! XTerm*facename: Inconsolata
+! XTerm*faceSize: 9
 XTerm*foreground: white
 XTerm*background: black
 XTerm*saveLines: 99999
