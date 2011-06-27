@@ -157,6 +157,10 @@
   (if (file-exists-p gconfig)
       (load-file gconfig)))
 
+;; (2011 Jun 27) I have no idea why this isn't already set:
+(defun byte-compile-dest-file (filename)
+  (concat filename "c"))
+
 ;;==============================================================================
 ;; Major modes and language-specific config
 ;;==============================================================================
@@ -267,9 +271,11 @@
 (add-to-list 'auto-mode-alist '("rc$" . shell-script-mode))
 
 ;;----------------------------------------
-;; JSON-ish
+;; Javascript and friends
 ;;----------------------------------------
-(add-to-list 'auto-mode-alist '("\\.json" . javascript-mode))
+(autoload 'js2-mode "js2-mode" nil t)
+(add-to-list 'auto-mode-alist '("\\.js$" . js2-mode))
+(add-to-list 'auto-mode-alist '("\\.json$" . js2-mode))
 
 ;;------------------------
 ;; html
