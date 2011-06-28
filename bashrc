@@ -247,7 +247,7 @@ alias c=clear
 alias d=date
 # Why isn't this the default?
 alias df='df -h'
-alias g='grep -E'
+alias g='grep -n --color=auto -E'
 alias h=history
 alias ht='history | tail -n 20'
 alias ny=nyxmms2
