@@ -142,7 +142,7 @@ fi
 # we want everything to route through one central set of emacs
 # commands
 alias emacsdaemon='$(which emacs) --daemon'
-alias emacs="emacsclient -a \'\' -c"
+alias emacs="emacsclient -c"
 alias e='emacs'
 alias et='emacs -t'
 
@@ -150,6 +150,25 @@ alias et='emacs -t'
 export EDITOR='emacsclient -c -t'
 export VISUAL='emacsclient -c -t'
 export CVSEDITOR='emacsclient -c -t'
+
+# TMUX + Emacs
+# (2011 Jun 29) I've gotten slightly annoyed at having *one* emacs session; I'd like
+# to experiment with just a few, tied to my tmux sessions. 
+if [ -n "${TMUX:+x}" ]; then
+  export TMUX_SESSION="$(tmux display -p \#S)"
+  alias emacsdaemon='$(which emacs) --daemon='"${TMUX_SESSION}"
+  alias emacs="emacsclient -c -s ${TMUX_SESSION}"
+  if [ "$(ps w -u ${USER} | grep macs | grep ${TMUX_SESSION})xxx" == "xxx" ]; then
+    LOCKFILE="${HOME}/.lock-emacs-${TMUX_SESSION}"
+    if [ -f "${LOCKFILE}" ]; then
+      echo "Emacs is currently starting up, skipping ..."
+    else
+      echo "Starting Emacs daemon ..."
+      $(which emacs) --daemon="${TMUX_SESSION}"
+    fi
+  fi
+fi
+
 
 # this line is here in support of my .inputrc: I want
 # to be able to use \C-s and \C-r for interactive history
@@ -451,6 +470,7 @@ unset BLACK_COLOR DARK_GRAY_COLOR BLUE_COLOR \
 # Currently, tmux uses chdir(2) on creating a new shell, so can't do a cd without
 # inheriting the "feature" of following symlinks. So here's my workaround: have tmux
 # drop a shell var, then let the shell cd (and hence preserve paths).
-if [ "$TMUX_DEFAULT_DIR" ]; then
+if [ -n "${TMUX_DEFAULT_DIR:+x}" ]; then
   cd $TMUX_DEFAULT_DIR
 fi
+
