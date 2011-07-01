@@ -282,6 +282,9 @@
 (autoload 'js2-mode "js2-mode" nil t)
 (add-to-list 'auto-mode-alist '("\\.js$" . js2-mode))
 (add-to-list 'auto-mode-alist '("\\.json$" . js2-mode))
+;; (2011 Jul 01) Why both? 
+(setq js2-indent-on-enter-key t)
+(setq js2-enter-indents-newline t)
 
 ;;------------------------
 ;; html
