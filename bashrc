@@ -469,8 +469,10 @@ unset BLACK_COLOR DARK_GRAY_COLOR BLUE_COLOR \
 # tmux-related
 # Currently, tmux uses chdir(2) on creating a new shell, so can't do a cd without
 # inheriting the "feature" of following symlinks. So here's my workaround: have tmux
-# drop a shell var, then let the shell cd (and hence preserve paths).
-if [ -n "${TMUX_DEFAULT_DIR:+x}" ]; then
+# drop a shell var, then let the shell cd (and hence preserve paths). See:
+#  http://fixunix.com/questions/15902-bash-checking-if-env-var-set.html
+if [ -n "${TMUX_DEFAULT_DIR}" -a ! -n "${CC_BASHRC_INITIALIZED}" ]; then
   cd $TMUX_DEFAULT_DIR
 fi
+export CC_BASHRC_INITIALIZED="true"
 
