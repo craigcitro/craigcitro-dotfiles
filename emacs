@@ -306,6 +306,12 @@
 ;; (2010 Sep 25) Does this even work? Investigate something smarter.
 
 ;;------------------------
+;; soy-mode
+;;------------------------
+
+(require 'soy-mode)
+
+;;------------------------
 ;; Other stuff
 ;;------------------------
 
