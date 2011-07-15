@@ -308,8 +308,10 @@
 ;;------------------------
 ;; soy-mode
 ;;------------------------
-
-(require 'soy-mode)
+(let ((soy-mode-path (concat (getenv "HOME") "/.emacs.d/lisp/soy-mode")))
+  (when (file-exists-p soy-mode-path)
+    (add-to-list 'load-path soy-mode-path)
+    (require 'soy-mode)))
 
 ;;------------------------
 ;; Other stuff
