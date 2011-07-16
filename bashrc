@@ -286,7 +286,7 @@ alias vw=et
 # primitive.
 alias pd=pushd
 alias po=popd
-alias di='dirs -p'
+alias di='dirs -v'
 
 # It's better to just overwrite du, and then we can re-specify
 # --max-depth if needed.
