@@ -271,8 +271,6 @@ alias h=history
 alias ht='history | tail -n 20'
 alias ny=nyxmms2
 alias p=echo
-alias pd=pushd
-alias po=popd
 alias scp='scp -p'
 alias sigh='echo You let out a good, long sigh of relief.'
 # So I'm going to try using emacs as my only editor, just
@@ -283,6 +281,12 @@ alias sigh='echo You let out a good, long sigh of relief.'
 # read-only" in emacsclient, but I don't know if that exists. (TODO?)
 alias v=et
 alias vw=et
+
+# (2011 Jul 16) I like using the dir stack -- but it's awfully
+# primitive.
+alias pd=pushd
+alias po=popd
+alias di='dirs -p'
 
 # It's better to just overwrite du, and then we can re-specify
 # --max-depth if needed.
