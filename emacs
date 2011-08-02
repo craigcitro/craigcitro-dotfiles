@@ -318,6 +318,8 @@
 ;;------------------------
 (add-to-list 'load-path "~/ext/ess-5.14/lisp")
 (require 'ess-site)
+(add-to-list 'auto-mode-alist '("\\.R$" . r-mode))
+(add-to-list 'auto-mode-alist '("\\.valclass$" . r-mode))
 
 ;;------------------------
 ;; Other stuff
