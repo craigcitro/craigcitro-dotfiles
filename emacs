@@ -314,6 +314,12 @@
     (require 'soy-mode)))
 
 ;;------------------------
+;; ess-mode
+;;------------------------
+(add-to-list 'load-path "~/ext/ess-5.14/lisp")
+(require 'ess-site)
+
+;;------------------------
 ;; Other stuff
 ;;------------------------
 
