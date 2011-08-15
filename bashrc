@@ -158,6 +158,7 @@ if [ -n "${TMUX:+x}" ]; then
   export TMUX_SESSION="$(tmux display -p \#S)"
   alias emacsdaemon='$(which emacs) --daemon='"${TMUX_SESSION}"
   alias emacs="emacsclient -c -s ${TMUX_SESSION}"
+  export EDITOR="emacsclient -c -s ${TMUX_SESSION}"
   if [ "$(ps w -u ${USER} | grep macs | grep ${TMUX_SESSION})xxx" == "xxx" ]; then
     LOCKFILE="${HOME}/.lock-emacs-${TMUX_SESSION}"
     if [ -f "${LOCKFILE}" ]; then
