@@ -158,7 +158,9 @@ if [ -n "${TMUX:+x}" ]; then
   export TMUX_SESSION="$(tmux display -p \#S)"
   alias emacsdaemon='$(which emacs) --daemon='"${TMUX_SESSION}"
   alias emacs="emacsclient -c -s ${TMUX_SESSION}"
-  export EDITOR="emacsclient -c -s ${TMUX_SESSION}"
+  export EDITOR="emacsclient -c -t -s ${TMUX_SESSION}"
+  export VISUAL="emacsclient -c -t -s ${TMUX_SESSION}"
+  export CVSEDITOR="emacsclient -c -t -s ${TMUX_SESSION}"
   if [ "$(ps w -u ${USER} | grep macs | grep ${TMUX_SESSION})xxx" == "xxx" ]; then
     LOCKFILE="${HOME}/.lock-emacs-${TMUX_SESSION}"
     if [ -f "${LOCKFILE}" ]; then
@@ -166,6 +168,7 @@ if [ -n "${TMUX:+x}" ]; then
     else
       echo "Starting Emacs daemon ..."
       $(which emacs) --daemon="${TMUX_SESSION}"
+      rm -f "${LOCKFILE}"
     fi
   fi
 fi
@@ -251,15 +254,14 @@ fi
 # except that it doesn't seem to work on linux, because the format of
 # the known_hosts file is different. I should clean it up at some
 # point.
+#
+# (2011 Aug 16) This was over-complicated; don't know if there's any
+# need to be that cautious. Original version:
+#   sed -e 's/^  *//' -e '/^#/d' -e 's/[, ].*//' -e '/\[/d' ~/.ssh/known_hosts
 if [ "$SYSTEM" == "Darwin" ]; then
-  complete -W "$(echo $(sed -e 's/^  *//' -e '/^#/d' -e 's/[, ].*//' -e '/\[/d' ~/.ssh/known_hosts | sort -u);)" ssh
+  complete -W "$(echo $(sed -e 's/[, ].*//' ~/.ssh/known_hosts | sort -u);)" ssh
+  complete -W "$(echo $(sed -e 's/[, ].*//' ~/.ssh/known_hosts | sort -u);)" -f -d scp
 fi
-
-# I tried turning this on for scp, but it's annoying because then you
-# can't tab complete the file you want to scp. I guess you can't have
-# it both ways ...
-#complete -W "$(echo $(sed -e 's/^  *//' -e '/^#/d' -e 's/[, ].*//' -e '/\[/d' ~/.ssh/known_hosts | sort -u);)" scp
-
 
 ################################
 # Common commands
