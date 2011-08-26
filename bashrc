@@ -161,7 +161,7 @@ if [ -n "${TMUX:+x}" ]; then
   export EDITOR="emacsclient -c -t -s ${TMUX_SESSION}"
   export VISUAL="emacsclient -c -t -s ${TMUX_SESSION}"
   export CVSEDITOR="emacsclient -c -t -s ${TMUX_SESSION}"
-  if [ "$(ps w -u ${USER} | grep macs | grep ${TMUX_SESSION})xxx" == "xxx" ]; then
+  if [ "$(ps awx -U ${USER} | grep macs | grep daemon | grep ${TMUX_SESSION})xxx" == "xxx" ]; then
     LOCKFILE="${HOME}/.lock-emacs-${TMUX_SESSION}"
     if [ -f "${LOCKFILE}" ]; then
       echo "Emacs is currently starting up, skipping ..."
