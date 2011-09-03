@@ -75,8 +75,9 @@
 (server-start nil)
 
 ;; Set up local path for lisp files
-(when (file-exists-p (concat (getenv "HOME") "/.emacs.d/lisp"))
-  (add-to-list 'load-path (concat (getenv "HOME") "/.emacs.d/lisp")))
+(let ((emacs-path (concat (getenv "HOME") "/.emacs.d/lisp")))
+  (when (file-exists-p emacs-path)
+    (add-to-list 'load-path emacs-path)))
 
 ;; I haven't used this much yet, but it seems like it could be cool.
 ;; (2010 Sep 24) Okay, this is exactly as described: you only need it
@@ -441,7 +442,7 @@
 (global-set-key "\C-ca" 'indent-region)
 
 ;; Transpose!!
-(global-set-key "\C-ct" 'transpose-words)
+(global-set-key "\C-ct" 'transpose-chars)
 (global-set-key "\C-c\C-t" 'transpose-words)
 
 ;; this is still experimentation -- but I think I prefer that the
@@ -497,9 +498,9 @@
   "Scroll down one manageable page."
   (interactive)
   (forward-line (* -1 (min (/ (frame-height) 2) largest-page-movement-size))))
-(defun adjust-pageup-pagedown ()
+(defun adjust-pageup-pagedown (&optional frame)
   "Adjust page size based on the current frame size."
-  (when (> (frame-height) largest-page-movement-size)
+  (when (> (frame-height frame) largest-page-movement-size)
     (global-set-key "\M-v" 'down-one-bounded-page)
     (global-set-key "\C-v" 'up-one-bounded-page)
     (global-set-key [M-up] 'down-one-bounded-page)
@@ -507,6 +508,9 @@
 ;; I don't know that I need to do this more often than at program
 ;; start ...
 (adjust-pageup-pagedown)
+;; ... but that doesn't seem to hold, so let's just do it at
+;; frame creation time.
+(add-to-list 'after-make-frame-functions 'adjust-pageup-pagedown)
 
 (defun up-one () (interactive) (scroll-up 1))
 (defun down-one () (interactive) (scroll-down 1))
@@ -749,14 +753,6 @@ after-make-frame-functions."
 ;;==================================================
 ;; edit-server.el
 ;;==================================================
-;; Enable editing Chrome textareas with emacs via Edit with Emacs:
-;;   http://github.com/stsquad/emacs_chrome
-(when (and (or (daemonp)
-	     (server-running-p))
-	 (locate-library "edit-server"))
-  (require 'edit-server)
-  (edit-server-start))
-
 ;; I really like the convenience of emacs being given focus and
 ;; gracefully giving it back when the edit server creates and destroys
 ;; a frame for editing. These are some helper functions I wrote to
@@ -766,7 +762,7 @@ after-make-frame-functions."
 ;; `(unless (processing-edit-server-hooks-p)` or somesuch ...
 ;;  * x-raise-this-frame: Give focus to the current frame. 
 ;;  * x-focus-back-to-chrome: Specifically give X focus back to an app
-;;    caled "Google Chrome" ... this is fragile, but I think it's
+;;    called "Google Chrome" ... this is fragile, but I think it's
 ;;    easier than the alternative (make edit-server record what
 ;;    application it came from). 
 (defun x-raise-this-frame (&optional ignored)
@@ -774,33 +770,43 @@ after-make-frame-functions."
   (interactive)
   (unless (in-terminal)
     (when (eq window-system 'ns)
-      (ns-hide-emacs 'activate))
-    ;; This works too:
-    ;;(x-focus-frame (car (frame-list)))
-    ;; but ns-hide-emacs seems like a "better" solution.
-    ))
+      (ns-hide-emacs 'activate))))
+;; For the last part, this works too:
+;; (x-focus-frame (car (frame-list)))
+;; but ns-hide-emacs seems like a "better" solution.
 (defun x-focus-back-to-chrome (&optional ignored)
   "Give focus back to Chrome. (Used with edit-server.)"
   (unless (in-terminal)
     (when (eq window-system 'ns)
       (ns-do-applescript "tell application \"Google Chrome\" to activate"))))
-(add-hook 'edit-server-start-hook 'x-raise-this-frame)
-(add-hook 'edit-server-done-hook 'x-focus-back-to-chrome)
-;; This one seems like it couldn't hurt ... famous last words?
-;;(add-to-list 'after-make-frame-functions 'x-raise-this-frame)
-;; Seems to cause trouble with focus in text-based terminals, which is
-;; odd, since it starts by checking that it's not in a terminal ...
 
-;; I've been annoyed that C-xC-s will close the clients spawned by
-;; the edit server; here's the offending line in edit-server.el:
-;;  (define-key edit-server-text-mode-map (kbd "C-x C-s") 'edit-server-done)
-;; that's easy enough to undo ...
-(define-key edit-server-text-mode-map (kbd "C-x C-s") 'save-buffer)
+;; Enable editing Chrome textareas with emacs via Edit with Emacs:
+;;   http://github.com/stsquad/emacs_chrome
 ;; I had a few problems when I first installed it, but it seems to be
 ;; working for now. The other option is yakshave, which isn't as good
-;; for this particular puprose. It's not a bad solution for keyboard
+;; for this particular purpose. It's not a bad solution for keyboard
 ;; bindings, but I feel like there should be something better ...
 ;;
+;; (2011 Sep 03) I'm turning this off for now -- I've found
+;; edit-server not quite as useful as I'd like over time. I'll hide it
+;; behind an unlikely shell variable.
+(when (getenv "USE_EDIT_SERVER")
+  (when (and (or (daemonp)
+		 (server-running-p))
+	     (locate-library "edit-server"))
+    (require 'edit-server)
+    (edit-server-start))
+  (add-hook 'edit-server-start-hook 'x-raise-this-frame)
+  (add-hook 'edit-server-done-hook 'x-focus-back-to-chrome)
+  ;; I've been annoyed that C-xC-s will close the clients spawned by
+  ;; the edit server; here's the offending line in edit-server.el:
+  ;;  (define-key edit-server-text-mode-map (kbd "C-x C-s") 'edit-server-done)
+  ;; that's easy enough to undo ...
+  (define-key edit-server-text-mode-map (kbd "C-x C-s") 'save-buffer))
+;; This one seems like it couldn't hurt ... famous last words?
+;; (add-to-list 'after-make-frame-functions 'x-raise-this-frame)
+;; Seems to cause trouble with focus in text-based terminals, which is
+;; odd, since it starts by checking that it's not in a terminal ...
 
 ;;-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
 ;; NO OTHER CODE BELOW THIS COMMAND
