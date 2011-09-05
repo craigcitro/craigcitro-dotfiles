@@ -161,12 +161,121 @@
 ;; Extra config
 ;;======================================================
 (let ((gconfig (concat (getenv "HOME") "/.emacs.google")))
-  (if (file-exists-p gconfig)
-      (load-file gconfig)))
+  (when (file-exists-p gconfig)
+    (load-file gconfig)))
 
 ;; (2011 Jun 27) I have no idea why this isn't already set:
 (defun byte-compile-dest-file (filename)
   (concat filename "c"))
+
+;;===========================================
+;; Context-dependent config
+;;===========================================
+
+(defun in-terminal (&optional frame)
+  "Determine whether or not we seem to be in a terminal."
+  (not (display-multi-frame-p (or frame
+				  (selected-frame)))))
+
+(defun various-mac-setup (&optional frame)
+  "Run a handful of Mac-specific configuration commands."
+  (when (eq 'darwin system-type)
+    ;; Is this necessary?
+    ;; (when frame
+    ;;   (select-frame frame))
+    ;; This is documented in the manual, but not in the description of
+    ;; this variable. Set this to nil for option as meta, and non-nil
+    ;; for command as meta. Given that I always use cmd-key-happy on any
+    ;; Mac, nil is the right choice for me.
+    (setq mac-command-key-is-meta nil)
+    ;; Set colors
+    (modify-frame-parameters frame '((foreground-color . "ivory")
+				     (background-color . "black")))))
+(add-to-list 'after-make-frame-functions 'various-mac-setup)
+
+;;===========================================
+;; Set up the window
+;;===========================================
+
+(defun various-window-config (&optional frame)
+  "Various window configuration for non-terminal sessions."
+  ;; Move the window and don't wait for the window manager as 
+  ;; we start up
+  (unless (in-terminal)
+    (modify-frame-parameters frame '((wait-for-wm . nil)
+				     (top . 25)
+				     (left . 0)))))
+(add-to-list 'after-make-frame-functions 'various-window-config)
+
+;; Clean up the window. Each of these sets a global option, so
+;; there's no need to use this as a hook.
+(defun kill-trim (&optional ignored)
+  "Kill all the extras: menu, scrollbar, toolbar. Takes
+an (ignored) optional argument so it can be used as a hook in
+after-make-frame-functions."
+  (menu-bar-mode -1)
+  (scroll-bar-mode -1)
+  (tool-bar-mode -1))
+(kill-trim)
+
+;; Need to change the default frame height depending on whether I'm
+;; launching from X11, on Linux, or actually launching Emacs.app.
+;; (2010 Sep 27) Actually, I only use this from Mac; I should
+;; ultimately implement something that looks at frame
+;; resolution/screen resolution/etc and decides this.
+(defun preferred-frame-height ()
+   (cond
+    ;;((eq window-system 'x) '145)
+    ;;((eq window-system 'mac) '63)
+    ((eq window-system 'ns) '66)
+    ((and (in-terminal) (getenv "LINES")) (getenv "LINES"))
+    (t nil)))
+(defun preferred-frame-width ()
+  (cond
+   ;;((eq window-system 'x) '98)
+   ;;((eq window-system 'mac) '100)
+   ((eq window-system 'ns) 117)
+   ((and (in-terminal) (getenv "COLUMNS")) (getenv "COLUMNS"))
+   (t nil)))
+
+;; setup frame shape
+(defun force-shape (&optional frame)
+  "Force emacs into the right geometry, if we know it."
+  (interactive)
+  (when (preferred-frame-width)
+    (unless (in-terminal)
+      ;; if we're in a windowing system, force the frame shape.
+      (modify-frame-parameters frame
+			       `((height . ,(preferred-frame-height))
+				 (width . ,(preferred-frame-width)))))))
+;; Add a hook to do this on a new frame
+(add-to-list 'after-make-frame-functions 'force-shape)
+
+;; I work mostly with columns, so I should take advantage of that.
+(defun maximize-window-height ()
+  "Make a window fill the entire column."
+  (interactive)
+  (enlarge-window (frame-height)))
+(global-set-key "\C-c1" 'delete-other-windows)
+(global-set-key "\C-x1" 'maximize-window-height)
+;; want to write a balance-windows-in-column command;
+;; can just do something with a map/filter over (window-list),
+;; checking the value of (window-edges w).
+
+;; I like a double-wide window. In theory, I might want a smaller one;
+;; this will shrink as necessary.
+(defun toggle-window-width (&optional frame)
+  "Toggle between a single-wide and double-wide window. Ignored
+in terminal windows."
+  (interactive)
+  (when (preferred-frame-width)
+      (unless (in-terminal)
+	(if (eq (preferred-frame-width) (frame-width))
+	    (modify-frame-parameters frame
+				     `((width . ,(* 2 (preferred-frame-width)))))
+	  (modify-frame-parameters frame
+				   `((width . ,(preferred-frame-width))))))))
+(global-set-key "\C-xw" 'toggle-window-width)
 
 ;;==============================================================================
 ;; Major modes and language-specific config
@@ -283,9 +392,7 @@
 (autoload 'js2-mode "js2-mode" nil t)
 (add-to-list 'auto-mode-alist '("\\.js$" . js2-mode))
 (add-to-list 'auto-mode-alist '("\\.json$" . js2-mode))
-;; (2011 Jul 01) Why both? 
-(setq js2-indent-on-enter-key t)
-(setq js2-enter-indents-newline t)
+;; More js2 customization in the custom blocks at the bottom.
 
 ;;------------------------
 ;; html
@@ -302,8 +409,7 @@
     (rassq-delete-all 'bold html-tag-face-alist)
     (add-to-list 'html-tag-face-alist '("strong" . bold))
     (rassq-delete-all 'italic html-tag-face-alist)
-    (add-to-list 'html-tag-face-alist '("em" . italic))
-    ))
+    (add-to-list 'html-tag-face-alist '("em" . italic))))
 ;; (2010 Sep 25) Does this even work? Investigate something smarter.
 
 ;;------------------------
@@ -482,10 +588,6 @@
 (global-set-key [mouse-4] 'down-slightly)
 (global-set-key [mouse-5] 'up-slightly)
 
-;; M-up and M-down seem like good pageup/pagedown keys
-(global-set-key [M-up] 'scroll-down)
-(global-set-key [M-down] 'scroll-up)
-
 ;; It's silly to page up and page down when a page is a bajillion
 ;; rows. Instead, make them half a page, capped at 40.
 (defvar largest-page-movement-size '40
@@ -512,6 +614,10 @@
 ;; frame creation time.
 (add-to-list 'after-make-frame-functions 'adjust-pageup-pagedown)
 
+;; M-up and M-down seem like good pageup/pagedown keys
+(global-set-key [M-up] 'down-one-bounded-page)
+(global-set-key [M-down] 'up-one-bounded-page)
+
 (defun up-one () (interactive) (scroll-up 1))
 (defun down-one () (interactive) (scroll-down 1))
 (global-set-key "\M-z" 'down-one)
@@ -524,16 +630,13 @@
 (global-set-key "\C-xt" 'transient-mark-mode)
 (setq transient-mark-mode nil)
 
-;; the next time i'm playing with this, i noticed that there's a
-;; "window-start" command. this would probably help with the 
-;; little bit of jitter i get on reload. ... DONE
+;; (2011 Sep 05) Well this use of revert-buffer is a marked
+;; improvement. Thanks to:
+;;  http://www.stokebloke.com/wordpress/2008/04/17/emacs-refresh-f5-key/
 (defun reload-buffer ()
   "Reload the current buffer with the current cursor position."
   (interactive)
-  (let ((current-window-position (window-start)))
-    (find-alternate-file buffer-file-name)
-    (set-window-start (car (window-list)) current-window-position)
-    (goto-line (get-cursor-position-as-integer))))
+  (revert-buffer t (not (buffer-modified-p)) t))
 (global-set-key "\C-c\C-r" 'reload-buffer)
 
 ;; this is for programmable completion ... maybe one day I'll set that up?
@@ -556,34 +659,9 @@
 ;;----------------------------------------
 ;; new movement-related stuff
 ;;----------------------------------------
+;; (2011 Sep 05) I had some funny movement stuff here; it wasn't
+;; awesome.
 ;;
-;; i was talking to nweiz, who does something very clever for vim-like
-;; movement in emacs. basically, he's using meta as the "in command
-;; mode" modifier.  this seems pretty slick -- I thought I'd try
-;; something along these lines, see if i like it. this also gives me
-;; the chance to fix the one broken thing about vim movement -- the
-;; silly four-in-a-row business. I'm thinking I'll use meta+chtn,
-;; which is the right-hand dvorak esdf.
-(defun set-movement-keys ()
-  (global-set-key "\M-c" 'previous-line)
-  (global-set-key "\M-t" 'next-line)
-  (global-set-key "\M-r" 'forward-char)
-  (global-set-key "\M-g" 'backward-char)
-  (global-set-key "\M-n" 'forward-word)
-  (global-set-key "\M-h" 'backward-word)
-  )
-;; should generate the restore dynamically!
-(defun restore-movement-keys ()
-  (global-set-key "\M-c" 'capitalize-word)
-  (global-set-key "\M-h" 'mark-paragraph)
-  (global-set-key "\M-t" 'transpose-words)
-  (global-set-key "\M-r" 'move-to-window-line)
-  (global-unset-key "\M-g")
-  (global-unset-key "\M-n")
-  )
-;; so far, this isn't really exciting for me. disabling for now.
-;;(set-movement-keys)
-
 ;; Read about some nice window movement stuff on 
 ;; Nathan's blog here:
 ;;  http://nex-3.com/posts/45-efficient-window-switching-in-emacs
@@ -603,23 +681,6 @@
 (global-set-key "\M-[c" 'windmove-right)
 (global-set-key "\M-[d" 'windmove-left)
 
-;; get myself in the right habits ... one day, maybe? still not worth
-;; it. 
-(defun unset-arrows ()
-  (interactive)
-  (global-unset-key (kbd "<up>"))
-  (global-unset-key (kbd "<down>"))
-  (global-unset-key (kbd "<left>"))
-  (global-unset-key (kbd "<right>")))
-(defun reset-arrows ()
-  (interactive)
-  (global-set-key (kbd "<up>") 'previous-line)
-  (global-set-key (kbd "<down>") 'next-line)
-  (global-set-key (kbd "<left>") 'backward-char)
-  (global-set-key (kbd "<right>") 'forward-char))
-;; This is still **way** too hardcore for me.
-;;(unset-arrows)
-
 ;; This is nice -- a copy of what vim offers with moving the current
 ;; line to the top, bottom, or middle.
 (defun move-to-top ()
@@ -637,176 +698,34 @@ frame. (Emulates zt in vim.)"
   bottom. (Emulates zb in vim.)"
   (interactive)
   (recenter-top-bottom (- (window-height) 3)))
-(global-set-key "\C-c\C-g" 'move-to-top)
-(global-set-key "\C-c\C-h" 'move-to-middle)
-(global-set-key "\C-c\C-m" 'move-to-bottom)
+;; I'm never sure with \C-i vs. tab. Let's do both to be safe.
+(global-set-key "\C-c\C-i" 'move-to-top)
+(global-set-key [(control c) (tab)] 'move-to-top)
+(global-set-key "\C-c\C-k" 'move-to-middle)
+(global-set-key "\C-c\C-," 'move-to-bottom)
 
-;; I work mostly with columns, so I should take advantage of that.
-(defun maximize-window-height ()
-  "Make a window fill the entire column."
-  (interactive)
-  (enlarge-window (frame-height)))
-(global-set-key "\C-c1" 'delete-other-windows)
-(global-set-key "\C-x1" 'maximize-window-height)
-;; want to write a balance-windows-in-column command; 
-;; can just do something with a map/filter over (window-list),
-;; checking the value of (window-edges w).
-
-;; I like a double-wide window. In theory, I might want a smaller one;
-;; this will shrink as necessary.
-(defun toggle-window-width (&optional frame)
-  "Toggle between a single-wide and double-wide window. Ignored
-in terminal windows."
-  (interactive)
-  (when (preferred-frame-width)
-      (unless (in-terminal)
-	(if (eq (preferred-frame-width) (frame-width))
-	    (modify-frame-parameters frame
-				     `((width . ,(* 2 (preferred-frame-width)))))
-	  (modify-frame-parameters frame
-				   `((width . ,(preferred-frame-width))))))))
-(global-set-key "\C-xw" 'toggle-window-width)
-
-;;===========================================
-;; Context-dependent config
-;;===========================================
-
-(defun in-terminal (&optional frame)
-  "Determine whether or not we seem to be in a terminal."
-  (not (display-multi-frame-p (or frame
-				  (selected-frame)))))
-
-(defun various-mac-setup (&optional frame)
-  "Run a handful of Mac-specific configuration commands."
-  (when (eq 'darwin system-type)
-    ;; Is this necessary?
-    ;; (when frame
-    ;;   (select-frame frame))
-    ;; This is documented in the manual, but not in the description of
-    ;; this variable. Set this to nil for option as meta, and non-nil
-    ;; for command as meta. Given that I always use cmd-key-happy on any
-    ;; Mac, nil is the right choice for me.
-    (setq mac-command-key-is-meta nil)
-    ;; Set colors
-    (modify-frame-parameters frame '((foreground-color . "ivory")
-				     (background-color . "black")))))
-(add-to-list 'after-make-frame-functions 'various-mac-setup)
-
-;;===========================================
-;; Set up the window
-;;===========================================
-
-(defun various-window-config (&optional frame)
-  "Various window configuration for non-terminal sessions."
-  ;; Move the window and don't wait for the window manager as 
-  ;; we start up
-  (unless (in-terminal)
-    (modify-frame-parameters frame '((wait-for-wm . nil)
-				     (top . 25)
-				     (left . 0)))))
-(add-to-list 'after-make-frame-functions 'various-window-config)
-
-;; Clean up the window. Each of these sets a global option, so
-;; there's no need to use this as a hook.
-(defun kill-trim (&optional ignored)
-  "Kill all the extras: menu, scrollbar, toolbar. Takes
-an (ignored) optional argument so it can be used as a hook in
-after-make-frame-functions."
-  (menu-bar-mode -1)
-  (scroll-bar-mode -1)
-  (tool-bar-mode -1))
-(kill-trim)
-
-;; Need to change the default frame height depending on whether I'm
-;; launching from X11, on Linux, or actually launching Emacs.app.
-;; (2010 Sep 27) Actually, I only use this from Mac; I should
-;; ultimately implement something that looks at frame
-;; resolution/screen resolution/etc and decides this.
-(defun preferred-frame-height ()
-   (cond
-    ;;((eq window-system 'x) '145)
-    ;;((eq window-system 'mac) '63)
-    ((eq window-system 'ns) '66)
-    ((and (in-terminal) (getenv "LINES")) (getenv "LINES"))
-    (t nil)))
-(defun preferred-frame-width () 
-  (cond
-   ;;((eq window-system 'x) '98)
-   ;;((eq window-system 'mac) '100)
-   ((eq window-system 'ns) 117)
-   ((and (in-terminal) (getenv "COLUMNS")) (getenv "COLUMNS"))
-   (t nil)))
-
-;; setup frame shape
-(defun force-shape (&optional frame)
-  "Force emacs into the right geometry, if we know it."
-  (interactive)
-  (when (preferred-frame-width)
-    (unless (in-terminal)
-      ;; if we're in a windowing system, force the frame shape.
-      (modify-frame-parameters frame
-			       `((height . ,(preferred-frame-height))
-				 (width . ,(preferred-frame-width)))))))
-;; Add a hook to do this on a new frame
-(add-to-list 'after-make-frame-functions 'force-shape)
-
-;;==================================================
-;; edit-server.el
-;;==================================================
-;; I really like the convenience of emacs being given focus and
-;; gracefully giving it back when the edit server creates and destroys
-;; a frame for editing. These are some helper functions I wrote to
-;; automate this. They all start with `(unless (in-terminal)` because
-;; I don't want them to do anything if they accidentally fire in a
-;; terminal-based frame. What I really want is to have them say
-;; `(unless (processing-edit-server-hooks-p)` or somesuch ...
-;;  * x-raise-this-frame: Give focus to the current frame. 
-;;  * x-focus-back-to-chrome: Specifically give X focus back to an app
-;;    called "Google Chrome" ... this is fragile, but I think it's
-;;    easier than the alternative (make edit-server record what
-;;    application it came from). 
-(defun x-raise-this-frame (&optional ignored)
-  "Raise the current frame in X's estimation."
-  (interactive)
-  (unless (in-terminal)
-    (when (eq window-system 'ns)
-      (ns-hide-emacs 'activate))))
-;; For the last part, this works too:
-;; (x-focus-frame (car (frame-list)))
-;; but ns-hide-emacs seems like a "better" solution.
-(defun x-focus-back-to-chrome (&optional ignored)
-  "Give focus back to Chrome. (Used with edit-server.)"
-  (unless (in-terminal)
-    (when (eq window-system 'ns)
-      (ns-do-applescript "tell application \"Google Chrome\" to activate"))))
-
-;; Enable editing Chrome textareas with emacs via Edit with Emacs:
-;;   http://github.com/stsquad/emacs_chrome
-;; I had a few problems when I first installed it, but it seems to be
-;; working for now. The other option is yakshave, which isn't as good
-;; for this particular purpose. It's not a bad solution for keyboard
-;; bindings, but I feel like there should be something better ...
-;;
-;; (2011 Sep 03) I'm turning this off for now -- I've found
-;; edit-server not quite as useful as I'd like over time. I'll hide it
-;; behind an unlikely shell variable.
-(when (getenv "USE_EDIT_SERVER")
-  (when (and (or (daemonp)
-		 (server-running-p))
-	     (locate-library "edit-server"))
-    (require 'edit-server)
-    (edit-server-start))
-  (add-hook 'edit-server-start-hook 'x-raise-this-frame)
-  (add-hook 'edit-server-done-hook 'x-focus-back-to-chrome)
-  ;; I've been annoyed that C-xC-s will close the clients spawned by
-  ;; the edit server; here's the offending line in edit-server.el:
-  ;;  (define-key edit-server-text-mode-map (kbd "C-x C-s") 'edit-server-done)
-  ;; that's easy enough to undo ...
-  (define-key edit-server-text-mode-map (kbd "C-x C-s") 'save-buffer))
-;; This one seems like it couldn't hurt ... famous last words?
-;; (add-to-list 'after-make-frame-functions 'x-raise-this-frame)
-;; Seems to cause trouble with focus in text-based terminals, which is
-;; odd, since it starts by checking that it's not in a terminal ...
+;;======================================================
+;; M-x customize
+;;======================================================
+(custom-set-variables
+ ;; js2-mode
+ ;; All the cool kids use 2.
+ '(js2-basic-offset 2)
+ '(js2-cleanup-whitespace t)
+ '(js2-enter-indents-newline t)
+ '(js2-highlight-level 3)
+ '(js2-indent-on-enter-key t)
+ ;; js2-mode is smart enough to escape quotes when I insert
+ ;; them in a string; in theory that's cool, but so far it's
+ ;; been annoying more often than not.
+ '(js2-mode-escape-quotes nil)
+ ;; three cheers for spastic typing.
+ '(js2-mode-indent-ignore-first-tab t))
+(custom-set-faces
+ ;; js2
+ ;; Underlines don't seem to work well in my emacs setup.
+ '(js2-magic-paren-face ((t (:foreground "blue"))))
+ '(js2-warning-face ((((class color) (background dark)) (:foreground "pink")))))
 
 ;;-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
 ;; NO OTHER CODE BELOW THIS COMMAND
