@@ -59,5 +59,8 @@ xscreensaver &
 # stolen
 /usr/bin/xset -b
 
+# set up my mouse button appropriately:
+xinput set-button-map $(xinput --list | grep "Evoluent" | sed -e "s/.*id=\([0-9]*\).*/\1/g") 1 2 3 4 5 6 7 3 8
+
 # start the WM
 exec /usr/bin/ratpoison
