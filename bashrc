@@ -139,37 +139,34 @@ if [ -d "/Applications/Emacs.app/" ]; then
   export PATH;
 fi
 
-# we want everything to route through one central set of emacs
-# commands
-alias emacsdaemon='$(which emacs) --daemon'
-alias emacs="emacsclient -c"
-alias e='emacs'
-alias et='emacs -t'
-
-# how many editors can I set to emacs?
-export EDITOR='emacsclient -c -t'
-export VISUAL='emacsclient -c -t'
-export CVSEDITOR='emacsclient -c -t'
-
 # TMUX + Emacs
 # (2011 Jun 29) I've gotten slightly annoyed at having *one* emacs session; I'd like
-# to experiment with just a few, tied to my tmux sessions. 
+# to experiment with just a few, tied to my tmux sessions.
+# (2011 Sep 13) ... and a name for the non-tmux one.
 if [ -n "${TMUX:+x}" ]; then
-  export TMUX_SESSION="$(tmux display -p \#S)"
-  alias emacsdaemon='$(which emacs) --daemon='"${TMUX_SESSION}"
-  alias emacs="emacsclient -c -s ${TMUX_SESSION}"
-  export EDITOR="emacsclient -c -t -s ${TMUX_SESSION}"
-  export VISUAL="emacsclient -c -t -s ${TMUX_SESSION}"
-  export CVSEDITOR="emacsclient -c -t -s ${TMUX_SESSION}"
-  if [ "$(ps awx -U ${USER} | grep macs | grep daemon | grep ${TMUX_SESSION})xxx" == "xxx" ]; then
-    LOCKFILE="${HOME}/.lock-emacs-${TMUX_SESSION}"
-    if [ -f "${LOCKFILE}" ]; then
-      echo "Emacs is currently starting up, skipping ..."
-    else
-      echo "Starting Emacs daemon ..."
-      $(which emacs) --daemon="${TMUX_SESSION}"
-      rm -f "${LOCKFILE}"
-    fi
+  export EMACS_SERVERNAME="$(tmux display -p \#S)"
+else
+  export EMACS_SERVERNAME='craigcitro'
+fi
+
+# We want everything to route through one central set of emacs
+# commands ...
+alias emacsdaemon='$(which emacs) --daemon='"${EMACS_SERVERNAME}"
+alias emacs="emacsclient -c -s ${EMACS_SERVERNAME}"
+alias e='emacs'
+alias et='emacs -t'
+# Every editor I can find ...
+export EDITOR="emacsclient -c -t -s ${EMACS_SERVERNAME}"
+export VISUAL="emacsclient -c -t -s ${EMACS_SERVERNAME}"
+export CVSEDITOR="emacsclient -c -t -s ${EMACS_SERVERNAME}"
+if [ "$(ps awx -U ${USER} | grep macs | grep daemon | grep ${EMACS_SERVERNAME})xxx" == "xxx" ]; then
+  LOCKFILE="${HOME}/.lock-emacs-${EMACS_SERVERNAME}"
+  if [ -f "${LOCKFILE}" ]; then
+    echo "Emacs is currently starting up, skipping ..."
+  else
+    echo "Starting Emacs daemon with servername ${EMACS_SERVERNAME} ..."
+    $(which emacs) --daemon="${EMACS_SERVERNAME}"
+    rm -f "${LOCKFILE}"
   fi
 fi
 
