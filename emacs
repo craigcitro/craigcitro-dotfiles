@@ -702,7 +702,7 @@ frame. (Emulates zt in vim.)"
 (global-set-key "\C-c\C-i" 'move-to-top)
 (global-set-key [(control c) (tab)] 'move-to-top)
 (global-set-key "\C-c\C-k" 'move-to-middle)
-(global-set-key "\C-c\C-," 'move-to-bottom)
+(global-set-key [(control c) (control ,)] 'move-to-bottom)
 
 ;;======================================================
 ;; M-x customize
