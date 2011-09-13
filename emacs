@@ -699,10 +699,10 @@ frame. (Emulates zt in vim.)"
   (interactive)
   (recenter-top-bottom (- (window-height) 3)))
 ;; I'm never sure with \C-i vs. tab. Let's do both to be safe.
-(global-set-key "\C-c\C-i" 'move-to-top)
-(global-set-key [(control c) (tab)] 'move-to-top)
-(global-set-key "\C-c\C-k" 'move-to-middle)
-(global-set-key [(control c) (control ,)] 'move-to-bottom)
+(global-set-key "\C-c\C-u" 'move-to-top)
+(global-set-key [(control c) (tab)] 'move-to-middle)
+(global-set-key "\C-c\C-i" 'move-to-middle)
+(global-set-key "\C-c\C-o" 'move-to-bottom)
 
 ;;======================================================
 ;; M-x customize
