@@ -148,6 +148,7 @@ if [ -n "${TMUX:+x}" ]; then
 else
   export EMACS_SERVERNAME='craigcitro'
 fi
+export DEFAULT_EMACS_SERVERNAME='craigcitro'
 
 # We want everything to route through one central set of emacs
 # commands ...
@@ -159,12 +160,17 @@ alias et='emacs -t'
 export EDITOR="emacsclient -c -t -s ${EMACS_SERVERNAME}"
 export VISUAL="emacsclient -c -t -s ${EMACS_SERVERNAME}"
 export CVSEDITOR="emacsclient -c -t -s ${EMACS_SERVERNAME}"
-if [ "$(ps awx -U ${USER} | grep macs | grep daemon | grep ${EMACS_SERVERNAME})xxx" == "xxx" ]; then
+# (2011 Sep 13) Here's the old version:
+# if [ "$(ps awx -U ${USER} | grep macs | grep daemon | grep ${EMACS_SERVERNAME})xxx" == "xxx" ]; then
+# Amusingly, it's actually a bit more robust: a server can crash and fail to close the socket. However, the command below will
+# correctly identify servers whose name wasn't specified at the command line ...
+if [ ! -S $(emacsclient -s ${DEFAULT_EMACS_SERVERNAME} --eval '(print server-socket-dir)' | sed -e 's/^"//' -e 's/"$//')"/"${EMACS_SERVERNAME} ]; then
   LOCKFILE="${HOME}/.lock-emacs-${EMACS_SERVERNAME}"
   if [ -f "${LOCKFILE}" ]; then
     echo "Emacs is currently starting up, skipping ..."
   else
     echo "Starting Emacs daemon with servername ${EMACS_SERVERNAME} ..."
+    touch ${LOCKFILE}
     $(which emacs) --daemon="${EMACS_SERVERNAME}"
     rm -f "${LOCKFILE}"
   fi
