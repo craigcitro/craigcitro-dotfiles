@@ -69,8 +69,8 @@
 (defconst default-server-name "craigcitro"
   "Default server name to use when not in tmux.")
 (setq server-name
-      (if (getenv "TMUX_SESSION")
-	  (getenv "TMUX_SESSION")
+      (if (getenv "EMACS_SERVERNAME")
+	  (getenv "EMACS_SERVERNAME")
 	default-server-name))
 (server-start nil)
 
