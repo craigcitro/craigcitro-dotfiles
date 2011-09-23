@@ -74,10 +74,19 @@
 	default-server-name))
 (server-start nil)
 
+;;--------------------
+;; utilities
+;;--------------------
+(defun cc-add-to-load-path-if-exists (path &optional mode-to-require)
+  "Add a path to load-path if it exists, and optionally require a mode."
+  (let ((full-path (concat (getenv "HOME") path)))
+    (when (file-exists-p full-path)
+      (add-to-list 'load-path full-path)
+      (when mode-to-require
+	(require mode-to-require)))))
+
 ;; Set up local path for lisp files
-(let ((emacs-path (concat (getenv "HOME") "/.emacs.d/lisp")))
-  (when (file-exists-p emacs-path)
-    (add-to-list 'load-path emacs-path)))
+(cc-add-to-load-path-if-exists "/.emacs.d/lisp")
 
 ;; I haven't used this much yet, but it seems like it could be cool.
 ;; (2010 Sep 24) Okay, this is exactly as described: you only need it
@@ -415,15 +424,12 @@ in terminal windows."
 ;;------------------------
 ;; soy-mode
 ;;------------------------
-(let ((soy-mode-path (concat (getenv "HOME") "/.emacs.d/lisp/soy-mode")))
-  (when (file-exists-p soy-mode-path)
-    (add-to-list 'load-path soy-mode-path)
-    (require 'soy-mode)))
+(cc-add-to-load-path-if-exists "/emacs.d/lisp/soy-mode" 'soy-mode)
 
 ;;------------------------
 ;; ess-mode
 ;;------------------------
-(add-to-list 'load-path "~/ext/ess-5.14/lisp")
+(cc-add-to-load-path-if-exists "/ext/ess-5.14/lisp")
 (require 'ess-site)
 (add-to-list 'auto-mode-alist '("\\.R$" . r-mode))
 (add-to-list 'auto-mode-alist '("\\.valclass$" . r-mode))
