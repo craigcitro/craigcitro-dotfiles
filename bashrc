@@ -38,7 +38,7 @@ fi
 # if [ -f /etc/bashrc ] ;  then (source /etc/bashrc); fi
 
 # Stolen from: 
-# http://www.linuxfromscratch.org/blfs/view/svn/postlfs/profile.html
+#   http://www.linuxfromscratch.org/blfs/view/svn/postlfs/profile.html
 # Functions to help us manage paths.  Second argument is the name of the
 # path variable to be modified (default: PATH)
 pathremove () {
@@ -124,10 +124,6 @@ else
   alias ll='ls -lBhFv'
   alias lla='ls -lhFvA'
 fi
-
-# (2010 Oct 23) This isn't the perfect alias, but I type this *all*
-# the time ...
-alias lth='ll -t | head'
 
 ###############################
 ## emacs-related
@@ -237,8 +233,7 @@ shopt -s extglob
 shopt -s no_empty_cmd_completion
 # don't overwrite history
 shopt -s histappend
-# uniq the history ... I'm not sure, frequency information is pretty
-# good.
+# This would uniq the history ... which kinda sucks.
 #HISTCONTROL=ignoredups:ignorespace
 # really really large history
 HISTFILESIZE=100000000
@@ -254,9 +249,6 @@ fi
 # I found this clever trick here:
 #   http://www.macosxhints.com/article.php?story=20080317085050719
 # It autocompletes from .ssh/known_hosts, which is pretty useful ...
-# except that it doesn't seem to work on linux, because the format of
-# the known_hosts file is different. I should clean it up at some
-# point.
 #
 # (2011 Aug 16) This was over-complicated; don't know if there's any
 # need to be that cautious. Original version:
@@ -283,8 +275,6 @@ alias sigh='echo You let out a good, long sigh of relief.'
 # for kicks. 
 # alias v=vim
 # alias vw=view
-# The one thing I'd like is a command-line flag for "open this buffer
-# read-only" in emacsclient, but I don't know if that exists. (TODO?)
 alias v=et
 alias vw=et
 
@@ -337,6 +327,10 @@ alias puuuuuu='pd ../../../../../..'
 alias puuuuuuu='pd ../../../../../../..'
 alias puuuuuuuu='pd ../../../../../../../..'
 alias puuuuuuuuu='pd ../../../../../../../../..'
+
+# (2010 Oct 23) This isn't the perfect alias, but I type this *all*
+# the time ...
+alias lth='ll -t | head'
 
 # i find i use this alot:
 alias mr='cd $(/bin/ls -BF1t | grep / | head -1)'
@@ -449,10 +443,14 @@ fi
 
 ####################################################
 # Final config
+#
+# Last bits of config -- in particular, anything
+# that has to run after Google-specific config.
 ####################################################
 
-# Last bits of config -- in particular, anything that has to run after
-# Google-specific config.
+###############
+## Prompt
+
 
 export COLOR_PS1="$BRACKET_COLOR[$PROMPT_TEXT_COLOR$PROMPT_TEXT$BRACKET_COLOR] $PROMPT_DOLLAR_COLOR\\$ $NORMAL_TEXT_COLOR"
 export EMACS_PS1="$COLOR_PS1"
