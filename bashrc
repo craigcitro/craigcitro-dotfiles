@@ -421,8 +421,71 @@ craigcitro-macbookpro.local)
   PROMPT_DOLLAR_COLOR="$GREEN_PROMPT_COLOR"
   ;;
 esac
+PROMPT_GIT_COLOR="$GREEN_PROMPT_COLOR"
 NORMAL_TEXT_COLOR="$LIGHT_GRAY_PROMPT_COLOR"
 
+#################################
+## History
+## 
+## Changes the prompt and saves history information somewhere other
+## than just the HISTFILE; this whole section was "deeply inspired" by
+## Ami's .bashrc, i.e. I stole it and modified it.
+
+export CC_SHELL_LOG="${HOME}/.shell.log"
+function gh() {
+  grep -a "$@" $CC_SHELL_LOG | cut -d' ' -f9- | sed -e 's/^ *//' | cut -c-2000;
+} #
+export -f gh
+
+function git_prompt_info () {
+  if [ -n "$CC_GIT_BRANCH" ]; then
+    echo " {${CC_GIT_BRANCH}}"
+  fi
+}
+
+function show_last_cmd () {
+  local cmd=$(history 1 | awk "length() < 5000 {print}")
+  if [ ! -z "$CMD" -a "$(id -u)" -ne 0 ]; then
+    echo $(date) $(pwd|tr " " "_") $(history 1)
+  fi
+}
+export -f show_last_cmd
+
+function abbrev_string () {
+  if [ -n "$1" ]; then
+    local len=${#1}
+    local width=${2:-35}
+    if [ $len -gt $width ]; then
+      echo "..."${1:len-($width-3)}
+    else
+      echo "$1"
+    fi
+  else
+    echo ""
+  fi
+}
+export -f abbrev_string
+
+function prompt_pwd () {
+  local dir=${PWD//\/home\/craigcitro/\~}
+  echo "$(abbrev_string ${dir})"
+}
+export -f prompt_pwd
+
+function restore_bash_history () {
+  # Can't use history -r - or history -r <(cut...) because history -r
+  # is not stream-capable.
+  history -c
+  TMPHIST=$(mktemp -t cc.shell.log.XXXXXX) #
+  cut -f9- -d' ' $CC_SHELL_LOG > $TMPHIST
+  history -r $TMPHIST
+  rm -f $TMPHIST
+}
+export -f restore_bash_history
+
+export PROMPT_COMMAND=""
+
+PS1="\h \$(prompt_pwd)\$(git_prompt_info)\$(exit_status) \$\[\e[0m\] " #
 
 ###################################################
 ## Unused config
@@ -451,10 +514,25 @@ fi
 ###############
 ## Prompt
 
+PROMPT_COMMAND="show_last_cmd >>$CC_SHELL_LOG ; $PROMPT_COMMAND"
+PROMPT_COMMAND="export_git_info ; $PROMPT_COMMAND"
 
-export COLOR_PS1="$BRACKET_COLOR[$PROMPT_TEXT_COLOR$PROMPT_TEXT$BRACKET_COLOR] $PROMPT_DOLLAR_COLOR\\$ $NORMAL_TEXT_COLOR"
+function save_last_exit() {
+  LAST_STATUS=(${PIPESTATUS[@]});
+}
+export -f save_last_exit
+function exit_status() {
+  (( ${LAST_STATUS[@]/#/+} > 0 )) && (IFS=,; echo " exit:${LAST_STATUS[*]}");
+}
+export -f exit_status
+
+PROMPT_COMMAND="save_last_exit ; $PROMPT_COMMAND"
+
+export COLOR_PS1="$BRACKET_COLOR[$PROMPT_TEXT_COLOR$PROMPT_TEXT$BRACKET_COLOR]$PROMPT_GIT_COLOR\$(git_prompt_info)$RED_PROMPT_COLOR\$(exit_status) $PROMPT_DOLLAR_COLOR\\$ $NORMAL_TEXT_COLOR"
 export EMACS_PS1="$COLOR_PS1"
 export MONOPS1="[\h \w] \\$ "
+
+# TODO(craigcitro): Make the prompt include \h if it's not a known host.
 
 alias mono='export PS1=$MONOPS1'   # Means black [and white] mono color
 alias color='export PS1=$COLOR_PS1' # Intended for color on black backgrounds
