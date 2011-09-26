@@ -110,6 +110,24 @@
 ;; of 't' makes it change behavior based on how wide the Emacs window
 ;; is.
 (setq line-move-visual nil)
+;; It's annoying that this is only controlled by the global variable;
+;; this is the best way around it I can find:
+(defun next-visual-line (&optional arg try-vscroll)
+  "Move down a visual line."
+  (interactive)
+  (progn
+    (setq line-move-visual t)
+    (next-line arg try-vscroll)
+    (setq line-move-visual nil)))
+(defun previous-visual-line (&optional arg try-vscroll)
+  "Move up a visual line."
+  (interactive)
+  (progn
+    (setq line-move-visual t)
+    (previous-line arg try-vscroll)
+    (setq line-move-visual nil)))
+(global-set-key "\C-n" 'next-visual-line)
+(global-set-key "\C-p" 'previous-visual-line)
 ;; Emacs 23 likes to pop up real X windows for tooltips, which is
 ;; highly annoying on slow connections, especially using VNC or NX.
 ;; This makes it use the echo-area like it used to.
