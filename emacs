@@ -178,36 +178,48 @@
   (setq cc-buffer-git-branch (frame-parameter frame 'cc-git-branch))
   (setq cc-buffer-git-root (frame-parameter frame 'cc-git-root)))
 (add-hook 'find-file-hook 'cc-set-session-name)
+(defface cc-iswitchb-same-branch-face
+  '((t (:foreground "Green")))
+  "*Face used to highlight iswitchb matches in the same git repo/branch.")
+(defface cc-iswitchb-different-branch-face
+  '((t (:foreground "Red")))
+  "*Face used to highlight iswitchb matches in the same git repo, but a different branch.")
+(defface cc-iswitchb-system-buffer-face
+  '((t (:foreground "BrightBlack")))
+  "*Face used to highlight system buffers in the iswitchb matches list.")
+(defface cc-iswitchb-this-buffer-face
+  '((t (:foreground "Blue")))
+  "*Face used to highlight the current buffer in the iswitchb matches list.")
+(defun empty-or-nil-p (x)
+  (or (null x) (string= "" x)))
 (defun cc-filter-buffers ()
   (let ((frame-git-root (frame-parameter nil 'cc-git-root))
 	(frame-git-branch (frame-parameter nil 'cc-git-branch)))
-    (let ((this-branch-bufs nil)  ;; Things in this branch and root
-	  (this-root-bufs nil)  ;; Things in this root, *different* branch
-	  (no-git-bufs nil))  ;; Things without a git branch
-      (let ((process-buffer
-	     (lambda (buf)
-	       (let* ((buffer (get-buffer buf))
-		      (buffer-git-branch (buffer-local-value
-					  'cc-buffer-git-branch buffer))
-		      (buffer-git-root (buffer-local-value
-					'cc-buffer-git-root buffer)))
-		 (cond
-		  ((or (null buffer-git-branch) (null buffer-git-root))
-		   (add-to-list 'no-git-bufs buf))
-		  ((and (string= frame-git-root buffer-git-root)
-			(string= frame-git-branch buffer-git-branch))
-		   (add-to-list 'this-branch-bufs buf))
-		  ((string= frame-git-root buffer-git-root)
-		   (add-to-list 'this-root-bufs buf))
-		  ((or (null buffer-git-root) (string= "" buffer-git-root))
-		   (add-to-list 'no-git-bufs buf)))))))
-	(print frame-git-root)
-	(print iswitchb-temp-buflist)
-	(print (mapcar (lambda (x) (buffer-local-value 'cc-buffer-git-root (get-buffer x))) iswitchb-temp-buflist))
-	(mapcar process-buffer iswitchb-temp-buflist)
-	(print `(,this-branch-bufs ,this-root-bufs ,no-git-bufs))
-	(setq iswitchb-temp-buflist
-	      (append this-branch-bufs this-root-bufs no-git-bufs))))))
+    (let ((colored-buflist nil))
+      (dolist (buf iswitchb-temp-buflist colored-buflist)
+	(let* ((buffer (get-buffer buf))
+	       (buffer-git-branch (buffer-local-value
+				   'cc-buffer-git-branch buffer))
+	       (buffer-git-root (buffer-local-value
+				 'cc-buffer-git-root buffer)))
+	  (cond
+	   ((string= buf (buffer-name (current-buffer)))
+	    (add-to-list 'colored-buflist (propertize buf 'face 'cc-iswitchb-this-buffer-face)))
+	   ((char-equal ?* (elt buf 0))
+	    (add-to-list 'colored-buflist (propertize buf 'face 'cc-iswitchb-system-buffer-face)))
+	   ((empty-or-nil-p frame-git-root)
+	    (when (empty-or-nil-p buffer-git-root)
+	      (add-to-list 'colored-buflist buf)))
+	   ((or (null buffer-git-branch) (null buffer-git-root))
+	    (add-to-list 'colored-buflist buf))
+	   ((and (string= frame-git-root buffer-git-root)
+		 (string= frame-git-branch buffer-git-branch))
+	    (add-to-list 'colored-buflist (propertize buf 'face 'cc-iswitchb-same-branch-face)))
+	   ((string= frame-git-root buffer-git-root)
+	    (add-to-list 'colored-buflist (propertize buf 'face 'cc-iswitchb-different-branch-face)))
+	   ((empty-or-nil-p buffer-git-root)
+	    (add-to-list 'colored-buflist buf)))))
+      (setq iswitchb-temp-buflist (reverse colored-buflist)))))
 (add-hook 'iswitchb-make-buflist-hook 'cc-filter-buffers)
 
 ;;------------------------------------------------------------
