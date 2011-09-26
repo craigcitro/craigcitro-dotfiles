@@ -263,6 +263,7 @@ fi
 ################################
 # Common commands
 alias c=clear
+alias cut="cut -d' '"
 alias d=date
 # Why isn't this the default?
 alias df='df -h'
