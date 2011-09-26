@@ -458,7 +458,7 @@ function export_git_info() {
 export -f export_git_info
 
 function git_prompt_info () {
-  if [ -n "$CC_GIT_BRANCH" ]; then
+  if [ -n "{$CC_GIT_BRANCH:-x}" ]; then
     echo " {${CC_GIT_BRANCH}}"
   fi
 }
@@ -578,7 +578,7 @@ unset BLACK_COLOR DARK_GRAY_COLOR BLUE_COLOR \
 # inheriting the "feature" of following symlinks. So here's my workaround: have tmux
 # drop a shell var, then let the shell cd (and hence preserve paths). See:
 #  http://fixunix.com/questions/15902-bash-checking-if-env-var-set.html
-if [ -n "${TMUX_DEFAULT_DIR}" -a ! -n "${CC_BASHRC_INITIALIZED}" ]; then
+if [ -n "${TMUX_DEFAULT_DIR:-x}" -a ! -n "${CC_BASHRC_INITIALIZED:-x}" ]; then
   cd $TMUX_DEFAULT_DIR
 fi
 export CC_BASHRC_INITIALIZED="true"
