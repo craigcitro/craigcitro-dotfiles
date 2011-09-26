@@ -68,10 +68,10 @@
 ;; start the server if it's not already up
 (defconst default-server-name "craigcitro"
   "Default server name to use when not in tmux.")
-(setq server-name
-      (if (getenv "EMACS_SERVERNAME")
-	  (getenv "EMACS_SERVERNAME")
-	default-server-name))
+(require 'server)
+(let ((cc-server-name (or (getenv "EMACS_SERVERNAME") default-server-name)))
+  (unless (server-running-p cc-server-name)
+    (setq server-name cc-server-name)))
 (server-start nil)
 
 ;;--------------------
@@ -136,12 +136,59 @@
 	    (define-key iswitchb-mode-map (edmacro-parse-keys key) fun)))
 	'(("<right>" . iswitchb-next-match)
 	  ("<left>"  . iswitchb-prev-match)
-	  ("<up>"    . ignore             )
-	  ("<down>"  . ignore             ))))
+	  ("\C-r"    . (lambda ()
+			 (interactive)
+			 (setq iswitchb-temp-buflist iswitchb-buflist)))
+	  )))
 (add-hook 'iswitchb-define-mode-map-hook 'iswitchb-local-keys)
 ;; (2010 Oct 01) It's curious to me why I spontaneously started
 ;; needing this:
 (setq iswitchb-default-method 'samewindow)
+
+;; (2011 Sep 24) Experimenting with smarter iswitchb configuration.
+;; TODO(craigcitro): Use symbols instead of strings.
+
+(defun cc-set-frame-params (&optional frame)
+  (set-frame-parameter frame 'cc-git-branch (getenv "CC_GIT_BRANCH" frame))
+  (set-frame-parameter frame 'cc-git-root (getenv "CC_GIT_ROOT" frame)))
+(add-hook 'after-make-frame-functions 'cc-set-frame-params)
+(defvar cc-buffer-git-root)
+(defvar cc-buffer-git-branch)
+(make-variable-buffer-local 'cc-buffer-git-root)
+(make-variable-buffer-local 'cc-buffer-git-branch)
+(defun cc-set-session-name (&optional frame)
+  (setq cc-buffer-git-branch (frame-parameter frame 'cc-git-branch))
+  (setq cc-buffer-git-root (frame-parameter frame 'cc-git-root)))
+(add-hook 'find-file-hook 'cc-set-session-name)
+(defun cc-filter-buffers ()
+  (let ((frame-git-root (frame-parameter nil 'cc-git-root)))
+    (unless (or (null frame-git-root) (string= "" frame-git-root))
+      (let ((this-branch-bufs nil)  ;; Things in this branch and root
+	    (this-root-bufs nil)  ;; Things in this root, *different* branch
+	    (no-git-bufs nil)  ;; Things without a git branch
+	    (this-git-root (frame-parameter nil 'cc-git-root))
+	    (this-git-branch (frame-parameter nil 'cc-git-branch)))
+	(let ((process-buffer
+	       (lambda (buf)
+		 (let* ((buffer (get-buffer buf))
+			(buffer-git-branch (buffer-local-value
+					    'cc-buffer-git-branch buffer))
+			(buffer-git-root (buffer-local-value
+					  'cc-buffer-git-root buffer)))
+		   (cond
+		    ((or (null buffer-git-branch) (null buffer-git-root))
+		     (add-to-list 'no-git-bufs buf))
+		    ((and (string= this-git-root buffer-git-root)
+			  (string= this-git-branch buffer-git-branch))
+		     (add-to-list 'this-branch-bufs buf))
+		    ((string= this-git-root buffer-git-root)
+		     (add-to-list 'this-root-bufs buf))
+		    ((or (null buffer-git-root) (string= "" buffer-git-root))
+		     (add-to-list 'no-git-bufs buf)))))))
+	  (mapcar 'process-buffer iswitchb-temp-buflist)
+	  (setq iswitchb-temp-buflist
+		(append this-branch-bufs this-root-bufs no-git-bufs)))))))
+(add-hook 'iswitchb-make-buflist-hook 'cc-filter-buffers)
 
 ;;------------------------------------------------------------
 ;; Buffer naming
@@ -644,6 +691,9 @@ in terminal windows."
   (interactive)
   (revert-buffer t (not (buffer-modified-p)) t))
 (global-set-key "\C-c\C-r" 'reload-buffer)
+
+;; Maybe useful:
+(global-set-key "\C-c!" 'toggle-read-only)
 
 ;; this is for programmable completion ... maybe one day I'll set that up?
 ;; (pcomplete-autolist t)

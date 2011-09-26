@@ -139,38 +139,44 @@ fi
 # (2011 Jun 29) I've gotten slightly annoyed at having *one* emacs session; I'd like
 # to experiment with just a few, tied to my tmux sessions.
 # (2011 Sep 13) ... and a name for the non-tmux one.
+# (2011 Sep 25) Even better -- done with this "many servers" nonsense. Just record
+# the TMUX_SESSION for use in various places.
 if [ -n "${TMUX:+x}" ]; then
-  export EMACS_SERVERNAME="$(tmux display -p \#S)"
+  export TMUX_SESSION="$(tmux display -p \#S)"
 else
-  export EMACS_SERVERNAME='craigcitro'
+  export TMUX_SESSION='craigcitro'
 fi
-export DEFAULT_EMACS_SERVERNAME='craigcitro'
+export EMACS_SERVERNAME='craigcitro'
 
 # We want everything to route through one central set of emacs
 # commands ...
-alias emacsdaemon='$(which emacs) --daemon='"${EMACS_SERVERNAME}"
+alias emacsdaemon='$(which emacs) --daemon'
 alias emacs="emacsclient -c -s ${EMACS_SERVERNAME}"
 alias e='emacs'
 alias et='emacs -t'
 # Every editor I can find ...
-export EDITOR="emacsclient -c -t -s ${EMACS_SERVERNAME}"
-export VISUAL="emacsclient -c -t -s ${EMACS_SERVERNAME}"
-export CVSEDITOR="emacsclient -c -t -s ${EMACS_SERVERNAME}"
+export EDITOR="emacsclient -c -s ${EMACS_SERVERNAME} -t"
+export VISUAL="emacsclient -c -s ${EMACS_SERVERNAME} -t"
+export CVSEDITOR="emacsclient -c -s ${EMACS_SERVERNAME} -t"
 # (2011 Sep 13) Here's the old version:
 # if [ "$(ps awx -U ${USER} | grep macs | grep daemon | grep ${EMACS_SERVERNAME})xxx" == "xxx" ]; then
-# Amusingly, it's actually a bit more robust: a server can crash and fail to close the socket. However, the command below will
-# correctly identify servers whose name wasn't specified at the command line ...
-if [ ! -S $(emacsclient -s ${DEFAULT_EMACS_SERVERNAME} --eval '(print server-socket-dir)' | sed -e 's/^"//' -e 's/"$//')"/"${EMACS_SERVERNAME} ]; then
-  LOCKFILE="${HOME}/.lock-emacs-${EMACS_SERVERNAME}"
-  if [ -f "${LOCKFILE}" ]; then
-    echo "Emacs is currently starting up, skipping ..."
-  else
-    echo "Starting Emacs daemon with servername ${EMACS_SERVERNAME} ..."
-    touch ${LOCKFILE}
-    $(which emacs) --daemon="${EMACS_SERVERNAME}"
-    rm -f "${LOCKFILE}"
-  fi
-fi
+# Amusingly, it's actually a bit more robust: a server can crash and
+# fail to close the socket. However, the command below will correctly
+# identify servers whose name wasn't specified at the command line ...
+#
+# (2011 Sep 25) For now, I'm turning this off: if my server dies, that's
+# another issue, one which I probably don't need to automate.
+# if [ ! -S $(emacsclient -s ${DEFAULT_EMACS_SERVERNAME} --eval '(print server-socket-dir)' | sed -e 's/^"//' -e 's/"$//')"/"${EMACS_SERVERNAME} ]; then
+#   LOCKFILE="${HOME}/.lock-emacs-${EMACS_SERVERNAME}"
+#   if [ -f "${LOCKFILE}" ]; then
+#     echo "Emacs is currently starting up, skipping ..."
+#   else
+#     echo "Starting Emacs daemon with servername ${EMACS_SERVERNAME} ..."
+#     touch ${LOCKFILE}
+#     $(which emacs) --daemon="${EMACS_SERVERNAME}"
+#     rm -f "${LOCKFILE}"
+#   fi
+# fi
 
 
 # this line is here in support of my .inputrc: I want
@@ -437,11 +443,30 @@ function gh() {
 } #
 export -f gh
 
+function export_git_info() {
+  if [ "$PWD" = ~ -o "$PWD" = "/home" ]; then
+    export CC_GIT_BRANCH=""
+    export CC_GIT_ROOT=""
+    return
+  fi
+  if [ "${PWD##~}" = "$PWD" -a "${PWD##/home}" != "$PWD" ]; then
+    return
+  fi
+  local b="$(git symbolic-ref HEAD 2>/dev/null)"
+  if [ -n "$b" ]; then
+    export CC_GIT_BRANCH="${b##refs/heads/}"
+    export CC_GIT_ROOT="$(git rev-parse --show-toplevel)"
+    return
+  fi
+}
+export -f export_git_info
+
 function git_prompt_info () {
   if [ -n "$CC_GIT_BRANCH" ]; then
     echo " {${CC_GIT_BRANCH}}"
   fi
 }
+export -f git_prompt_info
 
 function show_last_cmd () {
   local cmd=$(history 1 | awk "length() < 5000 {print}")
