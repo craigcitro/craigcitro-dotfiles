@@ -505,6 +505,15 @@ function restore_bash_history () {
 }
 export -f restore_bash_history
 
+function save_last_exit() {
+  LAST_STATUS=(${PIPESTATUS[@]});
+}
+export -f save_last_exit
+function exit_status() {
+  (( ${LAST_STATUS[@]/#/+} > 0 )) && (IFS=,; echo " exit:${LAST_STATUS[*]}");
+}
+export -f exit_status
+
 export PROMPT_COMMAND=""
 
 PS1="\h \$(prompt_pwd)\$(git_prompt_info)\$(exit_status) \$\[\e[0m\] " #
@@ -536,19 +545,7 @@ fi
 ###############
 ## Prompt
 
-PROMPT_COMMAND="show_last_cmd >>$CC_SHELL_LOG ; $PROMPT_COMMAND"
-PROMPT_COMMAND="export_git_info ; $PROMPT_COMMAND"
-
-function save_last_exit() {
-  LAST_STATUS=(${PIPESTATUS[@]});
-}
-export -f save_last_exit
-function exit_status() {
-  (( ${LAST_STATUS[@]/#/+} > 0 )) && (IFS=,; echo " exit:${LAST_STATUS[*]}");
-}
-export -f exit_status
-
-PROMPT_COMMAND="save_last_exit ; $PROMPT_COMMAND"
+PROMPT_COMMAND="save_last_exit ; export_git_info ; show_last_cmd >>$CC_SHELL_LOG ; $PROMPT_COMMAND"
 
 export COLOR_PS1="$BRACKET_COLOR[$PROMPT_TEXT_COLOR$PROMPT_TEXT$BRACKET_COLOR]$PROMPT_GIT_COLOR\$(git_prompt_info)$RED_PROMPT_COLOR\$(exit_status) $PROMPT_DOLLAR_COLOR\\$ $NORMAL_TEXT_COLOR"
 export EMACS_PS1="$COLOR_PS1"
