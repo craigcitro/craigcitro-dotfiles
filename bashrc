@@ -458,7 +458,7 @@ function export_git_info() {
 export -f export_git_info
 
 function git_prompt_info () {
-  if [ -n "{$CC_GIT_BRANCH:-x}" ]; then
+  if [ -n "{$CC_GIT_BRANCH}" ]; then
     echo " {${CC_GIT_BRANCH}}"
   fi
 }
