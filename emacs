@@ -179,33 +179,35 @@
   (setq cc-buffer-git-root (frame-parameter frame 'cc-git-root)))
 (add-hook 'find-file-hook 'cc-set-session-name)
 (defun cc-filter-buffers ()
-  (let ((frame-git-root (frame-parameter nil 'cc-git-root)))
-    (unless (or (null frame-git-root) (string= "" frame-git-root))
-      (let ((this-branch-bufs nil)  ;; Things in this branch and root
-	    (this-root-bufs nil)  ;; Things in this root, *different* branch
-	    (no-git-bufs nil)  ;; Things without a git branch
-	    (this-git-root (frame-parameter nil 'cc-git-root))
-	    (this-git-branch (frame-parameter nil 'cc-git-branch)))
-	(let ((process-buffer
-	       (lambda (buf)
-		 (let* ((buffer (get-buffer buf))
-			(buffer-git-branch (buffer-local-value
-					    'cc-buffer-git-branch buffer))
-			(buffer-git-root (buffer-local-value
-					  'cc-buffer-git-root buffer)))
-		   (cond
-		    ((or (null buffer-git-branch) (null buffer-git-root))
-		     (add-to-list 'no-git-bufs buf))
-		    ((and (string= this-git-root buffer-git-root)
-			  (string= this-git-branch buffer-git-branch))
-		     (add-to-list 'this-branch-bufs buf))
-		    ((string= this-git-root buffer-git-root)
-		     (add-to-list 'this-root-bufs buf))
-		    ((or (null buffer-git-root) (string= "" buffer-git-root))
-		     (add-to-list 'no-git-bufs buf)))))))
-	  (mapcar 'process-buffer iswitchb-temp-buflist)
-	  (setq iswitchb-temp-buflist
-		(append this-branch-bufs this-root-bufs no-git-bufs)))))))
+  (let ((frame-git-root (frame-parameter nil 'cc-git-root))
+	(frame-git-branch (frame-parameter nil 'cc-git-branch)))
+    (let ((this-branch-bufs nil)  ;; Things in this branch and root
+	  (this-root-bufs nil)  ;; Things in this root, *different* branch
+	  (no-git-bufs nil))  ;; Things without a git branch
+      (let ((process-buffer
+	     (lambda (buf)
+	       (let* ((buffer (get-buffer buf))
+		      (buffer-git-branch (buffer-local-value
+					  'cc-buffer-git-branch buffer))
+		      (buffer-git-root (buffer-local-value
+					'cc-buffer-git-root buffer)))
+		 (cond
+		  ((or (null buffer-git-branch) (null buffer-git-root))
+		   (add-to-list 'no-git-bufs buf))
+		  ((and (string= frame-git-root buffer-git-root)
+			(string= frame-git-branch buffer-git-branch))
+		   (add-to-list 'this-branch-bufs buf))
+		  ((string= frame-git-root buffer-git-root)
+		   (add-to-list 'this-root-bufs buf))
+		  ((or (null buffer-git-root) (string= "" buffer-git-root))
+		   (add-to-list 'no-git-bufs buf)))))))
+	(print frame-git-root)
+	(print iswitchb-temp-buflist)
+	(print (mapcar (lambda (x) (buffer-local-value 'cc-buffer-git-root (get-buffer x))) iswitchb-temp-buflist))
+	(mapcar process-buffer iswitchb-temp-buflist)
+	(print `(,this-branch-bufs ,this-root-bufs ,no-git-bufs))
+	(setq iswitchb-temp-buflist
+	      (append this-branch-bufs this-root-bufs no-git-bufs))))))
 (add-hook 'iswitchb-make-buflist-hook 'cc-filter-buffers)
 
 ;;------------------------------------------------------------
