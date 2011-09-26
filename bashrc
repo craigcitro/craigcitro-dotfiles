@@ -141,7 +141,7 @@ fi
 # (2011 Sep 13) ... and a name for the non-tmux one.
 # (2011 Sep 25) Even better -- done with this "many servers" nonsense. Just record
 # the TMUX_SESSION for use in various places.
-if [ -n "${TMUX:+x}" ]; then
+if [ ${#TMUX} -gt 0 ]; then
   export TMUX_SESSION="$(tmux display -p \#S)"
 else
   export TMUX_SESSION='craigcitro'
@@ -449,7 +449,7 @@ function export_git_info() {
     return
   fi
   local b="$(git symbolic-ref HEAD 2>/dev/null)"
-  if [ -n "$b" ]; then
+  if [ ${#b} -gt 0 ]; then
     export CC_GIT_BRANCH="${b##refs/heads/}"
     export CC_GIT_ROOT="$(git rev-parse --show-toplevel)"
     return
@@ -458,7 +458,7 @@ function export_git_info() {
 export -f export_git_info
 
 function git_prompt_info () {
-  if [ -n "{$CC_GIT_BRANCH}" ]; then
+  if [ ${#CC_GIT_BRANCH} -gt 0 ]; then
     echo " {${CC_GIT_BRANCH}}"
   fi
 }
@@ -473,7 +473,7 @@ function show_last_cmd () {
 export -f show_last_cmd
 
 function abbrev_string () {
-  if [ -n "$1" ]; then
+  if [ ${#1} -gt 0 ]; then
     local len=${#1}
     local width=${2:-35}
     if [ $len -gt $width ]; then
@@ -578,7 +578,7 @@ unset BLACK_COLOR DARK_GRAY_COLOR BLUE_COLOR \
 # inheriting the "feature" of following symlinks. So here's my workaround: have tmux
 # drop a shell var, then let the shell cd (and hence preserve paths). See:
 #  http://fixunix.com/questions/15902-bash-checking-if-env-var-set.html
-if [ -n "${TMUX_DEFAULT_DIR:-x}" -a ! -n "${CC_BASHRC_INITIALIZED:-x}" ]; then
+if [ ${#TMUX_DEFAULT_DIR} -gt 0 -a ! ${#CC_BASHRC_INITIALIZED} -gt 0 ]; then
   cd $TMUX_DEFAULT_DIR
 fi
 export CC_BASHRC_INITIALIZED="true"
