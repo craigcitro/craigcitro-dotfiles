@@ -163,21 +163,17 @@ export CVSEDITOR="emacsclient -c -s ${EMACS_SERVERNAME} -t"
 # Amusingly, it's actually a bit more robust: a server can crash and
 # fail to close the socket. However, the command below will correctly
 # identify servers whose name wasn't specified at the command line ...
-#
-# (2011 Sep 25) For now, I'm turning this off: if my server dies, that's
-# another issue, one which I probably don't need to automate.
-# if [ ! -S $(emacsclient -s ${DEFAULT_EMACS_SERVERNAME} --eval '(print server-socket-dir)' | sed -e 's/^"//' -e 's/"$//')"/"${EMACS_SERVERNAME} ]; then
-#   LOCKFILE="${HOME}/.lock-emacs-${EMACS_SERVERNAME}"
-#   if [ -f "${LOCKFILE}" ]; then
-#     echo "Emacs is currently starting up, skipping ..."
-#   else
-#     echo "Starting Emacs daemon with servername ${EMACS_SERVERNAME} ..."
-#     touch ${LOCKFILE}
-#     $(which emacs) --daemon="${EMACS_SERVERNAME}"
-#     rm -f "${LOCKFILE}"
-#   fi
-# fi
-
+if [ ! -S $(emacsclient -s ${EMACS_SERVERNAME} --eval '(print server-socket-dir)' | sed -e 's/^"//' -e 's/"$//')"/"${EMACS_SERVERNAME} ]; then
+  LOCKFILE="${HOME}/.lock-emacs-${EMACS_SERVERNAME}"
+  if [ -f "${LOCKFILE}" ]; then
+    echo "Emacs is currently starting up, skipping ..."
+  else
+    echo "Starting Emacs daemon with servername ${EMACS_SERVERNAME} ..."
+    touch ${LOCKFILE}
+    $(which emacs) --daemon="${EMACS_SERVERNAME}"
+    rm -f "${LOCKFILE}"
+  fi
+fi
 
 # this line is here in support of my .inputrc: I want
 # to be able to use \C-s and \C-r for interactive history
