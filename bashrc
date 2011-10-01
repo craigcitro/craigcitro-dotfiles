@@ -531,7 +531,14 @@ PS1="\h \$(prompt_pwd)\$(git_prompt_info)\$(exit_status) \$\[\e[0m\] " #
 # Google config
 ####################################################
 
-if [ -e $HOME"/.bashrc.google" ]; then
+function at_work () {
+  local len=${#HOSTNAME}
+  if [ ${HOSTNAME:len-10:len} = "google.com" ]; then
+    echo ${HOSTNAME}
+  fi
+}
+export -f at_work
+if [ -n "$(at_work)" -a -e $HOME"/.bashrc.google" ]; then
   source $HOME"/.bashrc.google"
 fi
 
