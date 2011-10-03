@@ -413,10 +413,11 @@ in terminal windows."
 ;;---------------------------
 ;; Python, Cython
 ;;---------------------------
+;; TODO(craigcitro): Merge this and the other python mode.
 ;; Currently, there are problems with this cython/python mode,
 ;; so just ignore them.
 ;; (add-to-list 'load-path (expand-file-name "/sage/data/emacs"))
-(require 'python)
+;; (require 'python)
 ;; (require 'pyrex "pyrex-mode")
 ;; (load (concat (getenv "HOME") "/.emacs.d/lisp/cython-mode.el"))
 ;; (load (concat (getenv "HOME") "/.emacs.d/lisp/python-mode.el"))
