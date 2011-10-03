@@ -359,9 +359,6 @@ export PYTHONSTARTUP
 #############
 ## Haskell
 
-if [ $SYSTEM == "Darwin" ]; then
-  pathappend '/Library/Frameworks/HaskellPlatform.framework/bin';
-fi
 pathappend $HOME'/ext/cabal/bin';
 pathappend $HOME'/ext/cabal/share/man' MANPATH;
 
