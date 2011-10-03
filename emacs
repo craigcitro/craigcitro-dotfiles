@@ -387,6 +387,7 @@ in terminal windows."
 (require 'rst)
 (add-to-list 'auto-mode-alist '("\\.rst$" . rst-mode))
 (add-to-list 'auto-mode-alist '("\\.rest$" . rst-mode))
+(cc-add-to-load-path-if-exists "/.emacs.d/lisp/markdown-mode")
 (autoload 'markdown-mode "markdown-mode.el"
           "Major mode for editing Markdown files" t)
 (add-to-list 'auto-mode-alist '("\\.md$" . markdown-mode))
