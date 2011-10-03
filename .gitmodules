@@ -7,3 +7,6 @@
 [submodule "emacs.d/lisp/rcirc"]
 	path = emacs.d/lisp/rcirc
 	url = https://github.com/nealey/rcirc.git
+[submodule "emacs.d/lisp/markdown-mode"]
+	path = emacs.d/lisp/markdown-mode
+	url = git://jblevins.org/git/markdown-mode.git
