@@ -530,7 +530,7 @@ PS1="\h \$(prompt_pwd)\$(git_prompt_info)\$(exit_status) \$\[\e[0m\] " #
 
 function at_work () {
   local len=${#HOSTNAME}
-  if [ ${HOSTNAME:len-10:len} = "google.com" ]; then
+  if [ ${HOSTNAME:len-10:len} = "google.com" -a ${HOSTNAME:0:10} = "craigcitro" ]; then
     echo ${HOSTNAME}
   fi
 }
