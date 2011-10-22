@@ -13,7 +13,7 @@
 # (2011 Mar 22) Trying something new after a few months ... the
 # address bar thing is my only complaint, but it's annoying. Maybe
 # use the keystroke everyone else uses for tmux?
-escape C-b
+escape C-q
 
 # (2010 Oct 25) It's frustrating/embarassing to accidentally hit a
 # key and do something you don't know how to undo in your WM. I think
@@ -29,8 +29,8 @@ source /home/craigcitro/.ratpoisonrc.google
 # These get reset by the "blast everything" approach.
 bind l meta
 bind \C-l other
-bind b meta
-bind \C-b other
+bind q meta
+bind \C-q other
 bind w windows
 
 # We need to re-bind redisplay from t ...
