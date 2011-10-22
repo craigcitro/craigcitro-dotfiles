@@ -406,6 +406,10 @@ in terminal windows."
 ;;------------------
 ;; Haskell
 ;;------------------
+(let ((cabal-path (concat (getenv "HOME") "/ext/cabal/bin")))
+  (when (file-exists-p cabal-path)
+    (add-to-list 'exec-path cabal-path)))
+  
 ;; Generic bit
 (load "~/.emacs.d/lisp/haskell-mode/haskell-site-file")
 (add-to-list 'auto-mode-alist '("\\.hs$" . haskell-mode))
@@ -414,6 +418,13 @@ in terminal windows."
 (add-hook 'haskell-mode-hook 'turn-on-haskell-indentation)
 ;; (add-hook 'haskell-mode-hook 'turn-on-haskell-indent)
 ;; (add-hook 'haskell-mode-hook 'turn-on-haskell-simple-indent)
+
+;; ghc-mod:
+;;   https://github.com/kazu-yamamoto/ghc-mod
+(cc-add-to-load-path-if-exists "/.emacs.d/lisp/ghc-mod/elisp")
+
+(autoload 'ghc-init "ghc" nil t)
+(add-hook 'haskell-mode-hook (lambda () (ghc-init) (flymake-mode)))
 
 ;;---------------------------
 ;; Python, Cython
