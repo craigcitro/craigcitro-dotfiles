@@ -438,7 +438,7 @@ in terminal windows."
     (if hoogle-process
 	(set-process-sentinel hoogle-process 'cc-haskell-hoogle-sentinel)
       (set-window-start (get-buffer-window (help-buffer)) 1))))
-(define-key haskell-mode-map "\C-c?" 'cc-haskell-hoogle)
+(define-key haskell-mode-map "\C-c?" 'haskell-hoogle)
 
 ;;---------------------------
 ;; Python, Cython
