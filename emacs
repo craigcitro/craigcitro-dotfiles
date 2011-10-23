@@ -406,10 +406,6 @@ in terminal windows."
 ;;------------------
 ;; Haskell
 ;;------------------
-(let ((cabal-path (concat (getenv "HOME") "/ext/cabal/bin")))
-  (when (file-exists-p cabal-path)
-    (add-to-list 'exec-path cabal-path)))
-  
 ;; Generic bit
 (load "~/.emacs.d/lisp/haskell-mode/haskell-site-file")
 (add-to-list 'auto-mode-alist '("\\.hs$" . haskell-mode))
@@ -422,9 +418,27 @@ in terminal windows."
 ;; ghc-mod:
 ;;   https://github.com/kazu-yamamoto/ghc-mod
 (cc-add-to-load-path-if-exists "/.emacs.d/lisp/ghc-mod/elisp")
-
+(let ((cabal-path (concat (getenv "HOME") "/ext/cabal/bin")))
+  (when (file-exists-p cabal-path)
+    (add-to-list 'exec-path cabal-path)))
 (autoload 'ghc-init "ghc" nil t)
 (add-hook 'haskell-mode-hook (lambda () (ghc-init) (flymake-mode)))
+
+;; hoogle
+(require 'haskell-mode)
+(setq haskell-hoogle-command "hoogle")
+;; Stupidly, the default 'haskell-hoogle seems to leave the result buffer
+;; scrolled to the bottom; this is annoying.
+(defun cc-haskell-hoogle-sentinel (process event)
+  (set-window-start (get-buffer-window (help-buffer) t) 1))
+(defun cc-haskell-hoogle ()
+  (interactive)
+  (call-interactively 'haskell-hoogle)
+  (let ((hoogle-process (get-process "hoogle")))
+    (if hoogle-process
+	(set-process-sentinel hoogle-process 'cc-haskell-hoogle-sentinel)
+      (set-window-start (get-buffer-window (help-buffer)) 1))))
+(define-key haskell-mode-map "\C-c?" 'cc-haskell-hoogle)
 
 ;;---------------------------
 ;; Python, Cython
