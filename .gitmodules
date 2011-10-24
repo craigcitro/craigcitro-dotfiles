@@ -10,3 +10,6 @@
 [submodule "emacs.d/lisp/markdown-mode"]
 	path = emacs.d/lisp/markdown-mode
 	url = git://jblevins.org/git/markdown-mode.git
+[submodule "emacs.d/lisp/ghc-mod"]
+	path = emacs.d/lisp/ghc-mod
+	url = https://github.com/kazu-yamamoto/ghc-mod.git
