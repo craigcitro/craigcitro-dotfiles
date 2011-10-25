@@ -427,17 +427,6 @@ in terminal windows."
 ;; hoogle
 (require 'haskell-mode)
 (setq haskell-hoogle-command "hoogle")
-;; Stupidly, the default 'haskell-hoogle seems to leave the result buffer
-;; scrolled to the bottom; this is annoying.
-(defun cc-haskell-hoogle-sentinel (process event)
-  (set-window-start (get-buffer-window (help-buffer) t) 1))
-(defun cc-haskell-hoogle ()
-  (interactive)
-  (call-interactively 'haskell-hoogle)
-  (let ((hoogle-process (get-process "hoogle")))
-    (if hoogle-process
-	(set-process-sentinel hoogle-process 'cc-haskell-hoogle-sentinel)
-      (set-window-start (get-buffer-window (help-buffer)) 1))))
 (define-key haskell-mode-map "\C-c?" 'haskell-hoogle)
 
 ;;---------------------------

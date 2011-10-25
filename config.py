@@ -19,6 +19,7 @@ BASIC_LINKS = [
     'bashrc',
     'emacs',
     'emacs.d',
+    'ghci',
     'gitconfig',
     'gitignore',
     'hgrc',
