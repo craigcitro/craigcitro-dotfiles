@@ -515,8 +515,6 @@ export -f exit_status
 
 export PROMPT_COMMAND=""
 
-PS1="\h \$(prompt_pwd)\$(git_prompt_info)\$(exit_status) \$\[\e[0m\] " #
-
 ###################################################
 ## Unused config
 ###################################################

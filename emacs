@@ -421,8 +421,8 @@ in terminal windows."
 (let ((cabal-path (concat (getenv "HOME") "/ext/cabal/bin")))
   (when (file-exists-p cabal-path)
     (add-to-list 'exec-path cabal-path)))
-(autoload 'ghc-init "ghc" nil t)
-(add-hook 'haskell-mode-hook (lambda () (ghc-init) (flymake-mode)))
+;; (autoload 'ghc-init "ghc" nil t)
+;; (add-hook 'haskell-mode-hook (lambda () (ghc-init) (flymake-mode)))
 
 ;; hoogle
 (require 'haskell-mode)
