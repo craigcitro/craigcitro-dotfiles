@@ -13,3 +13,6 @@
 [submodule "emacs.d/lisp/ghc-mod"]
 	path = emacs.d/lisp/ghc-mod
 	url = https://github.com/kazu-yamamoto/ghc-mod.git
+[submodule "emacs.d/lisp/eclim-emacs"]
+	path = emacs.d/lisp/eclim-emacs
+	url = https://github.com/senny/emacs-eclim.git
