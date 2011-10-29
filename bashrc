@@ -411,13 +411,13 @@ LIGHT_PURPLE_PROMPT_COLOR="\[\033[1;35m\]"
 case $HOSTNAME in
 craigcitro-macbookpro.local)
   BRACKET_COLOR="$PURPLE_PROMPT_COLOR"
-  PROMPT_TEXT="\u@\h \w"
+  PROMPT_TEXT="\h \$(prompt_pwd)"
   PROMPT_TEXT_COLOR="$RED_PROMPT_COLOR"
   PROMPT_DOLLAR_COLOR="$CYAN_PROMPT_COLOR"
   ;;
 *)
   BRACKET_COLOR="$RED_PROMPT_COLOR"
-  PROMPT_TEXT="\u@\h \w"  
+  PROMPT_TEXT="\h \$(prompt_pwd)"  
   PROMPT_TEXT_COLOR="$PURPLE_PROMPT_COLOR"
   PROMPT_DOLLAR_COLOR="$GREEN_PROMPT_COLOR"
   ;;
@@ -488,6 +488,7 @@ export -f abbrev_string
 
 function prompt_pwd () {
   local dir=${PWD//\/home\/craigcitro/\~}
+  dir=${dir//\/Users\/craigcitro/\~}
   echo "$(abbrev_string ${dir})"
 }
 export -f prompt_pwd
@@ -524,6 +525,7 @@ PS1="\h \$(prompt_pwd)\$(git_prompt_info)\$(exit_status) \$\[\e[0m\] " #
 # kill your shell, but still get passed through as EOF for
 # any other program? Here's the answer:
 # export IGNOREEOF=1
+# ... which apparently doesn't completely work.
 
 ####################################################
 # Google config
@@ -554,7 +556,7 @@ PROMPT_COMMAND="save_last_exit ; export_git_info ; show_last_cmd >>$CC_SHELL_LOG
 
 export COLOR_PS1="$BRACKET_COLOR[$PROMPT_TEXT_COLOR$PROMPT_TEXT$BRACKET_COLOR]$PROMPT_GIT_COLOR\$(git_prompt_info)$RED_PROMPT_COLOR\$(exit_status) $PROMPT_DOLLAR_COLOR\\$ $NORMAL_TEXT_COLOR"
 export EMACS_PS1="$COLOR_PS1"
-export MONOPS1="[\h \w] \\$ "
+export MONOPS1="[\h \$(prompt_pwd)] \\$ "
 
 # TODO(craigcitro): Make the prompt include \h if it's not a known host.
 

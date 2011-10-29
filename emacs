@@ -534,6 +534,26 @@ in terminal windows."
 (add-to-list 'auto-mode-alist '("\\.valclass$" . r-mode))
 
 ;;------------------------
+;; eclim-emacs
+;;------------------------
+(cc-add-to-load-path-if-exists "/.emacs.d/lisp/eclim-emacs/")
+;; only add the vendor path when you want to use the libraries provided with emacs-eclim
+(cc-add-to-load-path-if-exists "/.emacs.d/lisp/eclim-emacs/vendor")
+(require 'eclim)
+
+(setq eclim-auto-save t)
+(global-eclim-mode)
+
+;; ;; regular auto-complete initialization
+;; (require 'auto-complete-config)
+;; (ac-config-default)
+
+;; ;; add the emacs-eclim source
+;; (require 'ac-emacs-eclim-source)
+;; (add-hook 'eclim-mode-hook (lambda () (add-to-list 'ac-sources 'ac-source-emacs-eclim)))
+
+
+;;------------------------
 ;; Other stuff
 ;;------------------------
 
