@@ -610,6 +610,7 @@ in terminal windows."
 
 ;; Insert the current date in parentheses. 
 ;; TODO: make the parentheses customizable.
+;; TODO: take a prefix argument to insert different dates.
 (defun insert-date ()
   "Insert the current date in parentheses into the buffer."
   (interactive)
