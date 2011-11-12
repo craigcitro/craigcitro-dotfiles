@@ -487,8 +487,8 @@ function abbrev_string () {
 export -f abbrev_string
 
 function prompt_pwd () {
-  local dir=${PWD//\/home\/craigcitro/\~}
-  dir=${dir//\/Users\/craigcitro/\~}
+  local dir=${PWD/#\/home\/craigcitro/\~}
+  dir=${dir/#\/Users\/craigcitro/\~}
   local abbrev=$(abbrev_string "${dir}")
   echo "${abbrev}"
 }
