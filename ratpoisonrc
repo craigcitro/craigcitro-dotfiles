@@ -92,3 +92,8 @@ bind \M-Down resize -10 0
 exec autocutsel -fork -selection PRIMARY
 exec autocutsel -fork -selection CLIPBOARD 
 
+# (2011 Nov 07) IntelliJ likes to lose my cursor, but a quick
+# right-click-left-click seems to fix it. Add a script and bind to a
+# key.
+bind \C-j exec ~/bin/rat-kick-intellij
+
