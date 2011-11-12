@@ -13,7 +13,13 @@
 # (2011 Mar 22) Trying something new after a few months ... the
 # address bar thing is my only complaint, but it's annoying. Maybe
 # use the keystroke everyone else uses for tmux?
-escape C-q
+#
+# (2011 Nov 12) So I switched to C-q, hoping this would be a way to
+# stop me from accidentally quitting Chrome; turns out that getting
+# your fingers in the habit of always hitting C-q twice in a row isn't
+# a win. :)
+escape C-b
+# escape C-q
 
 # (2010 Oct 25) It's frustrating/embarassing to accidentally hit a
 # key and do something you don't know how to undo in your WM. I think
@@ -27,10 +33,8 @@ source /home/craigcitro/.ratpoisonrc.ugly
 source /home/craigcitro/.ratpoisonrc.google
 
 # These get reset by the "blast everything" approach.
-bind l meta
-bind \C-l other
-bind q meta
-bind \C-q other
+bind b meta
+bind \C-b other
 bind w windows
 
 # We need to re-bind redisplay from t ...
