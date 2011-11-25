@@ -523,7 +523,8 @@ in terminal windows."
 ;;------------------------
 ;; soy-mode
 ;;------------------------
-(cc-add-to-load-path-if-exists "/emacs.d/lisp/soy-mode" 'soy-mode)
+;; (2011 Nov 24) Don't love this soy-mode.
+;; (cc-add-to-load-path-if-exists "/emacs.d/lisp/soy-mode" 'soy-mode)
 
 ;;------------------------
 ;; ess-mode
