@@ -40,7 +40,7 @@ export XAUTHORITY=~/.Xauthority
 
 # stolen
 # /usr/lib/gnome-volume-manager/gnome-volume-manager --sm-disable
-/usr/bin/xmodmap ~/.xmodmap-cc
+/usr/bin/xmodmap ~/.xmodmaprc
 
 # stolen
 #/usr/bin/gnome-screensaver &
