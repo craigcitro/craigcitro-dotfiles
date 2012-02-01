@@ -36,7 +36,7 @@ MAC_LINKS = [
 XWINDOWS_LINKS = [
     'ratpoisonrc',
     'ratpoisonrc.ugly',
-    'xmodmap-ctrl',
+    'xmodmaprc',
     'xsession',
     'xsettingsd',
     ]
@@ -105,5 +105,3 @@ if __name__ == '__main__':
 
     _SetupLinks(links_to_create)
     _RunScripts(SCRIPTS)
-
-    
