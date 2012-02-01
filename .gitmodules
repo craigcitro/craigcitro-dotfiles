@@ -1,6 +1,6 @@
 [submodule "emacs.d/lisp/haskell-mode"]
 	path = emacs.d/lisp/haskell-mode
-	url = https://github.com/emacsmirror/haskell-mode.git
+	url = https://github.com/craigcitro/haskell-mode.git
 [submodule "emacs.d/lisp/soy-mode"]
 	path = emacs.d/lisp/soy-mode
 	url = https://github.com/toomore-such/soy-mode.git
