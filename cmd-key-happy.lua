@@ -23,7 +23,7 @@ global_excludes = Set{
                        -- "cmd-,",
                        "cmd-tab",
                        "shift-cmd-tab",
-		       "cmd-h",
+		               "cmd-h",
                      }
 
 -- The set of apps we want to consider swapping keys for, with some
@@ -33,7 +33,9 @@ global_excludes = Set{
 
 apps = {
    -- XQuartz doesn't have any special rules.
-   X11 = { exclude = Set{ } },
+   X11 = { exclude = { } },
+   -- NX annoyingly has its own name.
+   ["NX Player for OS X"] = { exclude = { } },
 }
 
 -- Return true to swap cmd/alt, otherwise false.
