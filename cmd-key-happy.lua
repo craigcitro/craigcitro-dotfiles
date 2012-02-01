@@ -12,17 +12,18 @@ end
 -- we really only want to include the things that are just too hardwired
 -- to want to switch for alt.
 
-global_excludes = Set{ 
-                       "alt-cmd-left",
-                       "alt-cmd-right",
-                       "alt-cmd-down",
-                       "alt-cmd-1",
-                       "alt-cmd-2",
-                       "alt-cmd-3",
-                       "alt-cmd-4",
+global_excludes = Set{
+                       -- "alt-cmd-left",
+                       -- "alt-cmd-right",
+                       -- "alt-cmd-down",
+                       -- "alt-cmd-1",
+                       -- "alt-cmd-2",
+                       -- "alt-cmd-3",
+                       -- "alt-cmd-4",
                        -- "cmd-,",
-		               "cmd-tab", 
+                       "cmd-tab",
                        "shift-cmd-tab",
+		       "cmd-h",
                      }
 
 -- The set of apps we want to consider swapping keys for, with some
@@ -31,28 +32,21 @@ global_excludes = Set{
 -- have to use "alt-w" to close a terminal window.
 
 apps = {
-   -- One inclusion for Terminal (specifically because of Visor).
-   Terminal = { exclude = Set{ "cmd-t", } },
-   -- Can't think of anything I need to override in iTerm ...
-   iTerm = { exclude = Set{ } },
-   -- iTerm2 seems smart enough to identify itself as iTerm, but
-   -- just in case ...
-   iTerm2 = { exclude = Set{ } },
-   -- Emacs generally knows better: basically don't swap anything.
-   Emacs = { exclude = Set{ } }, 
+   -- XQuartz doesn't have any special rules.
+   X11 = { exclude = Set{ } },
 }
 
 -- Return true to swap cmd/alt, otherwise false.
 
 -- This function is passed a table comprising the following keys:
 --
---   key_str_seq	key sequence (e.g., "shift-cmd-e")
---   alt		true if the alt key was pressed
+--   key_str_seq        key sequence (e.g., "shift-cmd-e")
+--   alt                true if the alt key was pressed
 --   fn                 true if the fn key was pressed
 --   control            true if the control key was pressed
 --   shift              true if the shift key was pressed
 --   cmd                true if the command key was pressed
---   keycode		numeric virtual keycode (e.g., 48)
+--   keycode            numeric virtual keycode (e.g., 48)
 --   appname            the frontmost application (e.g., Terminal)
 --
 -- The order of the modifier keys in key-str-eq is always:

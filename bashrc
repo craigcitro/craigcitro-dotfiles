@@ -350,10 +350,6 @@ alias py='python2.6'
 alias py2='python2.6'
 alias py3='python3.1'
 
-alias lpy=$HOME'/ext/python/bin/python2.7'
-alias cpy=$HOME'/cython/local-python/bin/python2.7'
-alias lcy='lpy '$HOME'/cython/devel/cython.py'
-
 PYTHONSTARTUP=$HOME'/.pythonrc'
 export PYTHONSTARTUP
 
