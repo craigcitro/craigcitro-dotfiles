@@ -15,3 +15,9 @@ keysym Caps_Lock = Control_L
 ! add Lock = Caps_Lock instead of:
 add Control = Caps_Lock
 add Control = Control_L
+
+!
+! Set Super_L to be another Alt_L (for the Mac+NX).
+!
+remove mod4 = Super_L
+add mod1 = Super_L
