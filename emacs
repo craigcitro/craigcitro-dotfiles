@@ -533,6 +533,10 @@ in terminal windows."
 (require 'ess-site)
 (add-to-list 'auto-mode-alist '("\\.R$" . r-mode))
 (add-to-list 'auto-mode-alist '("\\.valclass$" . r-mode))
+;; We want to force _ back to _; ess-toggle-underscore can
+;; force it to "smart _", but not off. Ugh.
+(ess-toggle-underscore 1)
+(ess-toggle-underscore nil)
 
 ;;------------------------
 ;; eclim-emacs
