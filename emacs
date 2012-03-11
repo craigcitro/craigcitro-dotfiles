@@ -436,7 +436,8 @@ in terminal windows."
 ;; Currently, there are problems with this cython/python mode,
 ;; so just ignore them.
 ;; (add-to-list 'load-path (expand-file-name "/sage/data/emacs"))
-;; (require 'python)
+(require 'python)
+(setq python-indent 2)
 ;; (require 'pyrex "pyrex-mode")
 ;; (load (concat (getenv "HOME") "/.emacs.d/lisp/cython-mode.el"))
 ;; (load (concat (getenv "HOME") "/.emacs.d/lisp/python-mode.el"))
@@ -537,6 +538,8 @@ in terminal windows."
 ;; force it to "smart _", but not off. Ugh.
 (ess-toggle-underscore 1)
 (ess-toggle-underscore nil)
+;; Indent 4 spaces on a continued line in parens
+(setq ess-arg-function-offset 4)
 
 ;;------------------------
 ;; eclim-emacs
