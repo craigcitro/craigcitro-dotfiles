@@ -77,13 +77,11 @@
 ;;--------------------
 ;; utilities
 ;;--------------------
-(defun cc-add-to-load-path-if-exists (path &optional mode-to-require)
-  "Add a path to load-path if it exists, and optionally require a mode."
+(defun cc-add-to-load-path-if-exists (path)
+  "Add a path to load-path if it exists."
   (let ((full-path (concat (getenv "HOME") path)))
     (when (file-exists-p full-path)
-      (add-to-list 'load-path full-path)
-      (when mode-to-require
-	(require mode-to-require)))))
+      (add-to-list 'load-path full-path))))
 
 ;; Set up local path for lisp files
 (cc-add-to-load-path-if-exists "/.emacs.d/lisp")
@@ -540,6 +538,13 @@ in terminal windows."
 (ess-toggle-underscore nil)
 ;; Indent 4 spaces on a continued line in parens
 (setq ess-arg-function-offset 4)
+
+;;------------------------
+;; julia mode
+;;------------------------
+(cc-add-to-load-path-if-exists "/ext/src/julia/contrib/")
+(require 'julia-mode)
+(add-to-list 'auto-mode-alist '("\\.jl$" . julia-mode))
 
 ;;------------------------
 ;; eclim-emacs
