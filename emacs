@@ -167,7 +167,6 @@
 
 ;; (2011 Sep 24) Experimenting with smarter iswitchb configuration.
 ;; TODO(craigcitro): Use symbols instead of strings.
-
 (defun cc-set-frame-params (&optional frame)
   (set-frame-parameter frame 'cc-git-branch (getenv "CC_GIT_BRANCH" frame))
   (set-frame-parameter frame 'cc-git-root (getenv "CC_GIT_ROOT" frame)))
@@ -434,7 +433,8 @@ in terminal windows."
 ;; Currently, there are problems with this cython/python mode,
 ;; so just ignore them.
 ;; (add-to-list 'load-path (expand-file-name "/sage/data/emacs"))
-(require 'python)
+(cc-add-to-load-path-if-exists "/ext/src/python-mode")
+(require 'python-mode)
 (setq python-indent 2)
 ;; (require 'pyrex "pyrex-mode")
 ;; (load (concat (getenv "HOME") "/.emacs.d/lisp/cython-mode.el"))
@@ -547,26 +547,6 @@ in terminal windows."
 (add-to-list 'auto-mode-alist '("\\.jl$" . julia-mode))
 
 ;;------------------------
-;; eclim-emacs
-;;------------------------
-;; (cc-add-to-load-path-if-exists "/.emacs.d/lisp/eclim-emacs/")
-;; ;; only add the vendor path when you want to use the libraries provided with emacs-eclim
-;; (cc-add-to-load-path-if-exists "/.emacs.d/lisp/eclim-emacs/vendor")
-;; (require 'eclim)
-
-;; (setq eclim-auto-save t)
-;; (global-eclim-mode)
-
-;; ;; regular auto-complete initialization
-;; (require 'auto-complete-config)
-;; (ac-config-default)
-
-;; ;; add the emacs-eclim source
-;; (require 'ac-emacs-eclim-source)
-;; (add-hook 'eclim-mode-hook (lambda () (add-to-list 'ac-sources 'ac-source-emacs-eclim)))
-
-
-;;------------------------
 ;; Other stuff
 ;;------------------------
 
@@ -584,9 +564,12 @@ in terminal windows."
 ;; up copying/evolving these functions, but for now, why not just use
 ;; the Python macros ...  In particular, I think I'll end up wanting
 ;; to switch indent-rigidly for indent-code-rigidly. 
-(require 'python)
-(global-set-key "\C-c<" 'python-shift-left)
-(global-set-key "\C-c>" 'python-shift-right)
+;; (require 'python)
+;; (global-set-key "\C-c<" 'python-shift-left)
+;; (global-set-key "\C-c>" 'python-shift-right)
+;; (2012 May 05) Switch to the ones from python-mode ...
+(global-set-key "\C-c<" 'py-shift-left)
+(global-set-key "\C-c>" 'py-shift-right)
 
 ;; It probably makes sense to have a default major mode other than
 ;; Fundamental (which seems to be unexciting); I'm torn between
