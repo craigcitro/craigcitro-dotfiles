@@ -99,6 +99,8 @@ pathprepend $HOME/ext/bin;
 pathprepend $HOME/bin; 
 export PATH
 
+pathprepend $HOME/ext/share/man MANPATH;
+
 # As Ami says, "Mmmm ... core files are so yummy!"
 ulimit -c unlimited
 
