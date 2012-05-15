@@ -205,9 +205,11 @@
 				 'cc-buffer-git-root buffer)))
 	  (cond
 	   ((string= buf (buffer-name (current-buffer)))
-	    (add-to-list 'colored-buflist (propertize buf 'face 'cc-iswitchb-this-buffer-face)))
+	    (add-to-list 'colored-buflist
+			 (propertize buf 'face 'cc-iswitchb-this-buffer-face)))
 	   ((char-equal ?* (elt buf 0))
-	    (add-to-list 'colored-buflist (propertize buf 'face 'cc-iswitchb-system-buffer-face)))
+	    (add-to-list 'colored-buflist
+			 (propertize buf 'face 'cc-iswitchb-system-buffer-face)))
 	   ((empty-or-nil-p frame-git-root)
 	    (when (empty-or-nil-p buffer-git-root)
 	      (add-to-list 'colored-buflist buf)))
@@ -215,9 +217,11 @@
 	    (add-to-list 'colored-buflist buf))
 	   ((and (string= frame-git-root buffer-git-root)
 		 (string= frame-git-branch buffer-git-branch))
-	    (add-to-list 'colored-buflist (propertize buf 'face 'cc-iswitchb-same-branch-face)))
+	    (add-to-list 'colored-buflist
+			 (propertize buf 'face 'cc-iswitchb-same-branch-face)))
 	   ((string= frame-git-root buffer-git-root)
-	    (add-to-list 'colored-buflist (propertize buf 'face 'cc-iswitchb-different-branch-face)))
+	    (add-to-list 'colored-buflist
+			 (propertize buf 'face 'cc-iswitchb-different-branch-face)))
 	   ((empty-or-nil-p buffer-git-root)
 	    (add-to-list 'colored-buflist buf)))))
       (setq iswitchb-temp-buflist (reverse colored-buflist)))))
@@ -231,20 +235,6 @@
 ;;  http://www.gnu.org/software/emacs/manual/html_node/emacs/Uniquify.html
 (require 'uniquify)
 (setq uniquify-buffer-name-style 'forward)
-
-;;-----------------
-;; winner mode!
-;;-----------------
-;; It's a little weird that you have to do this first:
-;;(setq winner-dont-bind-my-keys t)
-(require 'winner)
-;; Change the keybindings ...
-(define-key winner-mode-map "\C-xh" 'winner-undo)
-(define-key winner-mode-map "\C-xn" 'winner-redo)
-;; Turn binding back on
-;;(setq winner-dont-bind-my-keys nil)
-;; and load!
-(winner-mode t)
 
 ;;======================================================
 ;; Extra config
@@ -385,15 +375,33 @@ in terminal windows."
 ;;-------------------
 ;; ReST and Markdown
 ;;-------------------
-(require 'rst)
-(add-to-list 'auto-mode-alist '("\\.rst$" . rst-mode))
-(add-to-list 'auto-mode-alist '("\\.rest$" . rst-mode))
-(cc-add-to-load-path-if-exists "/.emacs.d/lisp/markdown-mode")
-(autoload 'markdown-mode "markdown-mode.el"
-          "Major mode for editing Markdown files" t)
-(add-to-list 'auto-mode-alist '("\\.md$" . markdown-mode))
-(add-to-list 'auto-mode-alist '("\\.mdml$" . markdown-mode))
-(add-to-list 'auto-mode-alist '("\\.markdown$" . markdown-mode))
+(when (require 'rst nil t)
+  (add-to-list 'auto-mode-alist '("\\.rst$" . rst-mode))
+  (add-to-list 'auto-mode-alist '("\\.rest$" . rst-mode))
+  (cc-add-to-load-path-if-exists "/.emacs.d/lisp/markdown-mode")
+  (autoload 'markdown-mode "markdown-mode.el"
+    "Major mode for editing Markdown files" t)
+  (add-to-list 'auto-mode-alist '("\\.md$" . markdown-mode))
+  (add-to-list 'auto-mode-alist '("\\.mdml$" . markdown-mode))
+  (add-to-list 'auto-mode-alist '("\\.markdown$" . markdown-mode)))
+
+;;------------------
+;; deft-mode
+;;------------------
+(cc-add-to-load-path-if-exists "/.emacs.d/lisp/deft-mode")
+(when (require 'deft nil t)
+  (setq deft-extension "md")
+  (setq deft-directory "~/w/deft")
+  (setq deft-text-mode 'markdown-mode)
+  (setq deft-use-filename-as-title t))
+
+;;------------------
+;; org-mode
+;;------------------
+(add-to-list 'auto-mode-alist '("\\.org\\'" . org-mode))
+(global-set-key "\C-cl" 'org-store-link)
+(global-set-key "\C-ca" 'org-agenda)
+(global-set-key "\C-cb" 'org-iswitchb)
 
 ;;------------------
 ;; Makefiles
@@ -422,9 +430,9 @@ in terminal windows."
 ;; (add-hook 'haskell-mode-hook (lambda () (ghc-init) (flymake-mode)))
 
 ;; hoogle
-(require 'haskell-mode)
-(setq haskell-hoogle-command "hoogle")
-(define-key haskell-mode-map "\C-c?" 'haskell-hoogle)
+(when (require 'haskell-mode nil t)
+  (setq haskell-hoogle-command "hoogle")
+  (define-key haskell-mode-map "\C-c?" 'haskell-hoogle))
 
 ;;---------------------------
 ;; Python, Cython
@@ -434,8 +442,8 @@ in terminal windows."
 ;; so just ignore them.
 ;; (add-to-list 'load-path (expand-file-name "/sage/data/emacs"))
 (cc-add-to-load-path-if-exists "/ext/src/python-mode")
-(require 'python-mode)
-(setq python-indent 2)
+(when (require 'python-mode nil t)
+  (setq python-indent 2))
 ;; (require 'pyrex "pyrex-mode")
 ;; (load (concat (getenv "HOME") "/.emacs.d/lisp/cython-mode.el"))
 ;; (load (concat (getenv "HOME") "/.emacs.d/lisp/python-mode.el"))
@@ -529,22 +537,22 @@ in terminal windows."
 ;; ess-mode
 ;;------------------------
 (cc-add-to-load-path-if-exists "/ext/ess-5.14/lisp")
-(require 'ess-site)
-(add-to-list 'auto-mode-alist '("\\.R$" . r-mode))
-(add-to-list 'auto-mode-alist '("\\.valclass$" . r-mode))
-;; We want to force _ back to _; ess-toggle-underscore can
-;; force it to "smart _", but not off. Ugh.
-(ess-toggle-underscore 1)
-(ess-toggle-underscore nil)
-;; Indent 4 spaces on a continued line in parens
-(setq ess-arg-function-offset 4)
+(when (require 'ess-site nil t)
+  (add-to-list 'auto-mode-alist '("\\.R$" . r-mode))
+  (add-to-list 'auto-mode-alist '("\\.valclass$" . r-mode))
+  ;; We want to force _ back to _; ess-toggle-underscore can
+  ;; force it to "smart _", but not off. Ugh.
+  (ess-toggle-underscore 1)
+  (ess-toggle-underscore nil)
+  ;; Indent 4 spaces on a continued line in parens
+  (setq ess-arg-function-offset 4))
 
 ;;------------------------
 ;; julia mode
 ;;------------------------
 (cc-add-to-load-path-if-exists "/ext/src/julia/contrib/")
-(require 'julia-mode)
-(add-to-list 'auto-mode-alist '("\\.jl$" . julia-mode))
+(when (require 'julia-mode nil t)
+  (add-to-list 'auto-mode-alist '("\\.jl$" . julia-mode)))
 
 ;;------------------------
 ;; Other stuff
@@ -653,6 +661,7 @@ in terminal windows."
 ;; This second binding is pretty good -- I should use it more.
 (global-set-key "\C-c\C-j" 'goto-line)
 (global-set-key "\M-\C-g" 'goto-line)
+
 (global-set-key "\C-c\C-z" 'shell)
 
 ;; because I don't like "key not found" messages?
@@ -791,20 +800,20 @@ in terminal windows."
 ;; Nathan's blog here:
 ;;  http://nex-3.com/posts/45-efficient-window-switching-in-emacs
 (setq windmove-wrap-around t)
-(global-set-key [(control right)] 'windmove-right)
-(global-set-key [(control left)] 'windmove-left)
-(global-set-key [(control up)] 'windmove-up)
-(global-set-key [(control down)] 'windmove-down)
-(global-set-key (kbd "C-c <right>") 'windmove-right)
-(global-set-key (kbd "C-c <left>") 'windmove-left)
-(global-set-key (kbd "C-c <up>") 'windmove-up)
-(global-set-key (kbd "C-c <down>") 'windmove-down)
-;; control+arrows in tmux ... I should figure out exactly what's
-;; going on with these keystrokes.
-(global-set-key "\M-[a" 'windmove-up)
-(global-set-key "\M-[b" 'windmove-down)
-(global-set-key "\M-[c" 'windmove-right)
-(global-set-key "\M-[d" 'windmove-left)
+;; (global-set-key [(control right)] 'windmove-right)
+;; (global-set-key [(control left)] 'windmove-left)
+;; (global-set-key [(control up)] 'windmove-up)
+;; (global-set-key [(control down)] 'windmove-down)
+;; (global-set-key (kbd "C-c <right>") 'windmove-right)
+;; (global-set-key (kbd "C-c <left>") 'windmove-left)
+;; (global-set-key (kbd "C-c <up>") 'windmove-up)
+;; (global-set-key (kbd "C-c <down>") 'windmove-down)
+;; ;; control+arrows in tmux ... I should figure out exactly what's
+;; ;; going on with these keystrokes.
+;; (global-set-key "\M-[a" 'windmove-up)
+;; (global-set-key "\M-[b" 'windmove-down)
+;; (global-set-key "\M-[c" 'windmove-right)
+;; (global-set-key "\M-[d" 'windmove-left)
 
 ;; This is nice -- a copy of what vim offers with moving the current
 ;; line to the top, bottom, or middle.
@@ -824,10 +833,10 @@ frame. (Emulates zt in vim.)"
   (interactive)
   (recenter-top-bottom (- (window-height) 3)))
 ;; I'm never sure with \C-i vs. tab. Let's do both to be safe.
-(global-set-key "\C-c\C-u" 'move-to-top)
-(global-set-key [(control c) (tab)] 'move-to-middle)
-(global-set-key "\C-c\C-i" 'move-to-middle)
-(global-set-key "\C-c\C-o" 'move-to-bottom)
+;; (global-set-key "\C-c\C-u" 'move-to-top)
+;; (global-set-key [(control c) (tab)] 'move-to-middle)
+;; (global-set-key "\C-c\C-i" 'move-to-middle)
+;; (global-set-key "\C-c\C-o" 'move-to-bottom)
 
 ;;======================================================
 ;; M-x customize
