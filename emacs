@@ -115,8 +115,8 @@
     (select-frame frame norecord)))
 (when (memq 'select-frame after-make-frame-functions)
   (setq after-make-frame-functions (cons 'robust-select-frame
-                                         (remq 'select-frame
-                                               after-make-frame-functions))))
+					 (remq 'select-frame
+					       after-make-frame-functions))))
 
 ;; Stole these from a wiki on Emacs 23 vs. 22 compatibility:
 ;; Make ^N work based on the document structure. The default setting
@@ -254,7 +254,7 @@
 ;;======================================================
 ;; Extra config
 ;;======================================================
-(let ((gconfig (cc-home-path-or-nil ".emacs.google")))
+(let ((gconfig (cc-find-file-or-nil ".emacs.google")))
   (when gconfig
     (load-file gconfig)))
 
@@ -291,16 +291,6 @@
 ;; Set up the window
 ;;===========================================
 
-(defun various-window-config (&optional frame)
-  "Various window configuration for non-terminal sessions."
-  ;; Move the window and don't wait for the window manager as
-  ;; we start up
-  (unless (in-terminal)
-    (modify-frame-parameters frame '((wait-for-wm . nil)
-                                     (top . 25)
-                                     (left . 0)))))
-(add-to-list 'after-make-frame-functions 'various-window-config)
-
 ;; Clean up the window. Each of these sets a global option, so
 ;; there's no need to use this as a hook.
 (defun kill-trim (&optional ignored)
@@ -311,65 +301,6 @@ after-make-frame-functions."
   (scroll-bar-mode -1)
   (tool-bar-mode -1))
 (kill-trim)
-
-;; Need to change the default frame height depending on whether I'm
-;; launching from X11, on Linux, or actually launching Emacs.app.
-;; (2010 Sep 27) Actually, I only use this from Mac; I should
-;; ultimately implement something that looks at frame
-;; resolution/screen resolution/etc and decides this.
-(defun preferred-frame-height ()
-   (cond
-    ;;((eq window-system 'x) '145)
-    ;;((eq window-system 'mac) '63)
-    ((eq window-system 'ns) '66)
-    ((and (in-terminal) (getenv "LINES")) (getenv "LINES"))
-    (t nil)))
-(defun preferred-frame-width ()
-  (cond
-   ;;((eq window-system 'x) '98)
-   ;;((eq window-system 'mac) '100)
-   ((eq window-system 'ns) 117)
-   ((and (in-terminal) (getenv "COLUMNS")) (getenv "COLUMNS"))
-   (t nil)))
-
-;; setup frame shape
-(defun force-shape (&optional frame)
-  "Force emacs into the right geometry, if we know it."
-  (interactive)
-  (when (preferred-frame-width)
-    (unless (in-terminal)
-      ;; if we're in a windowing system, force the frame shape.
-      (modify-frame-parameters frame
-                               `((height . ,(preferred-frame-height))
-                                 (width . ,(preferred-frame-width)))))))
-;; Add a hook to do this on a new frame
-(add-to-list 'after-make-frame-functions 'force-shape)
-
-;; I work mostly with columns, so I should take advantage of that.
-(defun maximize-window-height ()
-  "Make a window fill the entire column."
-  (interactive)
-  (enlarge-window (frame-height)))
-(global-set-key "\C-c1" 'delete-other-windows)
-(global-set-key "\C-x1" 'maximize-window-height)
-;; want to write a balance-windows-in-column command;
-;; can just do something with a map/filter over (window-list),
-;; checking the value of (window-edges w).
-
-;; I like a double-wide window. In theory, I might want a smaller one;
-;; this will shrink as necessary.
-(defun toggle-window-width (&optional frame)
-  "Toggle between a single-wide and double-wide window. Ignored
-in terminal windows."
-  (interactive)
-  (when (preferred-frame-width)
-      (unless (in-terminal)
-        (if (eq (preferred-frame-width) (frame-width))
-            (modify-frame-parameters frame
-                                     `((width . ,(* 2 (preferred-frame-width)))))
-          (modify-frame-parameters frame
-                                   `((width . ,(preferred-frame-width))))))))
-(global-set-key "\C-xw" 'toggle-window-width)
 
 ;;==============================================================================
 ;; Major modes and language-specific config
@@ -427,7 +358,7 @@ in terminal windows."
 ;; Haskell
 ;;------------------
 ;; Generic bit
-(let ((haskell-site-file (cc-find-file--or-nil "haskell-mode/haskell-site-file")))
+(let ((haskell-site-file (cc-find-file-or-nil "haskell-mode/haskell-site-file")))
   (when haskell-site-file
     (load haskell-site-file)
     (add-to-list 'auto-mode-alist '("\\.hs$" . haskell-mode))
@@ -542,12 +473,6 @@ in terminal windows."
 ;; (2010 Sep 25) Does this even work? Investigate something smarter.
 
 ;;------------------------
-;; soy-mode
-;;------------------------
-;; (2011 Nov 24) Don't love this soy-mode.
-;; (cc-add-to-load-path-if-exists "/emacs.d/lisp/soy-mode" 'soy-mode)
-
-;;------------------------
 ;; ess-mode
 ;;------------------------
 (cc-add-to-load-path-if-exists "/ext/ess-5.14/lisp")
@@ -601,17 +526,6 @@ in terminal windows."
 ;;==============================================================================
 ;; Utility functions
 ;;==============================================================================
-
-;; Don't know where this is from -- Ryan had this in his .emacs.
-(defun unfill-region (start end)
-  (interactive "r")
-  (save-excursion
-    (save-restriction
-      (let ((fill-column (point-max)))
-	(fill-region (point-min) (point-max) nil t)
-	(goto-char (point-min))
-	(while (search-forward "\n\n" nil t)
-	  (replace-match "\n"))))))
 
 ;; I'm sure this has to exist somewhere in emacs already ...
 (defun get-cursor-position-as-integer ()
@@ -814,43 +728,6 @@ in terminal windows."
 ;; Nathan's blog here:
 ;;  http://nex-3.com/posts/45-efficient-window-switching-in-emacs
 (setq windmove-wrap-around t)
-;; (global-set-key [(control right)] 'windmove-right)
-;; (global-set-key [(control left)] 'windmove-left)
-;; (global-set-key [(control up)] 'windmove-up)
-;; (global-set-key [(control down)] 'windmove-down)
-;; (global-set-key (kbd "C-c <right>") 'windmove-right)
-;; (global-set-key (kbd "C-c <left>") 'windmove-left)
-;; (global-set-key (kbd "C-c <up>") 'windmove-up)
-;; (global-set-key (kbd "C-c <down>") 'windmove-down)
-;; ;; control+arrows in tmux ... I should figure out exactly what's
-;; ;; going on with these keystrokes.
-;; (global-set-key "\M-[a" 'windmove-up)
-;; (global-set-key "\M-[b" 'windmove-down)
-;; (global-set-key "\M-[c" 'windmove-right)
-;; (global-set-key "\M-[d" 'windmove-left)
-
-;; This is nice -- a copy of what vim offers with moving the current
-;; line to the top, bottom, or middle.
-(defun move-to-top ()
-  "Scroll the buffer so that the current line is at the top of the
-frame. (Emulates zt in vim.)"
-  (interactive)
-  (recenter-top-bottom 0))
-(defun move-to-middle ()
-  "Scroll the buffer so that the current line is at the
-  middle. (Emulates zz in vim.)"
-  (interactive)
-  (recenter-top-bottom (/ (frame-height) 2)))
-(defun move-to-bottom ()
-  "Scroll the buffer so that the current line is at the
-  bottom. (Emulates zb in vim.)"
-  (interactive)
-  (recenter-top-bottom (- (window-height) 3)))
-;; I'm never sure with \C-i vs. tab. Let's do both to be safe.
-;; (global-set-key "\C-c\C-u" 'move-to-top)
-;; (global-set-key [(control c) (tab)] 'move-to-middle)
-;; (global-set-key "\C-c\C-i" 'move-to-middle)
-;; (global-set-key "\C-c\C-o" 'move-to-bottom)
 
 ;;======================================================
 ;; M-x customize
