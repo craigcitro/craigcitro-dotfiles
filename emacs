@@ -31,10 +31,8 @@
 
 ;; Consistently add newlines at end of file
 (setq require-final-newline t)
-;; (2011 May 18) do not like:
-;; (setq next-line-add-newlines t)
 
-;; Here's a whole chunk I stole from nweiz. 
+;; Here's a whole chunk I stole from nweiz.
 ;; Fewer annoying files laying around ...
 (setq make-backup-files nil)
 (setq completion-ignored-extensions '(".a" ".so" ".o" "~" ".bak" ".class"))
@@ -77,14 +75,31 @@
 ;;--------------------
 ;; utilities
 ;;--------------------
-(defun cc-add-to-load-path-if-exists (path)
+(defun cc-first-non-nil (ls)
+  (cond
+   ((null ls) nil)
+   ((null (car ls)) (cc-first-non-nil (cdr ls)))
+   (t (car ls))))
+
+(defun cc-find-file-or-nil (path &optional prefix)
+  (let ((dirs (list ""
+		    prefix
+		    (getenv "HOME")
+                    (concat (getenv "HOME") "/.emacs.d/lisp"))))
+    (cc-first-non-nil
+     (mapcar (lambda (x)
+               (let ((full-path (command-line-normalize-file-name (concat x "/" path))))
+                 (when (file-exists-p full-path) full-path)))
+             dirs))))
+
+(defun cc-add-to-load-path-if-exists (path &optional prefix)
   "Add a path to load-path if it exists."
-  (let ((full-path (concat (getenv "HOME") path)))
+  (let ((full-path (cc-find-file-or-nil path prefix)))
     (when (file-exists-p full-path)
       (add-to-list 'load-path full-path))))
 
 ;; Set up local path for lisp files
-(cc-add-to-load-path-if-exists "/.emacs.d/lisp")
+(cc-add-to-load-path-if-exists ".emacs.d/lisp")
 
 ;; I haven't used this much yet, but it seems like it could be cool.
 ;; (2010 Sep 24) Okay, this is exactly as described: you only need it
@@ -100,8 +115,8 @@
     (select-frame frame norecord)))
 (when (memq 'select-frame after-make-frame-functions)
   (setq after-make-frame-functions (cons 'robust-select-frame
-					 (remq 'select-frame
-					       after-make-frame-functions))))
+                                         (remq 'select-frame
+                                               after-make-frame-functions))))
 
 ;; Stole these from a wiki on Emacs 23 vs. 22 compatibility:
 ;; Make ^N work based on the document structure. The default setting
@@ -151,15 +166,15 @@
 ;;   http://www.emacswiki.org/emacs/IswitchBuffers
 (require 'edmacro)
 (defun iswitchb-local-keys ()
-  (mapc (lambda (K) 
-	  (let* ((key (car K)) (fun (cdr K)))
-	    (define-key iswitchb-mode-map (edmacro-parse-keys key) fun)))
-	'(("<right>" . iswitchb-next-match)
-	  ("<left>"  . iswitchb-prev-match)
-	  ("\C-r"    . (lambda ()
-			 (interactive)
-			 (setq iswitchb-temp-buflist iswitchb-buflist)))
-	  )))
+  (mapc (lambda (K)
+          (let* ((key (car K)) (fun (cdr K)))
+            (define-key iswitchb-mode-map (edmacro-parse-keys key) fun)))
+        '(("<right>" . iswitchb-next-match)
+          ("<left>"  . iswitchb-prev-match)
+          ("\C-r"    . (lambda ()
+                         (interactive)
+                         (setq iswitchb-temp-buflist iswitchb-buflist)))
+          )))
 (add-hook 'iswitchb-define-mode-map-hook 'iswitchb-local-keys)
 ;; (2010 Oct 01) It's curious to me why I spontaneously started
 ;; needing this:
@@ -195,35 +210,35 @@
   (or (null x) (string= "" x)))
 (defun cc-filter-buffers ()
   (let ((frame-git-root (frame-parameter nil 'cc-git-root))
-	(frame-git-branch (frame-parameter nil 'cc-git-branch)))
+        (frame-git-branch (frame-parameter nil 'cc-git-branch)))
     (let ((colored-buflist nil))
       (dolist (buf iswitchb-temp-buflist colored-buflist)
-	(let* ((buffer (get-buffer buf))
-	       (buffer-git-branch (buffer-local-value
-				   'cc-buffer-git-branch buffer))
-	       (buffer-git-root (buffer-local-value
-				 'cc-buffer-git-root buffer)))
-	  (cond
-	   ((string= buf (buffer-name (current-buffer)))
-	    (add-to-list 'colored-buflist
-			 (propertize buf 'face 'cc-iswitchb-this-buffer-face)))
-	   ((char-equal ?* (elt buf 0))
-	    (add-to-list 'colored-buflist
-			 (propertize buf 'face 'cc-iswitchb-system-buffer-face)))
-	   ((empty-or-nil-p frame-git-root)
-	    (when (empty-or-nil-p buffer-git-root)
-	      (add-to-list 'colored-buflist buf)))
-	   ((or (null buffer-git-branch) (null buffer-git-root))
-	    (add-to-list 'colored-buflist buf))
-	   ((and (string= frame-git-root buffer-git-root)
-		 (string= frame-git-branch buffer-git-branch))
-	    (add-to-list 'colored-buflist
-			 (propertize buf 'face 'cc-iswitchb-same-branch-face)))
-	   ((string= frame-git-root buffer-git-root)
-	    (add-to-list 'colored-buflist
-			 (propertize buf 'face 'cc-iswitchb-different-branch-face)))
-	   ((empty-or-nil-p buffer-git-root)
-	    (add-to-list 'colored-buflist buf)))))
+        (let* ((buffer (get-buffer buf))
+               (buffer-git-branch (buffer-local-value
+                                   'cc-buffer-git-branch buffer))
+               (buffer-git-root (buffer-local-value
+                                 'cc-buffer-git-root buffer)))
+          (cond
+           ((string= buf (buffer-name (current-buffer)))
+            (add-to-list 'colored-buflist
+                         (propertize buf 'face 'cc-iswitchb-this-buffer-face)))
+           ((char-equal ?* (elt buf 0))
+            (add-to-list 'colored-buflist
+                         (propertize buf 'face 'cc-iswitchb-system-buffer-face)))
+           ((empty-or-nil-p frame-git-root)
+            (when (empty-or-nil-p buffer-git-root)
+              (add-to-list 'colored-buflist buf)))
+           ((or (null buffer-git-branch) (null buffer-git-root))
+            (add-to-list 'colored-buflist buf))
+           ((and (string= frame-git-root buffer-git-root)
+                 (string= frame-git-branch buffer-git-branch))
+            (add-to-list 'colored-buflist
+                         (propertize buf 'face 'cc-iswitchb-same-branch-face)))
+           ((string= frame-git-root buffer-git-root)
+            (add-to-list 'colored-buflist
+                         (propertize buf 'face 'cc-iswitchb-different-branch-face)))
+           ((empty-or-nil-p buffer-git-root)
+            (add-to-list 'colored-buflist buf)))))
       (setq iswitchb-temp-buflist (reverse colored-buflist)))))
 (add-hook 'iswitchb-make-buflist-hook 'cc-filter-buffers)
 
@@ -239,8 +254,8 @@
 ;;======================================================
 ;; Extra config
 ;;======================================================
-(let ((gconfig (concat (getenv "HOME") "/.emacs.google")))
-  (when (file-exists-p gconfig)
+(let ((gconfig (cc-home-path-or-nil ".emacs.google")))
+  (when gconfig
     (load-file gconfig)))
 
 ;; (2011 Jun 27) I have no idea why this isn't already set:
@@ -254,7 +269,7 @@
 (defun in-terminal (&optional frame)
   "Determine whether or not we seem to be in a terminal."
   (not (display-multi-frame-p (or frame
-				  (selected-frame)))))
+                                  (selected-frame)))))
 
 (defun various-mac-setup (&optional frame)
   "Run a handful of Mac-specific configuration commands."
@@ -269,7 +284,7 @@
     (setq mac-command-key-is-meta nil)
     ;; Set colors
     (modify-frame-parameters frame '((foreground-color . "ivory")
-				     (background-color . "black")))))
+                                     (background-color . "black")))))
 (add-to-list 'after-make-frame-functions 'various-mac-setup)
 
 ;;===========================================
@@ -278,12 +293,12 @@
 
 (defun various-window-config (&optional frame)
   "Various window configuration for non-terminal sessions."
-  ;; Move the window and don't wait for the window manager as 
+  ;; Move the window and don't wait for the window manager as
   ;; we start up
   (unless (in-terminal)
     (modify-frame-parameters frame '((wait-for-wm . nil)
-				     (top . 25)
-				     (left . 0)))))
+                                     (top . 25)
+                                     (left . 0)))))
 (add-to-list 'after-make-frame-functions 'various-window-config)
 
 ;; Clean up the window. Each of these sets a global option, so
@@ -325,8 +340,8 @@ after-make-frame-functions."
     (unless (in-terminal)
       ;; if we're in a windowing system, force the frame shape.
       (modify-frame-parameters frame
-			       `((height . ,(preferred-frame-height))
-				 (width . ,(preferred-frame-width)))))))
+                               `((height . ,(preferred-frame-height))
+                                 (width . ,(preferred-frame-width)))))))
 ;; Add a hook to do this on a new frame
 (add-to-list 'after-make-frame-functions 'force-shape)
 
@@ -349,11 +364,11 @@ in terminal windows."
   (interactive)
   (when (preferred-frame-width)
       (unless (in-terminal)
-	(if (eq (preferred-frame-width) (frame-width))
-	    (modify-frame-parameters frame
-				     `((width . ,(* 2 (preferred-frame-width)))))
-	  (modify-frame-parameters frame
-				   `((width . ,(preferred-frame-width))))))))
+        (if (eq (preferred-frame-width) (frame-width))
+            (modify-frame-parameters frame
+                                     `((width . ,(* 2 (preferred-frame-width)))))
+          (modify-frame-parameters frame
+                                   `((width . ,(preferred-frame-width))))))))
 (global-set-key "\C-xw" 'toggle-window-width)
 
 ;;==============================================================================
@@ -366,11 +381,11 @@ in terminal windows."
 ;; Paragraphs get indented
 (add-to-list 'auto-mode-alist '("\\.txt$" . paragraph-indent-text-mode))
 ;; Set auto-fill and abbreviation for text
-(setq text-mode-hook 
-      '(lambda nil 
+(setq text-mode-hook
+      '(lambda nil
          (setq fill-column 78)
          (auto-fill-mode 1)
-	 (abbrev-mode 1)))
+         (abbrev-mode 1)))
 
 ;;-------------------
 ;; ReST and Markdown
@@ -378,7 +393,7 @@ in terminal windows."
 (when (require 'rst nil t)
   (add-to-list 'auto-mode-alist '("\\.rst$" . rst-mode))
   (add-to-list 'auto-mode-alist '("\\.rest$" . rst-mode))
-  (cc-add-to-load-path-if-exists "/.emacs.d/lisp/markdown-mode")
+  (cc-add-to-load-path-if-exists "markdown-mode")
   (autoload 'markdown-mode "markdown-mode.el"
     "Major mode for editing Markdown files" t)
   (add-to-list 'auto-mode-alist '("\\.md$" . markdown-mode))
@@ -388,7 +403,7 @@ in terminal windows."
 ;;------------------
 ;; deft-mode
 ;;------------------
-(cc-add-to-load-path-if-exists "/.emacs.d/lisp/deft-mode")
+(cc-add-to-load-path-if-exists "deft-mode")
 (when (require 'deft nil t)
   (setq deft-extension "md")
   (setq deft-directory "~/w/deft")
@@ -412,17 +427,16 @@ in terminal windows."
 ;; Haskell
 ;;------------------
 ;; Generic bit
-(load "~/.emacs.d/lisp/haskell-mode/haskell-site-file")
-(add-to-list 'auto-mode-alist '("\\.hs$" . haskell-mode))
-(add-hook 'haskell-mode-hook 'turn-on-haskell-doc-mode)
-;; Add indentation mode: not sure which I'll like.
-(add-hook 'haskell-mode-hook 'turn-on-haskell-indentation)
-;; (add-hook 'haskell-mode-hook 'turn-on-haskell-indent)
-;; (add-hook 'haskell-mode-hook 'turn-on-haskell-simple-indent)
+(let ((haskell-site-file (cc-find-file--or-nil "haskell-mode/haskell-site-file")))
+  (when haskell-site-file
+    (load haskell-site-file)
+    (add-to-list 'auto-mode-alist '("\\.hs$" . haskell-mode))
+    (add-hook 'haskell-mode-hook 'turn-on-haskell-doc-mode)
+    (add-hook 'haskell-mode-hook 'turn-on-haskell-indentation)))
 
 ;; ghc-mod:
 ;;   https://github.com/kazu-yamamoto/ghc-mod
-(cc-add-to-load-path-if-exists "/.emacs.d/lisp/ghc-mod/elisp")
+(cc-add-to-load-path-if-exists "ghc-mod/elisp")
 (let ((cabal-path (concat (getenv "HOME") "/ext/cabal/bin")))
   (when (file-exists-p cabal-path)
     (add-to-list 'exec-path cabal-path)))
@@ -571,7 +585,7 @@ in terminal windows."
 ;; Better indenting! I think that in the long-term I'll probably end
 ;; up copying/evolving these functions, but for now, why not just use
 ;; the Python macros ...  In particular, I think I'll end up wanting
-;; to switch indent-rigidly for indent-code-rigidly. 
+;; to switch indent-rigidly for indent-code-rigidly.
 ;; (require 'python)
 ;; (global-set-key "\C-c<" 'python-shift-left)
 ;; (global-set-key "\C-c>" 'python-shift-right)
@@ -605,14 +619,14 @@ in terminal windows."
   (interactive)
   (string-to-number (substring (what-line) 5)))
 
-;; Sometimes it's nice to easily find out a keycode: to do this, 
+;; Sometimes it's nice to easily find out a keycode: to do this,
 ;; \M-: (read-event "?") or just run this function:
 (defun get-keycode ()
   "Wrapper around read-event for when I forget it exists."
   (interactive)
   (read-event "Hit a key: "))
 
-;; Insert the current date in parentheses. 
+;; Insert the current date in parentheses.
 ;; TODO: make the parentheses customizable.
 ;; TODO: take a prefix argument to insert different dates.
 (defun insert-date ()
@@ -654,7 +668,7 @@ in terminal windows."
 ;;==============================================================================
 ;; MISC KEY SETTINGS
 ;; ==============================================================================
-;; (2010 Sep 24) Did something break this? Why did I feel the need to re-bind? 
+;; (2010 Sep 24) Did something break this? Why did I feel the need to re-bind?
 (global-unset-key [(control t)])
 (global-set-key [(control t)] 'fill-paragraph)
 
@@ -683,9 +697,9 @@ in terminal windows."
 (global-set-key "\C-c\C-t" 'transpose-words)
 
 ;; this is still experimentation -- but I think I prefer that the
-;; default is copy, and you request cut. this will also match the 
+;; default is copy, and you request cut. this will also match the
 ;; keystrokes in tmux, making it easier on my fingers.
-;; (2010 Sep 24) Man, I totally prefer this. 
+;; (2010 Sep 24) Man, I totally prefer this.
 (global-set-key "\C-w" 'kill-ring-save)
 (global-set-key "\M-w" 'kill-region)
 
@@ -796,7 +810,7 @@ in terminal windows."
 ;; (2011 Sep 05) I had some funny movement stuff here; it wasn't
 ;; awesome.
 ;;
-;; Read about some nice window movement stuff on 
+;; Read about some nice window movement stuff on
 ;; Nathan's blog here:
 ;;  http://nex-3.com/posts/45-efficient-window-switching-in-emacs
 (setq windmove-wrap-around t)
@@ -824,7 +838,7 @@ frame. (Emulates zt in vim.)"
   (recenter-top-bottom 0))
 (defun move-to-middle ()
   "Scroll the buffer so that the current line is at the
-  middle. (Emulates zz in vim.)" 
+  middle. (Emulates zz in vim.)"
   (interactive)
   (recenter-top-bottom (/ (frame-height) 2)))
 (defun move-to-bottom ()
