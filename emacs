@@ -346,7 +346,7 @@ after-make-frame-functions."
 ;;------------------
 (add-to-list 'auto-mode-alist '("\\.org\\'" . org-mode))
 (global-set-key "\C-cl" 'org-store-link)
-(global-set-key "\C-ca" 'org-agenda)
+(global-set-key "\C-cg" 'org-agenda)
 (global-set-key "\C-cb" 'org-iswitchb)
 
 ;;------------------
@@ -733,6 +733,8 @@ after-make-frame-functions."
 ;; M-x customize
 ;;======================================================
 (custom-set-variables
+ ;; org-mode
+ '(org-startup-indented t)
  ;; js2-mode
  ;; All the cool kids use 2.
  '(js2-basic-offset 2)
@@ -746,6 +748,7 @@ after-make-frame-functions."
  '(js2-mode-escape-quotes nil)
  ;; three cheers for spastic typing.
  '(js2-mode-indent-ignore-first-tab t))
+
 (custom-set-faces
  ;; js2
  ;; Underlines don't seem to work well in my emacs setup.
