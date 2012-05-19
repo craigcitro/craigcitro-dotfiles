@@ -306,6 +306,14 @@ after-make-frame-functions."
 ;; Major modes and language-specific config
 ;;==============================================================================
 
+;;------------------
+;; org-mode
+;;------------------
+(add-to-list 'auto-mode-alist '("\\.org\\'" . org-mode))
+(global-set-key "\C-cl" 'org-store-link)
+(global-set-key "\C-ca" 'org-agenda)
+(global-set-key "\C-cb" 'org-iswitchb)
+
 ;;---------------
 ;; text
 ;;---------------
@@ -340,14 +348,6 @@ after-make-frame-functions."
   (setq deft-directory "~/w/deft")
   (setq deft-text-mode 'markdown-mode)
   (setq deft-use-filename-as-title t))
-
-;;------------------
-;; org-mode
-;;------------------
-(add-to-list 'auto-mode-alist '("\\.org\\'" . org-mode))
-(global-set-key "\C-cl" 'org-store-link)
-(global-set-key "\C-cg" 'org-agenda)
-(global-set-key "\C-cb" 'org-iswitchb)
 
 ;;------------------
 ;; Makefiles
@@ -604,7 +604,7 @@ after-make-frame-functions."
 ;; quickly sort
 (global-set-key "\C-cs" 'sort-lines)
 ;; align a whole region (usually after copy-paste)
-(global-set-key "\C-ca" 'indent-region)
+(global-set-key "\C-cg" 'indent-region)
 
 ;; Transpose!!
 (global-set-key "\C-ct" 'transpose-chars)
