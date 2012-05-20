@@ -85,7 +85,8 @@
   (let ((dirs (list ""
 		    prefix
 		    (getenv "HOME")
-                    (concat (getenv "HOME") "/.emacs.d/lisp"))))
+                    (concat (getenv "HOME") "/.emacs.d/lisp")
+		    (concat (getenv "HOME") "/ext"))))
     (cc-first-non-nil
      (mapcar (lambda (x)
                (let ((full-path (command-line-normalize-file-name (concat x "/" path))))
@@ -100,6 +101,7 @@
 
 ;; Set up local path for lisp files
 (cc-add-to-load-path-if-exists ".emacs.d/lisp")
+(cc-add-to-load-path-if-exists "share/emacs/site-lisp")
 
 ;; I haven't used this much yet, but it seems like it could be cool.
 ;; (2010 Sep 24) Okay, this is exactly as described: you only need it
@@ -309,10 +311,29 @@ after-make-frame-functions."
 ;;------------------
 ;; org-mode
 ;;------------------
-(add-to-list 'auto-mode-alist '("\\.org\\'" . org-mode))
-(global-set-key "\C-cl" 'org-store-link)
-(global-set-key "\C-ca" 'org-agenda)
-(global-set-key "\C-cb" 'org-iswitchb)
+(when (require 'org-install nil t)
+  (add-to-list 'auto-mode-alist '("\\.org$" . org-mode))
+  (add-to-list 'auto-mode-alist '("\\.org_archive$" . org-mode))
+  ;; Global org keys
+  (global-set-key "\C-cl" 'org-store-link)
+  (global-set-key "\C-ca" 'org-agenda)
+  (global-set-key "\C-cb" 'org-iswitchb)
+  ;; So good it gets two keystrokes:
+  (global-set-key "\C-cc" 'org-capture)
+  (global-set-key "\M-\C-r" 'org-capture)
+  ;; Where the org files live
+  (setq org-directory "~/w/org")
+  (setq org-default-notes-file (concat org-directory "/refile.org"))
+  ;; Configure the capture templates
+  (setq org-capture-templates
+	(quote (("t" "todo" entry (file+headline org-default-notes-file "Tasks")
+		 "* TODO %?\n%U\n%a\n")
+		("n" "note" entry (file+headline org-default-notes-file "Notes")
+		 "* %? :NOTE:\n%U\n%a\n")
+		("j" "Journal" entry (file+datetree org-default-notes-file)
+		 "* %?\nEntered on %U\n  %i\n  %a")
+		)))
+  )
 
 ;;---------------
 ;; text
@@ -368,7 +389,7 @@ after-make-frame-functions."
 ;; ghc-mod:
 ;;   https://github.com/kazu-yamamoto/ghc-mod
 (cc-add-to-load-path-if-exists "ghc-mod/elisp")
-(let ((cabal-path (concat (getenv "HOME") "/ext/cabal/bin")))
+(let ((cabal-path (concat (getenv "HOME") "/cabal/bin")))
   (when (file-exists-p cabal-path)
     (add-to-list 'exec-path cabal-path)))
 ;; (autoload 'ghc-init "ghc" nil t)
@@ -386,7 +407,7 @@ after-make-frame-functions."
 ;; Currently, there are problems with this cython/python mode,
 ;; so just ignore them.
 ;; (add-to-list 'load-path (expand-file-name "/sage/data/emacs"))
-(cc-add-to-load-path-if-exists "/ext/src/python-mode")
+(cc-add-to-load-path-if-exists "src/python-mode")
 (when (require 'python-mode nil t)
   (setq python-indent 2))
 ;; (require 'pyrex "pyrex-mode")
@@ -421,7 +442,8 @@ after-make-frame-functions."
 ;; up differently ...
 (add-to-list 'auto-mode-alist '("/emacs$" . emacs-lisp-mode))
 ;; This is useful, but it would be nice to make it smarter: the C-e is
-;; hacky and inelegant.
+;; hacky and inelegant. I'd love it to evaluate the sexp and advance
+;; iff there's no blank line below.
 (defun eval-sexp-and-advance (arg)
   "Eval sexp ending at the end of this line and continue to the
   next sexp. (This is basically a poor man's 'step' function in
@@ -475,7 +497,7 @@ after-make-frame-functions."
 ;;------------------------
 ;; ess-mode
 ;;------------------------
-(cc-add-to-load-path-if-exists "/ext/ess-5.14/lisp")
+(cc-add-to-load-path-if-exists "ess-5.14/lisp")
 (when (require 'ess-site nil t)
   (add-to-list 'auto-mode-alist '("\\.R$" . r-mode))
   (add-to-list 'auto-mode-alist '("\\.valclass$" . r-mode))
@@ -489,9 +511,14 @@ after-make-frame-functions."
 ;;------------------------
 ;; julia mode
 ;;------------------------
-(cc-add-to-load-path-if-exists "/ext/src/julia/contrib/")
+(cc-add-to-load-path-if-exists "src/julia/contrib/")
 (when (require 'julia-mode nil t)
   (add-to-list 'auto-mode-alist '("\\.jl$" . julia-mode)))
+
+;;------------------------
+;; magit
+;;------------------------
+(require 'magit nil t)
 
 ;;------------------------
 ;; Other stuff
