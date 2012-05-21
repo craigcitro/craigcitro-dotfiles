@@ -318,14 +318,17 @@ after-make-frame-functions."
   (global-set-key "\C-cl" 'org-store-link)
   (global-set-key "\C-ca" 'org-agenda)
   (global-set-key "\C-cb" 'org-iswitchb)
-  ;; So good it gets two keystrokes:
   (global-set-key "\C-cc" 'org-capture)
+  ;; Secondary keystrokes for each:
+  (global-set-key "\M-\C-l" 'org-store-link)
+  (global-set-key "\M-\C-a" 'org-agenda)
+  (global-set-key "\M-\C-b" 'org-iswitchb)
   (global-set-key "\M-\C-r" 'org-capture)
   ;; Where the org files live
   (setq org-directory "~/w/org")
   (setq org-default-notes-file (concat org-directory "/refile.org"))
-  ;; Configure the capture templates
-  (setq org-capture-templates
+  ;; Configure the capture setq
+  (templates org-capture-templates
 	(quote (("t" "todo" entry (file+headline org-default-notes-file "Tasks")
 		 "* TODO %?\n%U\n%a\n")
 		("n" "note" entry (file+headline org-default-notes-file "Notes")
