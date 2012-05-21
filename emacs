@@ -655,8 +655,11 @@ after-make-frame-functions."
 (global-unset-key [(control x) (control o)])
 (global-set-key "\C-x\C-o" 'other-window)
 
-;; I kind of want a good keystroke for this:
+;; I want for a better keystroke here:
 (global-set-key "\C-xa" 'mark-whole-buffer)
+
+;; The default binding only ever annoys me in my tmux world:
+(global-set-key "\C-x3" 'split-window-vertically)
 
 ;; I miss vim's J command, and I always seem to mix up this and
 ;; "join-above" (i.e. delete-indentation). I'm going to switch them to
