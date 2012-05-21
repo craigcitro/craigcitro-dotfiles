@@ -518,7 +518,8 @@ after-make-frame-functions."
 ;;------------------------
 ;; magit
 ;;------------------------
-(require 'magit nil t)
+(when (require 'magit nil t)
+  (global-set-key "\C-c\C-g" 'magit-status))
 
 ;;------------------------
 ;; Other stuff
