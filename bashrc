@@ -107,9 +107,6 @@ ulimit -c unlimited
 ###############################
 ## ls configuration 
 
-## should I need it ...
-alias realls=$(which ls)
-
 if [ "$SYSTEM" == "Darwin" ]; then
 ## darwin/bsd ls formatting
   export LSCOLORS="Dxfxcxdxexegedabagacad"
@@ -301,7 +298,6 @@ fi
 
 # ps is in the same boat as du. I always use the same options, so just
 # make those the default.
-alias sps=$(which ps)
 if [ "$SYSTEM" == "Darwin" ]; then
   # wide by default on OSX
   alias ps="ps -U $USER"
