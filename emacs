@@ -311,6 +311,18 @@ after-make-frame-functions."
 ;;------------------
 ;; org-mode
 ;;------------------
+;; This initial configuration is heavily "inspired" by:
+;;   http://doc.norang.ca/org-mode.html
+
+;; Undefine C-c [ and C-c ], in favor of explicit management of the
+;; org-agenda-files variable.
+(add-hook 'org-mode-hook
+	  '(lambda ()
+	     (org-defkey org-mode-map "\C-c["    'undefined)
+	     (org-defkey org-mode-map "\C-c]"    'undefined)
+	     (org-defkey org-mode-map "\C-c;"    'undefined))
+	  'append)
+
 (when (require 'org-install nil t)
   (add-to-list 'auto-mode-alist '("\\.org$" . org-mode))
   (add-to-list 'auto-mode-alist '("\\.org_archive$" . org-mode))
@@ -326,9 +338,10 @@ after-make-frame-functions."
   (global-set-key "\M-\C-r" 'org-capture)
   ;; Where the org files live
   (setq org-directory "~/w/org")
+  (setq org-agenda-files (list org-directory))
   (setq org-default-notes-file (concat org-directory "/refile.org"))
-  ;; Configure the capture setq
-  (templates org-capture-templates
+  ;; Configure the capture templates
+  (setq org-capture-templates
 	(quote (("t" "todo" entry (file+headline org-default-notes-file "Tasks")
 		 "* TODO %?\n%U\n%a\n")
 		("n" "note" entry (file+headline org-default-notes-file "Notes")
