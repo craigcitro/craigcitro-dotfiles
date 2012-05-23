@@ -328,7 +328,7 @@ after-make-frame-functions."
   (add-to-list 'auto-mode-alist '("\\.org_archive$" . org-mode))
   ;; Global org keys
   (global-set-key "\C-cl" 'org-store-link)
-  (global-set-key "\C-ca" 'org-agenda)
+  (global-set-key "\C-cg" 'org-agenda)
   (global-set-key "\C-cb" 'org-iswitchb)
   (global-set-key "\C-cc" 'org-capture)
   ;; Secondary keystrokes for each:
@@ -340,15 +340,52 @@ after-make-frame-functions."
   (setq org-directory "~/w/org")
   (setq org-agenda-files (list org-directory))
   (setq org-default-notes-file (concat org-directory "/refile.org"))
+  (setq org-default-tips-file (concat org-directory "/tips.org"))
   ;; Configure the capture templates
   (setq org-capture-templates
 	(quote (("t" "todo" entry (file+headline org-default-notes-file "Tasks")
-		 "* TODO %?\n%U\n%a\n")
+		 "* TODO %?\n%T\n%a\n")
+		("f" "tips" entry (file+headline org-default-tips-file "Tips")
+		 "* %?\n%^G\n\U\n%a\n")
 		("n" "note" entry (file+headline org-default-notes-file "Notes")
 		 "* %? :NOTE:\n%U\n%a\n")
 		("j" "Journal" entry (file+datetree org-default-notes-file)
 		 "* %?\nEntered on %U\n  %i\n  %a")
 		)))
+  ;; Task states and related configuration
+  (setq org-todo-keywords
+	(quote ((sequence "TODO(t)" "NEXT(n)" "|" "DONE(d!/!)")
+		(sequence "WAITING(w@/!)"))))
+  (setq org-use-fast-todo-selection t)
+  (setq org-treat-S-cursor-todo-selection-as-state-change nil)
+  (setq org-todo-state-tags-triggers
+	(quote (("WAITING" ("WAITING" . t))
+		(done ("WAITING"))
+		("TODO" ("WAITING"))
+		("NEXT" ("WAITING"))
+		("DONE" ("WAITING")))))
+  ;; Tags
+  (setq org-tag-alist (quote ((:startgroup)
+			      ("@flume" . ?f)
+			      ("@bigquery" . ?b)
+			      ("@config" . ?C)
+			      ("@life" . ?l)
+			      (:endgroup)
+			      ("googs" . ?g)
+			      ("bq-cli" . ?c)
+			      ("python" . ?p)
+			      ("statsy" . ?s)
+			      ("emacs" . ?e)
+			      ("bash" . ?b)
+			      ("tmux" . ?t)
+			      )))
+
+  ;; Allow setting single tags without the menu
+  (setq org-fast-tag-selection-single-key (quote expert))
+  
+  ;; For tag searches ignore tasks with scheduled and deadline dates
+  (setq org-agenda-tags-todo-honor-ignore-options t)
+  
   )
 
 ;;---------------
@@ -648,7 +685,7 @@ after-make-frame-functions."
 ;; quickly sort
 (global-set-key "\C-cs" 'sort-lines)
 ;; align a whole region (usually after copy-paste)
-(global-set-key "\C-cg" 'indent-region)
+(global-set-key "\C-ca" 'indent-region)
 
 ;; Transpose!!
 (global-set-key "\C-ct" 'transpose-chars)
@@ -806,22 +843,3 @@ after-make-frame-functions."
 ;; NO OTHER CODE BELOW THIS COMMAND
 ;;-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
 (run-hooks 'after-make-frame-functions)
-
-;;======================================================
-;; TODO
-;;======================================================
-;;
-;; here's something I'd like to do: make splitting of windows
-;; automatic. for instance, there's no need to manually choose between
-;; splitting horizontally and vertically: i can figure out which one i
-;; want by just looking at (window-tree). then i can have a single
-;; binding for "make a new window in an intelligent way."
-;;
-;; along the same lines, it'd be great to have a keystroke to switch
-;; the two "most reasonable" windows, or forcibly switch the two
-;; columns in C-x 3 view.
-;;
-;; yet another: a better binding to restore a window when something
-;; like *Apropos* pops up. Probably winner-mode could do this for me,
-;; it's just a question of training my brain.
-;;
