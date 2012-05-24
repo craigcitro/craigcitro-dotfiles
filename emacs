@@ -270,15 +270,13 @@
 
 (defun in-terminal (&optional frame)
   "Determine whether or not we seem to be in a terminal."
-  (not (display-multi-frame-p (or frame
-                                  (selected-frame)))))
+  (not (display-multi-frame-p (or frame (selected-frame)))))
 
 (defun various-mac-setup (&optional frame)
   "Run a handful of Mac-specific configuration commands."
   (when (eq 'darwin system-type)
     ;; Is this necessary?
-    ;; (when frame
-    ;;   (select-frame frame))
+    (robust-select-frame frame)
     ;; This is documented in the manual, but not in the description of
     ;; this variable. Set this to nil for option as meta, and non-nil
     ;; for command as meta. Given that I always use cmd-key-happy on any
@@ -318,10 +316,19 @@ after-make-frame-functions."
 ;; org-agenda-files variable.
 (add-hook 'org-mode-hook
 	  '(lambda ()
-	     (org-defkey org-mode-map "\C-c["    'undefined)
-	     (org-defkey org-mode-map "\C-c]"    'undefined)
-	     (org-defkey org-mode-map "\C-c;"    'undefined))
+	     (org-defkey org-mode-map "\C-c[" 'undefined)
+	     (org-defkey org-mode-map "\C-c]" 'undefined)
+	     (org-defkey org-mode-map "\C-c;" 'undefined))
 	  'append)
+;; I want some single-chord shortcuts for movement; this seems
+;; like a good set, but we'll see.
+(add-hook 'org-mode-hook
+	  '(lambda ()
+	     (org-defkey org-mode-map "\M-\C-n" 'outline-next-visible-heading)
+	     (org-defkey org-mode-map "\M-\C-p" 'outline-previous-visible-heading)
+	     (org-defkey org-mode-map "\M-\C-f" 'org-forward-same-level)
+	     (org-defkey org-mode-map "\M-\C-b" 'org-backward-same-level)
+	     (org-defkey org-mode-map "\M-\C-u" 'outline-up-heading)))	  
 
 (when (require 'org-install nil t)
   (add-to-list 'auto-mode-alist '("\\.org$" . org-mode))
@@ -341,12 +348,16 @@ after-make-frame-functions."
   (setq org-agenda-files (list org-directory))
   (setq org-default-notes-file (concat org-directory "/refile.org"))
   (setq org-default-tips-file (concat org-directory "/tips.org"))
+  ;; More org-mode variable settings, in lieu of customize.
+  (setq org-startup-indented t)
+  (setq org-M-RET-may-split-line
+	'((default . nil) (table . t)))
   ;; Configure the capture templates
   (setq org-capture-templates
 	(quote (("t" "todo" entry (file+headline org-default-notes-file "Tasks")
 		 "* TODO %?\n%T\n%a\n")
-		("f" "tips" entry (file+headline org-default-tips-file "Tips")
-		 "* %?\n%^G\n\U\n%a\n")
+		("p" "tips" entry (file+headline org-default-tips-file "Tips")
+		 "* %?\n%^G\n%U\n%a\n")
 		("n" "note" entry (file+headline org-default-notes-file "Notes")
 		 "* %? :NOTE:\n%U\n%a\n")
 		("j" "Journal" entry (file+datetree org-default-notes-file)
@@ -373,16 +384,15 @@ after-make-frame-functions."
 			      (:endgroup)
 			      ("googs" . ?g)
 			      ("bq-cli" . ?c)
-			      ("python" . ?p)
+			      ("python" . ?P)
 			      ("statsy" . ?s)
-			      ("emacs" . ?e)
-			      ("bash" . ?b)
-			      ("tmux" . ?t)
+			      ("emacs" . ?E)
+			      ("bash" . ?B)
+			      ("tmux" . ?T)
+			      ("git" . ?G)
 			      )))
-
   ;; Allow setting single tags without the menu
   (setq org-fast-tag-selection-single-key (quote expert))
-  
   ;; For tag searches ignore tasks with scheduled and deadline dates
   (setq org-agenda-tags-todo-honor-ignore-options t)
   
