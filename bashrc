@@ -448,6 +448,8 @@ function export_git_info() {
     export CC_GIT_ROOT="$(git rev-parse --show-toplevel)"
     return
   fi
+  export CC_GIT_BRANCH=""
+  export CC_GIT_ROOT=""
 }
 export -f export_git_info
 
