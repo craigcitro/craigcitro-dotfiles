@@ -410,6 +410,12 @@ after-make-frame-functions."
          (auto-fill-mode 1)
          (abbrev-mode 1)))
 
+;;---------------
+;; text
+;;---------------
+(cc-add-to-load-path-if-exists "scratch-el")
+(require 'scratch nil t)
+
 ;;-------------------
 ;; ReST and Markdown
 ;;-------------------
