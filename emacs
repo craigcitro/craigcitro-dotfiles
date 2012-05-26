@@ -409,9 +409,10 @@ after-make-frame-functions."
          (setq fill-column 78)
          (auto-fill-mode 1)
          (abbrev-mode 1)))
+(add-to-list 'auto-mode-alist '("config$" . conf-unix-mode))
 
 ;;---------------
-;; text
+;; scratch
 ;;---------------
 (cc-add-to-load-path-if-exists "scratch-el")
 (require 'scratch nil t)
