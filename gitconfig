@@ -1,20 +1,18 @@
 [user]
-	name = Craig Citro
-	email = craigcitro@gmail.com
+        name = Craig Citro
+        email = craigcitro@gmail.com
 [alias]
-	stat = status
-	st = status
-	l = log -3
-	br = branch
-	ch = checkout
-	substatus = submodule foreach "git status; true"
+        stat = status
+        st = status
+        br = branch
+        ch = checkout
+        substatus = submodule foreach "git status; true"
+	l = "log -30 --abbrev-commit --relative-date --format='%Cred%h%Cgreen %aN%Cblue %ar %Creset %s'"
+	lg = "log -60 --graph --color=always --abbrev-commit --date=relative --format='%Cred%h%Cgreen %aN%Cblue %ar %Creset %s'"
 [color]
-	status = auto
-	branch = auto
-	interactive = auto
-	diff = auto
+        ui = true
 [core]
-	excludesfile = ~/.gitignore
+        excludesfile = ~/.gitignore
 [grep]
         lineNumber = true
-	
+        
