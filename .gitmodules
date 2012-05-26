@@ -22,3 +22,6 @@
 [submodule "emacs.d/lisp/deft-mode"]
 	path = emacs.d/lisp/deft-mode
 	url = https://github.com/emacsmirror/deft.git
+[submodule "emacs.d/lisp/scratch-el"]
+	path = emacs.d/lisp/scratch-el
+	url = git@github.com:craigcitro/scratch-el.git
