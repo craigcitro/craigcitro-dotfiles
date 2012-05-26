@@ -127,7 +127,11 @@ fi
 ###############################
 ## emacs-related
 
-if [ -d "/Applications/Emacs.app/" ]; then
+if [ -d "/Users/craigcitro/ext/Emacs.app" ]; then
+  pathprepend "/Users/craigcitro/ext/Emacs.app/Contents/MacOS/bin";
+  pathprepend "/Users/craigcitro/ext/Emacs.app/Contents/MacOS";
+  export PATH;
+elif [ -d "/Applications/Emacs.app/" ]; then
   # are there other paths I have to set up? 
   pathprepend "/Applications/Emacs.app/Contents/MacOS/bin";
   pathprepend "/Applications/Emacs.app/Contents/MacOS";
