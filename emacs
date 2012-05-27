@@ -153,9 +153,9 @@
 ;; split-height-threshold:
 (setq split-width-threshold nil)
 
-;; Wow, scroll-left and scroll-right are horrific. Unbind them.
-(global-unset-key "\C-x<")
-(global-unset-key "\C-x>")
+;; Wow, scroll-left and scroll-right are horrific. Disable them.
+(put 'scroll-left 'disabled t)
+(put 'scroll-left 'disabled t)
 
 ;;------------------------------------------------------------
 ;; Better buffer switching -- Nick Alexander showed me this.
