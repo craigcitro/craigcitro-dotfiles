@@ -354,6 +354,12 @@ after-make-frame-functions."
   (setq org-startup-indented t)
   (setq org-M-RET-may-split-line
 	'((default . nil) (table . t)))
+  (setq org-special-ctrl-a/e t)
+  (setq org-special-ctrl-k t)
+  (setq org-yank-adjusted-subtrees t)
+  (setq org-id-method 'uuidgen)
+  ;; Agenda-related config.
+  (setq org-agenda-ndays 4)
   ;; Configure the capture templates
   (setq org-capture-templates
 	(quote (("t" "todo" entry (file+headline org-default-notes-file "Tasks")
@@ -849,11 +855,7 @@ after-make-frame-functions."
 ;;----------------------------------------
 ;; new movement-related stuff
 ;;----------------------------------------
-;; (2011 Sep 05) I had some funny movement stuff here; it wasn't
-;; awesome.
-;;
-;; Read about some nice window movement stuff on
-;; Nathan's blog here:
+;; Read about some nice window movement stuff on Nathan's blog here:
 ;;  http://nex-3.com/posts/45-efficient-window-switching-in-emacs
 (setq windmove-wrap-around t)
 
