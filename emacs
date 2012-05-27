@@ -511,18 +511,32 @@ after-make-frame-functions."
 ;; (2010 Dec 02) Now that I rearranged my git repos, this name comes
 ;; up differently ...
 (add-to-list 'auto-mode-alist '("/emacs$" . emacs-lisp-mode))
-;; This is useful, but it would be nice to make it smarter: the C-e is
-;; hacky and inelegant. I'd love it to evaluate the sexp and advance
-;; iff there's no blank line below.
-(defun eval-sexp-and-advance (arg)
-  "Eval sexp ending at the end of this line and continue to the
-  next sexp. (This is basically a poor man's 'step' function in
-  emacs lisp.)"
-  (interactive "P")
-  (end-of-line)
-  (eval-last-sexp nil)
-  (unless arg
-    (forward-sexp)))
+;; A basic "step and execute" function -- am I reinventing this wheel?
+(defun eval-sexp-and-advance ()
+  "Eval the top-level containing sexp. If the next line after
+  this sexp is blank, do nothing. If next line is not blank, move
+  to the end of that sexp. This command can be repeated by
+  pressing the last key in the binding."
+  (interactive)
+  (lexical-let
+      ((step (lambda (&optional forward-first)
+	       (if forward-first
+		   (forward-line))
+	       (end-of-defun)
+	       (forward-line -1)
+	       (end-of-line)))
+       (continue t))
+    (funcall step)
+    (while continue
+      (lexical-let ((val (eval-last-sexp nil)))
+	(funcall step t)
+	(message "(Type e to execute next sexp) Last result: %s" val)
+	(unless (equal (event-basic-type ?e) (read-event))
+	  (setq continue nil))))
+    (when last-input-event
+      (clear-this-command-keys t)
+      (setq unread-command-events (list last-input-event))
+      )))
 (global-set-key "\C-c\C-e" 'eval-sexp-and-advance)
 
 ;; tab completion in the Eval: prompt!
@@ -553,15 +567,15 @@ after-make-frame-functions."
 ;; Jump into the late 90s for tag names ... there has to be a better
 ;; way to do this.
 (add-hook 'html-mode
-  (lambda ()
-    (assq-delete-all 'bold html-face-tag-alist)
-    (add-to-list 'html-face-tag-alist '(bold . "strong"))
-    (assq-delete-all 'italic html-face-tag-alist)
-    (add-to-list 'html-face-tag-alist '(italic . "em"))
-    (rassq-delete-all 'bold html-tag-face-alist)
-    (add-to-list 'html-tag-face-alist '("strong" . bold))
-    (rassq-delete-all 'italic html-tag-face-alist)
-    (add-to-list 'html-tag-face-alist '("em" . italic))))
+	  (lambda ()
+	    (assq-delete-all 'bold html-face-tag-alist)
+	    (add-to-list 'html-face-tag-alist '(bold . "strong"))
+	    (assq-delete-all 'italic html-face-tag-alist)
+	    (add-to-list 'html-face-tag-alist '(italic . "em"))
+	    (rassq-delete-all 'bold html-tag-face-alist)
+	    (add-to-list 'html-tag-face-alist '("strong" . bold))
+	    (rassq-delete-all 'italic html-tag-face-alist)
+	    (add-to-list 'html-tag-face-alist '("em" . italic))))
 ;; (2010 Sep 25) Does this even work? Investigate something smarter.
 
 ;;------------------------
