@@ -588,6 +588,14 @@ after-make-frame-functions."
 ;;------------------------
 ;; magit
 ;;------------------------
+;; change magit diff colors: stolen from
+;;   http://readystate4.com/2011/02/22/emacs-changing-magits-default-diff-colors/
+(eval-after-load 'magit
+  '(progn
+     (set-face-foreground 'magit-diff-add "green3")
+     (set-face-foreground 'magit-diff-del "red3")
+     (when (not window-system)
+       (set-face-background 'magit-item-highlight "black"))))
 (when (require 'magit nil t)
   (global-set-key "\C-c\C-g" 'magit-status))
 
