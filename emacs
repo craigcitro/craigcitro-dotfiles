@@ -3,6 +3,8 @@
 ;; and started modifying it a fair bit recently.
 ;;
 
+(message "Starting .emacs ...")
+
 ;;=======================================
 ;; Global Settings
 ;;=======================================
