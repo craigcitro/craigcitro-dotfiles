@@ -525,10 +525,12 @@ after-make-frame-functions."
 	       (end-of-defun)
 	       (forward-line -1)
 	       (end-of-line)))
-       (continue t))
+       (continue t)
+       (final-position (point)))
     (funcall step)
     (while continue
       (lexical-let ((val (eval-last-sexp nil)))
+	(setq final-position (point))
 	(funcall step t)
 	(message "(Type e to execute next sexp) Last result: %s" val)
 	(unless (equal (event-basic-type ?e) (read-event))
@@ -536,6 +538,7 @@ after-make-frame-functions."
     (when last-input-event
       (clear-this-command-keys t)
       (setq unread-command-events (list last-input-event))
+      (goto-char final-position)
       )))
 (global-set-key "\C-c\C-e" 'eval-sexp-and-advance)
 
