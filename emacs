@@ -520,19 +520,27 @@ after-make-frame-functions."
 ;; up differently ...
 (add-to-list 'auto-mode-alist '("/emacs$" . emacs-lisp-mode))
 ;; A basic "step and execute" function -- am I reinventing this wheel?
-(defun eval-sexp-and-advance ()
+(defun eval-sexp-and-advance (line-mode)
   "Eval the top-level containing sexp. If the next line after
   this sexp is blank, do nothing. If next line is not blank, move
   to the end of that sexp. This command can be repeated by
-  pressing the last key in the binding."
-  (interactive)
+  pressing the last key in the binding.
+
+  With any prefix arg, steps by sexps at the current level."
+  (interactive "P")
   (lexical-let
       ((step (lambda (&optional forward-first)
-	       (if forward-first
-		   (forward-line))
-	       (end-of-defun)
-	       (forward-line -1)
-	       (end-of-line)))
+	       (if line-mode
+		   (progn
+		     (if forward-first
+			 (forward-sexp)
+		       (end-of-line)))
+		 (progn
+		     (if forward-first
+			 (forward-line))
+		     (end-of-defun)
+		     (forward-line -1)
+		     (end-of-line)))))
        (continue t)
        (final-position (point)))
     (funcall step)
