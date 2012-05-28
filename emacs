@@ -85,10 +85,10 @@
 
 (defun cc-find-file-or-nil (path &optional prefix)
   (let ((dirs (list ""
-		    prefix
-		    (getenv "HOME")
+                    prefix
+                    (getenv "HOME")
                     (concat (getenv "HOME") "/.emacs.d/lisp")
-		    (concat (getenv "HOME") "/ext"))))
+                    (concat (getenv "HOME") "/ext"))))
     (cc-first-non-nil
      (mapcar (lambda (x)
                (let ((full-path (command-line-normalize-file-name (concat x "/" path))))
@@ -119,8 +119,8 @@
     (select-frame frame norecord)))
 (when (memq 'select-frame after-make-frame-functions)
   (setq after-make-frame-functions (cons 'robust-select-frame
-					 (remq 'select-frame
-					       after-make-frame-functions))))
+                                         (remq 'select-frame
+                                               after-make-frame-functions))))
 
 ;; Stole these from a wiki on Emacs 23 vs. 22 compatibility:
 ;; Make ^N work based on the document structure. The default setting
@@ -321,32 +321,32 @@ after-make-frame-functions."
   (end-of-buffer)
   (if (string= (org-get-todo-state) "TODO")
       (progn
-	(org-insert-todo-subheading nil)
-	(org-shiftright)
-	(insert " "))
+        (org-insert-todo-subheading nil)
+        (org-shiftright)
+        (insert " "))
     (org-insert-todo-heading nil)))
 
 ;; Undefine C-c [ and C-c ], in favor of explicit management of the
 ;; org-agenda-files variable.
 (add-hook 'org-mode-hook
-	  '(lambda ()
-	     (org-defkey org-mode-map "\C-c[" 'undefined)
-	     (org-defkey org-mode-map "\C-c]" 'undefined)
-	     (org-defkey org-mode-map "\C-c;" 'undefined))
-	  'append)
+          '(lambda ()
+             (org-defkey org-mode-map "\C-c[" 'undefined)
+             (org-defkey org-mode-map "\C-c]" 'undefined)
+             (org-defkey org-mode-map "\C-c;" 'undefined))
+          'append)
 ;; I want some single-chord shortcuts for movement; this seems
 ;; like a good set, but we'll see.
 (add-hook 'org-mode-hook
-	  '(lambda ()
-	     (org-defkey org-mode-map "\M-\C-n" 'outline-next-visible-heading)
-	     (org-defkey org-mode-map "\M-\C-p" 'outline-previous-visible-heading)
-	     (org-defkey org-mode-map "\M-\C-f" 'org-forward-same-level)
-	     (org-defkey org-mode-map "\M-\C-b" 'org-backward-same-level)
-	     (org-defkey org-mode-map "\M-\C-u" 'outline-up-heading)))
+          '(lambda ()
+             (org-defkey org-mode-map "\M-\C-n" 'outline-next-visible-heading)
+             (org-defkey org-mode-map "\M-\C-p" 'outline-previous-visible-heading)
+             (org-defkey org-mode-map "\M-\C-f" 'org-forward-same-level)
+             (org-defkey org-mode-map "\M-\C-b" 'org-backward-same-level)
+             (org-defkey org-mode-map "\M-\C-u" 'outline-up-heading)))
 ;; More keys for my workflow.
 (add-hook 'org-mode-hook
-	  '(lambda ()
-	     (org-defkey org-mode-map "\M-\C-t" 'cc/org-insert-next-subheading)))
+          '(lambda ()
+             (org-defkey org-mode-map "\M-\C-t" 'cc/org-insert-next-subheading)))
 
 (when (require 'org-install nil t)
   (add-to-list 'auto-mode-alist '("\\.org$" . org-mode))
@@ -369,7 +369,7 @@ after-make-frame-functions."
   ;; More org-mode variable settings, in lieu of customize.
   (setq org-startup-indented t)
   (setq org-M-RET-may-split-line
-	'((default . nil) (table . t)))
+        '((default . nil) (table . t)))
   (setq org-special-ctrl-a/e t)
   (setq org-special-ctrl-k t)
   (setq org-yank-adjusted-subtrees t)
@@ -380,43 +380,43 @@ after-make-frame-functions."
   (setq org-agenda-ndays 4)
   ;; Configure the capture templates
   (setq org-capture-templates
-	(quote (("t" "todo" entry (file+headline org-default-notes-file "Tasks")
-		 "* TODO %?\n%T\n%a\n")
-		("p" "tips" entry (file+headline org-default-tips-file "Tips")
-		 "* %?\n%^G\n%U\n%a\n")
-		("n" "note" entry (file+headline org-default-notes-file "Notes")
-		 "* %? :NOTE:\n%U\n%a\n")
-		("j" "Journal" entry (file+datetree org-default-notes-file)
-		 "* %?\nEntered on %U\n  %i\n  %a")
-		)))
+        (quote (("t" "todo" entry (file+headline org-default-notes-file "Tasks")
+                 "* TODO %?\n%T\n%a\n")
+                ("p" "tips" entry (file+headline org-default-tips-file "Tips")
+                 "* %?\n%^G\n%U\n%a\n")
+                ("n" "note" entry (file+headline org-default-notes-file "Notes")
+                 "* %? :NOTE:\n%U\n%a\n")
+                ("j" "Journal" entry (file+datetree org-default-notes-file)
+                 "* %?\nEntered on %U\n  %i\n  %a")
+                )))
   ;; Task states and related configuration
   (setq org-todo-keywords
-	(quote ((sequence "TODO(t)" "NEXT(n)" "|" "DONE(d!/!)")
-		(sequence "WAITING(w@/!)"))))
+        (quote ((sequence "TODO(t)" "NEXT(n)" "|" "DONE(d!/!)")
+                (sequence "WAITING(w@/!)"))))
   (setq org-use-fast-todo-selection t)
   (setq org-treat-S-cursor-todo-selection-as-state-change nil)
   (setq org-todo-state-tags-triggers
-	(quote (("WAITING" ("WAITING" . t))
-		(done ("WAITING"))
-		("TODO" ("WAITING"))
-		("NEXT" ("WAITING"))
-		("DONE" ("WAITING")))))
+        (quote (("WAITING" ("WAITING" . t))
+                (done ("WAITING"))
+                ("TODO" ("WAITING"))
+                ("NEXT" ("WAITING"))
+                ("DONE" ("WAITING")))))
   ;; Tags
   (setq org-tag-alist (quote ((:startgroup)
-			      ("@flume" . ?f)
-			      ("@bigquery" . ?b)
-			      ("@config" . ?C)
-			      ("@life" . ?l)
-			      (:endgroup)
-			      ("googs" . ?g)
-			      ("bq-cli" . ?c)
-			      ("python" . ?P)
-			      ("statsy" . ?s)
-			      ("emacs" . ?E)
-			      ("bash" . ?B)
-			      ("tmux" . ?T)
-			      ("git" . ?G)
-			      )))
+                              ("@flume" . ?f)
+                              ("@bigquery" . ?b)
+                              ("@config" . ?C)
+                              ("@life" . ?l)
+                              (:endgroup)
+                              ("googs" . ?g)
+                              ("bq-cli" . ?c)
+                              ("python" . ?P)
+                              ("statsy" . ?s)
+                              ("emacs" . ?E)
+                              ("bash" . ?B)
+                              ("tmux" . ?T)
+                              ("git" . ?G)
+                              )))
   ;; Allow setting single tags without the menu
   (setq org-fast-tag-selection-single-key (quote expert))
   ;; For tag searches ignore tasks with scheduled and deadline dates
@@ -548,27 +548,27 @@ after-make-frame-functions."
   (interactive "P")
   (lexical-let
       ((step (lambda (&optional forward-first)
-	       (if line-mode
-		   (progn
-		     (if forward-first
-			 (forward-sexp)
-		       (end-of-line)))
-		 (progn
-		     (if forward-first
-			 (forward-line))
-		     (end-of-defun)
-		     (forward-line -1)
-		     (end-of-line)))))
+               (if line-mode
+                   (progn
+                     (if forward-first
+                         (forward-sexp)
+                       (end-of-line)))
+                 (progn
+                     (if forward-first
+                         (forward-line))
+                     (end-of-defun)
+                     (forward-line -1)
+                     (end-of-line)))))
        (continue t)
        (final-position (point)))
     (funcall step)
     (while continue
       (lexical-let ((val (eval-last-sexp nil)))
-	(setq final-position (point))
-	(funcall step t)
-	(message "(Type e to execute next sexp) Last result: %s" val)
-	(unless (equal (event-basic-type ?e) (read-event))
-	  (setq continue nil))))
+        (setq final-position (point))
+        (funcall step t)
+        (message "(Type e to execute next sexp) Last result: %s" val)
+        (unless (equal (event-basic-type ?e) (read-event))
+          (setq continue nil))))
     (when last-input-event
       (clear-this-command-keys t)
       (setq unread-command-events (list last-input-event))
@@ -604,15 +604,15 @@ after-make-frame-functions."
 ;; Jump into the late 90s for tag names ... there has to be a better
 ;; way to do this.
 (add-hook 'html-mode
-	  (lambda ()
-	    (assq-delete-all 'bold html-face-tag-alist)
-	    (add-to-list 'html-face-tag-alist '(bold . "strong"))
-	    (assq-delete-all 'italic html-face-tag-alist)
-	    (add-to-list 'html-face-tag-alist '(italic . "em"))
-	    (rassq-delete-all 'bold html-tag-face-alist)
-	    (add-to-list 'html-tag-face-alist '("strong" . bold))
-	    (rassq-delete-all 'italic html-tag-face-alist)
-	    (add-to-list 'html-tag-face-alist '("em" . italic))))
+          (lambda ()
+            (assq-delete-all 'bold html-face-tag-alist)
+            (add-to-list 'html-face-tag-alist '(bold . "strong"))
+            (assq-delete-all 'italic html-face-tag-alist)
+            (add-to-list 'html-face-tag-alist '(italic . "em"))
+            (rassq-delete-all 'bold html-tag-face-alist)
+            (add-to-list 'html-tag-face-alist '("strong" . bold))
+            (rassq-delete-all 'italic html-tag-face-alist)
+            (add-to-list 'html-tag-face-alist '("em" . italic))))
 ;; (2010 Sep 25) Does this even work? Investigate something smarter.
 
 ;;------------------------
@@ -731,9 +731,9 @@ after-make-frame-functions."
   (if (null key)
       alist
     (if (and (null val)
-	     (listp key))
-	(update-alist (update-alist alist (caar key) (cdar key))
-		      (cdr key))
+             (listp key))
+        (update-alist (update-alist alist (caar key) (cdar key))
+                      (cdr key))
       (cons (cons key val) (assq-delete-all key alist)))))
 
 ;;==============================================================================
