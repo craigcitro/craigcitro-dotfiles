@@ -247,6 +247,14 @@
 (add-hook 'iswitchb-make-buflist-hook 'cc-filter-buffers)
 
 ;;------------------------------------------------------------
+;; ido-based file switching
+;;------------------------------------------------------------
+;; I'm using ido for org-mode completion, so I'm also going to
+;; try it out for finding files.
+(ido-mode 'files)
+(setq ido-max-directory-size 100000)
+
+;;------------------------------------------------------------
 ;; Buffer naming
 ;;------------------------------------------------------------
 ;; I'm pretty happy with uniquify and forward naming -- see details
@@ -311,7 +319,7 @@ after-make-frame-functions."
 ;;------------------
 ;; org-mode
 ;;------------------
-;; This initial configuration is heavily "inspired" by:
+;; This initial configuration draws heavily from:
 ;;   http://doc.norang.ca/org-mode.html
 
 (defun cc/org-insert-next-subheading ()
@@ -389,6 +397,13 @@ after-make-frame-functions."
                 ("j" "Journal" entry (file+datetree org-default-notes-file)
                  "* %?\nEntered on %U\n  %i\n  %a")
                 )))
+  ;; ido-based refile completion
+  (setq org-refile-targets '((nil :maxlevel . 9)
+			     (org-agenda-files :maxlevel . 9)))
+  (setq org-refile-use-outline-path t)
+  (setq org-outline-path-complete-in-steps nil)
+  (setq org-refile-allow-creating-parent-nodes 'confirm)
+  (setq org-completion-use-ido t)
   ;; Task states and related configuration
   (setq org-todo-keywords
         (quote ((sequence "TODO(t)" "NEXT(n)" "|" "DONE(d!/!)")
@@ -421,7 +436,8 @@ after-make-frame-functions."
   (setq org-fast-tag-selection-single-key (quote expert))
   ;; For tag searches ignore tasks with scheduled and deadline dates
   (setq org-agenda-tags-todo-honor-ignore-options t)
-  
+  ;; Auto-save org buffers every 30 min
+  (run-at-time "00:07" 1800 'org-save-all-org-buffers)
   )
 
 ;;---------------
