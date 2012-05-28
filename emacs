@@ -314,6 +314,18 @@ after-make-frame-functions."
 ;; This initial configuration is heavily "inspired" by:
 ;;   http://doc.norang.ca/org-mode.html
 
+(defun cc/org-insert-next-subheading ()
+  "Insert a subheading just as org-insert-todo-subheading,
+  but in state NEXT."
+  (interactive)
+  (end-of-buffer)
+  (if (string= (org-get-todo-state) "TODO")
+      (progn
+	(org-insert-todo-subheading nil)
+	(org-shiftright)
+	(insert " "))
+    (org-insert-todo-heading nil)))
+
 ;; Undefine C-c [ and C-c ], in favor of explicit management of the
 ;; org-agenda-files variable.
 (add-hook 'org-mode-hook
@@ -330,7 +342,11 @@ after-make-frame-functions."
 	     (org-defkey org-mode-map "\M-\C-p" 'outline-previous-visible-heading)
 	     (org-defkey org-mode-map "\M-\C-f" 'org-forward-same-level)
 	     (org-defkey org-mode-map "\M-\C-b" 'org-backward-same-level)
-	     (org-defkey org-mode-map "\M-\C-u" 'outline-up-heading)))	  
+	     (org-defkey org-mode-map "\M-\C-u" 'outline-up-heading)))
+;; More keys for my workflow.
+(add-hook 'org-mode-hook
+	  '(lambda ()
+	     (org-defkey org-mode-map "\M-\C-t" 'cc/org-insert-next-subheading)))
 
 (when (require 'org-install nil t)
   (add-to-list 'auto-mode-alist '("\\.org$" . org-mode))
@@ -358,6 +374,8 @@ after-make-frame-functions."
   (setq org-special-ctrl-k t)
   (setq org-yank-adjusted-subtrees t)
   (setq org-id-method 'uuidgen)
+  (setq org-cycle-separator-lines 2)
+  (setq org-blank-before-new-entry '((heading) (plain-list-item)))
   ;; Agenda-related config.
   (setq org-agenda-ndays 4)
   ;; Configure the capture templates
