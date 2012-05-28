@@ -389,6 +389,9 @@ after-make-frame-functions."
   ;; Configure the capture templates
   (setq org-capture-templates
         (quote (("t" "todo" entry (file+headline org-default-notes-file "Tasks")
+                 "* TODO %?\n%T\n")
+		("c" "todo with context" entry
+		 (file+headline org-default-notes-file "Tasks")
                  "* TODO %?\n%T\n%a\n")
                 ("p" "tips" entry (file+headline org-default-tips-file "Tips")
                  "* %?\n%^G\n%U\n%a\n")
@@ -425,10 +428,8 @@ after-make-frame-functions."
                               (:endgroup)
                               ("googs" . ?g)
                               ("bq-cli" . ?c)
-                              ("python" . ?P)
                               ("statsy" . ?s)
                               ("emacs" . ?E)
-                              ("bash" . ?B)
                               ("tmux" . ?T)
                               ("git" . ?G)
                               )))
