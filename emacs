@@ -97,7 +97,7 @@
 (defun cc-add-to-load-path-if-exists (path &optional prefix)
   "Add a path to load-path if it exists."
   (let ((full-path (cc-find-file-or-nil path prefix)))
-    (when (file-exists-p full-path)
+    (when (and full-path (file-exists-p full-path))
       (add-to-list 'load-path full-path))))
 
 ;; Set up local path for lisp files
