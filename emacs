@@ -437,6 +437,7 @@ after-make-frame-functions."
 			      ("Rstats" . ?R)
 			      ("julia" . ?J)
 			      ("python" . ?P)
+			      ("org" . ?O)
                               )))
   ;; Auto-save org buffers every 30 min
   (run-at-time "00:07" 1800 'org-save-all-org-buffers)
@@ -897,8 +898,6 @@ after-make-frame-functions."
 ;; M-x customize
 ;;======================================================
 (custom-set-variables
- ;; org-mode
- '(org-startup-indented t)
  ;; js2-mode
  ;; All the cool kids use 2.
  '(js2-basic-offset 2)
