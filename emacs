@@ -355,6 +355,80 @@ after-make-frame-functions."
 (add-hook 'org-mode-hook
           '(lambda ()
              (org-defkey org-mode-map "\M-\C-t" 'cc/org-insert-next-subheading)))
+;; More org-mode variable settings, in lieu of customize.
+(eval-after-load 'org
+  '(progn
+     ;; General config
+     (setq org-startup-indented t)
+     (setq org-M-RET-may-split-line
+	   '((default . nil) (table . t)))
+     (setq org-special-ctrl-a/e t)
+     (setq org-special-ctrl-k t)
+     (setq org-yank-adjusted-subtrees t)
+     (setq org-id-method 'uuidgen)
+     (setq org-cycle-separator-lines 2)
+     (setq org-blank-before-new-entry '((heading) (plain-list-item)))
+     ;; Where the org files live
+     (setq org-directory "~/w/org")
+     (setq org-agenda-files (list org-directory))
+     (setq org-default-notes-file (concat org-directory "/refile.org"))
+     (setq org-default-tips-file (concat org-directory "/tips.org"))
+     ;; Agenda-related config.
+     (setq org-agenda-ndays 4)
+     ;; Configure the capture templates
+     (setq org-capture-templates
+	   (quote (("t" "todo" entry (file+headline org-default-notes-file "Tasks")
+		    "* TODO %?\n%T\n")
+		   ("c" "todo with context" entry
+		    (file+headline org-default-notes-file "Tasks")
+		    "* TODO %?\n%T\n%a\n")
+		   ("p" "tips" entry (file+headline org-default-tips-file "Tips")
+		    "* %?\n%^G\n%U\n%a\n")
+		   ("n" "note" entry (file+headline org-default-notes-file "Notes")
+		    "* %? :NOTE:\n%U\n%a\n")
+		   ("j" "Journal" entry (file+datetree org-default-notes-file)
+		    "* %?\nEntered on %U\n  %i\n  %a")
+		   )))
+     ;; ido-based refile completion
+     (setq org-refile-targets '((nil :maxlevel . 9)
+				(org-agenda-files :maxlevel . 9)))
+     (setq org-refile-use-outline-path t)
+     (setq org-outline-path-complete-in-steps nil)
+     (setq org-refile-allow-creating-parent-nodes 'confirm)
+     (setq org-completion-use-ido t)
+     ;; Task states and related configuration
+     (setq org-todo-keywords
+	   (quote ((sequence "TODO(t)" "NEXT(n)" "|" "DONE(d!/!)")
+		   (sequence "WAITING(w@/!)"))))
+     (setq org-use-fast-todo-selection t)
+     (setq org-treat-S-cursor-todo-selection-as-state-change nil)
+     (setq org-todo-state-tags-triggers
+	   (quote (("WAITING" ("WAITING" . t))
+		   (done ("WAITING"))
+		   ("TODO" ("WAITING"))
+		   ("NEXT" ("WAITING"))
+		   ("DONE" ("WAITING")))))
+     ;; Tags
+     (setq org-fast-tag-selection-single-key nil)
+     ;; I tend to use this as a complete list of common tags.
+     (setq org-tag-alist (quote ((:startgroup)
+				 ("@flume" . ?f)
+				 ("@bigquery" . ?b)
+				 ("@config" . ?C)
+				 ("@life" . ?l)
+				 (:endgroup)
+				 ("googs" . ?g)
+				 ("bq-cli" . ?c)
+				 ("statsy" . ?s)
+				 ("emacs" . ?E)
+				 ("tmux" . ?T)
+				 ("git" . ?G)
+				 ("Rstats" . ?R)
+				 ("julia" . ?J)
+				 ("python" . ?P)
+				 ("org" . ?O)
+				 )))
+     ))
 
 (when (require 'org-install nil t)
   (add-to-list 'auto-mode-alist '("\\.org$" . org-mode))
@@ -369,76 +443,6 @@ after-make-frame-functions."
   (global-set-key "\M-\C-a" 'org-agenda)
   (global-set-key "\M-\C-b" 'org-iswitchb)
   (global-set-key "\M-\C-r" 'org-capture)
-  ;; Where the org files live
-  (setq org-directory "~/w/org")
-  (setq org-agenda-files (list org-directory))
-  (setq org-default-notes-file (concat org-directory "/refile.org"))
-  (setq org-default-tips-file (concat org-directory "/tips.org"))
-  ;; More org-mode variable settings, in lieu of customize.
-  (setq org-startup-indented t)
-  (setq org-M-RET-may-split-line
-        '((default . nil) (table . t)))
-  (setq org-special-ctrl-a/e t)
-  (setq org-special-ctrl-k t)
-  (setq org-yank-adjusted-subtrees t)
-  (setq org-id-method 'uuidgen)
-  (setq org-cycle-separator-lines 2)
-  (setq org-blank-before-new-entry '((heading) (plain-list-item)))
-  ;; Agenda-related config.
-  (setq org-agenda-ndays 4)
-  ;; Configure the capture templates
-  (setq org-capture-templates
-        (quote (("t" "todo" entry (file+headline org-default-notes-file "Tasks")
-                 "* TODO %?\n%T\n")
-		("c" "todo with context" entry
-		 (file+headline org-default-notes-file "Tasks")
-                 "* TODO %?\n%T\n%a\n")
-                ("p" "tips" entry (file+headline org-default-tips-file "Tips")
-                 "* %?\n%^G\n%U\n%a\n")
-                ("n" "note" entry (file+headline org-default-notes-file "Notes")
-                 "* %? :NOTE:\n%U\n%a\n")
-                ("j" "Journal" entry (file+datetree org-default-notes-file)
-                 "* %?\nEntered on %U\n  %i\n  %a")
-                )))
-  ;; ido-based refile completion
-  (setq org-refile-targets '((nil :maxlevel . 9)
-			     (org-agenda-files :maxlevel . 9)))
-  (setq org-refile-use-outline-path t)
-  (setq org-outline-path-complete-in-steps nil)
-  (setq org-refile-allow-creating-parent-nodes 'confirm)
-  (setq org-completion-use-ido t)
-  ;; Task states and related configuration
-  (setq org-todo-keywords
-        (quote ((sequence "TODO(t)" "NEXT(n)" "|" "DONE(d!/!)")
-                (sequence "WAITING(w@/!)"))))
-  (setq org-use-fast-todo-selection t)
-  (setq org-treat-S-cursor-todo-selection-as-state-change nil)
-  (setq org-todo-state-tags-triggers
-        (quote (("WAITING" ("WAITING" . t))
-                (done ("WAITING"))
-                ("TODO" ("WAITING"))
-                ("NEXT" ("WAITING"))
-                ("DONE" ("WAITING")))))
-  ;; Tags
-  (setq org-fast-tag-selection-single-key nil)
-  ;; I tend to use this as a complete list of common tags.
-  (setq org-tag-alist (quote ((:startgroup)
-                              ("@flume" . ?f)
-                              ("@bigquery" . ?b)
-                              ("@config" . ?C)
-                              ("@life" . ?l)
-                              (:endgroup)
-                              ("googs" . ?g)
-                              ("bq-cli" . ?c)
-                              ("statsy" . ?s)
-                              ("emacs" . ?E)
-                              ("tmux" . ?T)
-                              ("git" . ?G)
-			      ("Rstats" . ?R)
-			      ("julia" . ?J)
-			      ("python" . ?P)
-			      ("org" . ?O)
-                              )))
   ;; Auto-save org buffers every 30 min
   (run-at-time "00:07" 1800 'org-save-all-org-buffers)
   )
