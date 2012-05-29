@@ -420,6 +420,8 @@ after-make-frame-functions."
                 ("NEXT" ("WAITING"))
                 ("DONE" ("WAITING")))))
   ;; Tags
+  (setq org-fast-tag-selection-single-key nil)
+  ;; I tend to use this as a complete list of common tags.
   (setq org-tag-alist (quote ((:startgroup)
                               ("@flume" . ?f)
                               ("@bigquery" . ?b)
@@ -432,11 +434,10 @@ after-make-frame-functions."
                               ("emacs" . ?E)
                               ("tmux" . ?T)
                               ("git" . ?G)
+			      ("Rstats" . ?R)
+			      ("julia" . ?J)
+			      ("python" . ?P)
                               )))
-  ;; Allow setting single tags without the menu
-  (setq org-fast-tag-selection-single-key (quote expert))
-  ;; For tag searches ignore tasks with scheduled and deadline dates
-  (setq org-agenda-tags-todo-honor-ignore-options t)
   ;; Auto-save org buffers every 30 min
   (run-at-time "00:07" 1800 'org-save-all-org-buffers)
   )
