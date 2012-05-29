@@ -66,8 +66,7 @@
 (fset 'yes-or-no-p 'y-or-n-p)
 
 ;; start the server if it's not already up
-(defconst default-server-name "craigcitro"
-  "Default server name to use when not in tmux.")
+(defconst default-server-name "craigcitro" "Default server name.")
 (require 'server)
 (let ((cc-server-name (or (getenv "EMACS_SERVERNAME") default-server-name)))
   (unless (server-running-p cc-server-name)
