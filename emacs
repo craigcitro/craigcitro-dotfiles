@@ -475,16 +475,6 @@ after-make-frame-functions."
   (add-to-list 'auto-mode-alist '("\\.markdown$" . markdown-mode)))
 
 ;;------------------
-;; deft-mode
-;;------------------
-(cc-add-to-load-path-if-exists "deft-mode")
-(when (require 'deft nil t)
-  (setq deft-extension "md")
-  (setq deft-directory "~/w/deft")
-  (setq deft-text-mode 'markdown-mode)
-  (setq deft-use-filename-as-title t))
-
-;;------------------
 ;; Makefiles
 ;;------------------
 (add-to-list 'auto-mode-alist '("^Makefile$" . makefile-bsdmake-mode))
