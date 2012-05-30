@@ -108,7 +108,7 @@ ulimit -c unlimited
 ## ls configuration 
 
 if [ "$SYSTEM" == "Darwin" ]; then
-## darwin/bsd ls formatting
+  ## darwin/bsd ls formatting
   export LSCOLORS="Dxfxcxdxexegedabagacad"
   export BLOCKSIZE=1024
   alias l='ls -sFG' ## bsd ls
