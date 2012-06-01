@@ -411,8 +411,8 @@ after-make-frame-functions."
      (setq org-fast-tag-selection-single-key nil)
      ;; I tend to use this as a complete list of common tags.
      (setq org-tag-alist (quote ((:startgroup)
-				 ("@flume" . ?f)
-				 ("@bigquery" . ?b)
+				 ("@bigscience" . ?b)
+				 ("@bigquery" . ?q)
 				 ("@config" . ?C)
 				 ("@life" . ?l)
 				 (:endgroup)
