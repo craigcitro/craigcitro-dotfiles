@@ -1,6 +1,6 @@
 [submodule "emacs.d/lisp/haskell-mode"]
 	path = emacs.d/lisp/haskell-mode
-	url = https://github.com/craigcitro/haskell-mode.git
+	url = https://github.com/haskell/haskell-mode.git
 [submodule "emacs.d/lisp/rcirc"]
 	path = emacs.d/lisp/rcirc
 	url = https://github.com/nealey/rcirc.git
