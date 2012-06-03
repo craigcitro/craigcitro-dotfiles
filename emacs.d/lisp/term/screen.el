@@ -357,12 +357,11 @@
 
 (defun terminal-init-screen ()
   "Terminal initialization function for screen."
-  ;; Use the xterm color initialization code.
-  (message "running this code")
-
+  ;; Add the appropriate keymap.
   (let ((map (copy-keymap screen-function-map)))
     (set-keymap-parent map (keymap-parent input-decode-map))
     (set-keymap-parent input-decode-map map))
+  ;; Use the xterm color initialization code.
   (xterm-register-default-colors)
   (tty-set-up-initial-frame-faces))
 
