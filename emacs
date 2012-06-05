@@ -321,6 +321,13 @@ after-make-frame-functions."
 ;; This initial configuration draws heavily from:
 ;;   http://doc.norang.ca/org-mode.html
 
+(defun cc/org-set-todo-state (target-state)
+  (interactive)
+  (if (not (member target-state org-todo-keywords-for-agenda))
+      (message "Unknown TODO state: %s" target-state)
+    (while (not (string= (org-get-todo-state) target-state))
+      (org-shiftright))))
+
 (defun cc/org-insert-next-subheading ()
   "Insert a subheading just as org-insert-todo-subheading,
   but in state NEXT."
@@ -329,7 +336,7 @@ after-make-frame-functions."
   (if (string= (org-get-todo-state) "TODO")
       (progn
         (org-insert-todo-subheading nil)
-        (org-shiftright)
+        (cc/org-set-todo-state "NEXT")
         (insert " "))
     (org-insert-todo-heading nil)))
 
@@ -397,8 +404,8 @@ after-make-frame-functions."
      (setq org-completion-use-ido t)
      ;; Task states and related configuration
      (setq org-todo-keywords
-	   (quote ((sequence "TODO(t)" "NEXT(n)" "|" "DONE(d!/!)")
-		   (sequence "WAITING(w@/!)"))))
+	   '((sequence "TODO(t)" "|" "DONE(d!/!)")
+	     (sequence "NEXT(n)" "WAITING(w@/!)")))
      (setq org-use-fast-todo-selection t)
      (setq org-treat-S-cursor-todo-selection-as-state-change nil)
      (setq org-todo-state-tags-triggers
