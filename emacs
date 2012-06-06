@@ -381,6 +381,10 @@ after-make-frame-functions."
      (setq org-default-tips-file (concat org-directory "/tips.org"))
      ;; Agenda-related config.
      (setq org-agenda-ndays 4)
+     ;; mobile org
+     (setq org-mobile-directory "~/w/mobile-org")
+     (setq org-mobile-force-id-on-agenda-items nil)
+     (setq org-mobile-inbox-for-pull (concat org-directory "/mobile-inbox.org"))
      ;; Configure the capture templates
      (setq org-capture-templates
 	   (quote (("t" "todo" entry (file+headline org-default-notes-file "Tasks")
