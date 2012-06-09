@@ -204,35 +204,35 @@ del warnings
 #####################################
 ## utility functions
 #####################################
+# Common subsets of dir(x)
+def _is_private(attribute_name):
+  """Return True if attribute_name is a private attribute."""
+  return attribute_name.startswith('_')
 
-# I like dividing up `dir(x)` without having to add in filters by
-# hand. These are four common choices, which I abbreviate because
-# they're so much more useful that way.
+def _is_callable(obj, attribute_name):
+  """Return True if attribute_name is a callable attribute of obj."""
+  return callable(getattr(obj, attribute_name, None))
+
 def dpub(o):
   """Return a sorted list of all public members of an object."""
-  return sorted(filter(lambda x: not x.startswith('_'),
-    dir(o)))
+  return sorted(filter(lambda x: not _is_private(x), dir(o)))
 
 def dpri(o):
   """Return a sorted list of all private members of an object."""
-  return sorted(filter(lambda x: x.startswith('_'),
-    dir(o)))
+  return sorted(filter(_is_private, dir(o)))
 
 def ddata(o):
   """Return a sorted list of all non-callable members of an object."""
-  return sorted(filter(lambda x: not hasattr(getattr(o, x), '__call__'),
-    dir(o)))
+  return sorted(filter(lambda x: not _is_callable(x), dir(o)))
 
 def dmeth(o):
   """Return a sorted list of all callable members of an object."""
-  return sorted(filter(lambda x: hasattr(getattr(o, x), '__call__'),
-    dir(o)))
+  return sorted(filter(_is_callable, dir(o)))
 
 # One or two useful combinations of those
 def dpmeth(o):
   """Return a sorted list of all public callable members of an object."""
-  return sorted(filter(lambda x: hasattr(getattr(o, x), '__call__') and not x.startswith('_'),
-    dir(o)))
+  return sorted(filter(lambda x: _is_private(x) and _is_callable(x), dir(o)))
 
 import pprint
 pp = pprint.pprint
