@@ -44,6 +44,8 @@
 (setq sentence-end-double-space nil)
 ;; I think I'm a grown-up.
 (setq disabled-command-function nil)
+;; This is so much nicer than Fundamental.
+(setq-default major-mode 'paragraph-indent-text-mode)
 
 ;; I fiddled with this for a while, but this seems to be the right
 ;; setting for my Mac. If this isn't good in X on Ubuntu, I should
@@ -272,6 +274,25 @@
 ;; (2011 Jun 27) I have no idea why this isn't already set:
 (defun byte-compile-dest-file (filename)
   (concat filename "c"))
+
+
+;; I originally used the python.el hooks for this, but there's
+;; no reason not to just use my own.
+(defun cc/indent-region-rigidly (count start end)
+  "Indent the region rigidly by count, using indent-code-rigidly."
+  (indent-code-rigidly start end count))
+(defun cc/shift-left (&optional start end moves)
+  (interactive "r\np")
+  (lexical-let ((count (* -2 (if (null moves) 1 moves))))
+    (cc/indent-region-rigidly count start end)))
+(defun cc/shift-right (&optional start end moves)
+  (interactive "r\np")
+  (lexical-let ((count (* 2 (if (null moves) 1 moves))))
+    (cc/indent-region-rigidly count start end)))
+(global-set-key "\C-c<" 'cc/shift-left)
+(global-set-key "\C-c>" 'cc/shift-right)
+(define-key python-mode-map "\C-c<" 'cc/shift-left)
+(define-key python-mode-map "\C-c>" 'cc/shift-right)
 
 ;;===========================================
 ;; Context-dependent config
@@ -663,22 +684,6 @@ after-make-frame-functions."
 ;;     (local-set-key (kbd "RET") 'newline-and-indent))
 ;;   (add-hook 'lisp-mode-hook 'set-newline-and-indent)
 ;;   (add-hook 'html-mode-hook 'set-newline-and-indent)
-
-;; Better indenting! I think that in the long-term I'll probably end
-;; up copying/evolving these functions, but for now, why not just use
-;; the Python macros ...  In particular, I think I'll end up wanting
-;; to switch indent-rigidly for indent-code-rigidly.
-;; (require 'python)
-;; (global-set-key "\C-c<" 'python-shift-left)
-;; (global-set-key "\C-c>" 'python-shift-right)
-;; (2012 May 05) Switch to the ones from python-mode ...
-(global-set-key "\C-c<" 'py-shift-left)
-(global-set-key "\C-c>" 'py-shift-right)
-
-;; It probably makes sense to have a default major mode other than
-;; Fundamental (which seems to be unexciting); I'm torn between
-;; text-mode and markdown-mode.
-(setq-default major-mode 'paragraph-indent-text-mode)
 
 ;;==============================================================================
 ;; Utility functions
