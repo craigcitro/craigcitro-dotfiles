@@ -101,15 +101,14 @@ else:
 
 # save python command history between sessions
 import atexit, os
-historyPath = os.path.expanduser("~/.pyhistory")
+# TODO(craigcitro): Make the history_path appropriate on Windows.
+history_path = os.path.expanduser("~/.pyhistory")
 
 class _readline_history_iterator(object):
   def __init__(self):
-    self._gnu_readline = _detect_gnu_readline()
-    if self._gnu_readline:
+    self._ind = 0
+    if not _detect_gnu_readline():
       self._ind = 1
-    else:
-      self._ind = 0
 
   def __getitem__(self, ind):
     import readline
@@ -139,44 +138,47 @@ class _readline_history_iterator(object):
     self._ind += 1
     return line
 
-def save_history(historyPath=historyPath):
+def save_history(history_path=history_path):
   # OSX libedit seems to screw up writing the file, dropping \040
   # instead of ' '. (this is just the octal encoding of that
   # character, but who knows why it ends up in the file.) we work
   # around this in the most naive way possible: if we're using
   # libedit, we just write out the history ourselves.
-  import readline
   import codecs
+  import itertools
+  import readline
   if _detect_gnu_readline():
-    readline.write_history_file(historyPath)
-  else:
-    try:
-      f = open(historyPath, 'w')
-    except IOError:
-      print "Couldn't write history to %s. Exiting without saving history." % (historyPath,)
-      return
-    # We work around an oddity in readline.get_history_item
-    # indexing in the presence of libedit by just manually putting
-    # this line in the file.
-    for next_line in _readline_history_iterator():
-      f.write(codecs.raw_unicode_escape_encode(next_line)[0])
-      f.write('\n')
+    readline.write_history_file(history_path)
+    return
+  
+  try:
+    f = open(history_path, 'w')
+  except IOError:
+    print "Couldn't write history to %s. Exiting without saving history." % (
+      history_path,)
+    return
+  # We work around an oddity in readline.get_history_item
+  # indexing in the presence of libedit by just manually putting
+  # this line in the file.
+  f.writelines(itertools.imap(
+    lambda line: codecs.raw_unicode_escape_encode(line)[0] + '\n',
+    _readline_history_iterator()))
 
 atexit.register(save_history)
 
 # load the command history for this session
 try:
-  if os.path.exists(historyPath):
+  if os.path.exists(history_path):
     if os.environ.has_key('PY_DEBUG_PYTHONRC'):
-      print "Reading history from %s ..." % (historyPath,)
+      print "Reading history from %s ..." % (history_path,)
     if _detect_gnu_readline():
-      readline.read_history_file(historyPath)
+      readline.read_history_file(history_path)
     else:
       try:
-        f = open(historyPath, 'r')
+        f = open(history_path, 'r')
         # throw away the _HiStOrY_V2_ entry
         f.readline()
-        for line in open(historyPath, 'r'):
+        for line in open(history_path, 'r'):
           readline.add_history(codecs.raw_unicode_escape_decode(line[:-1])[0])
       finally:
         f.close()
@@ -186,19 +188,14 @@ except Exception, e:
     print "Raised exception of type %s" % (type(e),)
     print "  Message: %s" % (e.message,)
 
-del os, atexit, save_history, historyPath
+del os, atexit, save_history, history_path
 del _naive_detect_gnu_readline
 del readline, codecs
 
 #####################################
 ## warnings
 #####################################
-
-# I actually like warnings, in particular because I'd like to know
-# when things are deprecated. If nothing else, I'm going to try
-# turning this on and wait until it annoys me before I turn it back
-# off.
-
+# Turn on warnings
 import warnings
 warnings.resetwarnings()
 warnings.filterwarnings('always')
