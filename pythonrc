@@ -77,17 +77,18 @@ def _detect_gnu_readline():
   import commands
   import platform
   import readline
+  # TODO(craigcitro): Handle the case of Windows/pyreadline.
   if platform.system() != 'Darwin':
     return True
   else:
     otool_command = 'otool -L %s | grep libreadline' % (readline.__file__,)
     dynamic_deps = commands.getoutput(otool_command)
-  if dynamic_deps:
-    return True
+    if dynamic_deps:
+      return True
     nm_command = 'nm -U %s | grep rl_complete' % (readline.__file__,)
     static_deps = commands.getoutput(nm_command)
-  if static_deps:
-    return True
+    if static_deps:
+      return True
   return False
 
 if _detect_gnu_readline():
