@@ -558,6 +558,9 @@ after-make-frame-functions."
 (add-hook 'python-mode-hook 'cc/better-py-shifting)
 (when (require 'python-mode nil t)
   (cc/change-py-indentation))
+;; Some other python-files-by-another-name.
+(add-to-list 'auto-mode-alist '("/\\.?pythonrc$" . python-mode))
+(add-to-list 'auto-mode-alist '("/\\.?pdbrc$" . python-mode))
 ;; (require 'pyrex "pyrex-mode")
 ;; (load (concat (getenv "HOME") "/.emacs.d/lisp/cython-mode.el"))
 ;; (load (concat (getenv "HOME") "/.emacs.d/lisp/python-mode.el"))
