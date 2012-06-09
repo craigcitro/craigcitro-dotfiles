@@ -291,8 +291,6 @@
     (cc/indent-region-rigidly count start end)))
 (global-set-key "\C-c<" 'cc/shift-left)
 (global-set-key "\C-c>" 'cc/shift-right)
-(define-key python-mode-map "\C-c<" 'cc/shift-left)
-(define-key python-mode-map "\C-c>" 'cc/shift-right)
 
 ;;===========================================
 ;; Context-dependent config
@@ -553,6 +551,10 @@ after-make-frame-functions."
   (setq py-indent-offset 2)
   (setq python-indent 2))
 (add-hook 'python-mode-hook 'cc/change-py-indentation)
+(defun cc/better-py-shifting ()
+  (define-key python-mode-map "\C-c<" 'cc/shift-left)
+  (define-key python-mode-map "\C-c>" 'cc/shift-right))
+(add-hook 'python-mode-hook 'cc/better-py-shifting)
 (when (require 'python-mode nil t)
   (cc/change-py-indentation))
 ;; (require 'pyrex "pyrex-mode")
