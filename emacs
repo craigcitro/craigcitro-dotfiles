@@ -89,7 +89,8 @@
                     prefix
                     (getenv "HOME")
                     (concat (getenv "HOME") "/.emacs.d/lisp")
-                    (concat (getenv "HOME") "/ext"))))
+                    (concat (getenv "HOME") "/ext")
+		    (concat (getenv "HOME") "/ext/share/emacs/site-lisp"))))
     (cc-first-non-nil
      (mapcar (lambda (x)
                (let ((full-path (command-line-normalize-file-name (concat x "/" path))))
@@ -517,7 +518,7 @@ after-make-frame-functions."
 ;; Haskell
 ;;------------------
 ;; Generic bit
-(let ((haskell-site-file (cc-find-file-or-nil "haskell-mode/haskell-site-file")))
+(let ((haskell-site-file (cc-find-file-or-nil "haskell-mode/haskell-site-file.el")))
   (when haskell-site-file
     (load haskell-site-file)
     (add-to-list 'auto-mode-alist '("\\.hs$" . haskell-mode))
