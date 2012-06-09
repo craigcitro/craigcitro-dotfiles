@@ -62,128 +62,128 @@ import codecs
 # what we see.
 
 def _naive_detect_gnu_readline(method='path'):
-    """Try to determine whether or not we have GNU readline.
+  """Try to determine whether or not we have GNU readline.
 
-    None of these works very well."""
-    if method == 'path':
-        return readline.__file__.startswith('/System/Library/Frameworks/Python.framework/')
-    elif method == 'index_bug':
-        return readline.get_history_item(0) is None
-    elif method == 'docstring':
-        return not ('GNU' in readline.__doc__)
+  None of these works very well."""
+  if method == 'path':
+    return readline.__file__.startswith('/System/Library/Frameworks/Python.framework/')
+  elif method == 'index_bug':
+    return readline.get_history_item(0) is None
+  elif method == 'docstring':
+    return not ('GNU' in readline.__doc__)
 
 def _detect_gnu_readline():
-    """Returns True iff we're using GNU readline."""
-    import commands
-    import platform
-    import readline
-    if platform.system() != 'Darwin':
-        return True
-    else:
-        otool_command = 'otool -L %s | grep libreadline' % (readline.__file__,)
-        dynamic_deps = commands.getoutput(otool_command)
-	if dynamic_deps:
-	    return True
-        nm_command = 'nm -U %s | grep rl_complete' % (readline.__file__,)
-        static_deps = commands.getoutput(nm_command)
-	if static_deps:
-	    return True
-	return False
+  """Returns True iff we're using GNU readline."""
+  import commands
+  import platform
+  import readline
+  if platform.system() != 'Darwin':
+    return True
+  else:
+    otool_command = 'otool -L %s | grep libreadline' % (readline.__file__,)
+    dynamic_deps = commands.getoutput(otool_command)
+  if dynamic_deps:
+    return True
+    nm_command = 'nm -U %s | grep rl_complete' % (readline.__file__,)
+    static_deps = commands.getoutput(nm_command)
+  if static_deps:
+    return True
+  return False
 
 if _detect_gnu_readline():
-    # We have GNU readline
-    readline.parse_and_bind('tab: complete')
+  # We have GNU readline
+  readline.parse_and_bind('tab: complete')
 else:
-    # OSX readline-over-libedit
-    print "Detected non-GNU readline."
-    readline.parse_and_bind('bind ^I rl_complete')
+  # OSX readline-over-libedit
+  print "Detected non-GNU readline."
+  readline.parse_and_bind('bind ^I rl_complete')
 
 # save python command history between sessions
 import atexit, os
 historyPath = os.path.expanduser("~/.pyhistory")
 
 class _readline_history_iterator(object):
-    def __init__(self):
-        self._gnu_readline = _detect_gnu_readline()
-        if self._gnu_readline:
-            self._ind = 1
-        else:
-            self._ind = 0
+  def __init__(self):
+    self._gnu_readline = _detect_gnu_readline()
+    if self._gnu_readline:
+      self._ind = 1
+    else:
+      self._ind = 0
 
-    def __getitem__(self, ind):
-        import readline
-        return readline.get_history_item(ind)
+  def __getitem__(self, ind):
+    import readline
+    return readline.get_history_item(ind)
 
-    def append(self, val):
-        import readline
-        if not isinstance(val, str):
-            raise ValueError, "cannot set history line to non-str value %s" % (val,)
-        if '\n' in val:
-            raise ValueError, "history line must not contain newlines"
-        readline.add_history(val)
+  def append(self, val):
+    import readline
+    if not isinstance(val, str):
+      raise ValueError, "cannot set history line to non-str value %s" % (val,)
+    if '\n' in val:
+      raise ValueError, "history line must not contain newlines"
+    readline.add_history(val)
 
-    def __str__(self):
-        return "Iterator over the lines in the readline history."
+  def __str__(self):
+    return "Iterator over the lines in the readline history."
 
-    def __repr__(self):
-        return self.__str__()
+  def __repr__(self):
+    return self.__str__()
 
-    def __iter__(self):
-        return self
+  def __iter__(self):
+    return self
 
-    def next(self):
-        line = self[self._ind]
-        if line is None:
-            raise StopIteration
-        self._ind += 1
-        return line
+  def next(self):
+    line = self[self._ind]
+    if line is None:
+      raise StopIteration
+    self._ind += 1
+    return line
 
 def save_history(historyPath=historyPath):
-    # OSX libedit seems to screw up writing the file, dropping \040
-    # instead of ' '. (this is just the octal encoding of that
-    # character, but who knows why it ends up in the file.) we work
-    # around this in the most naive way possible: if we're using
-    # libedit, we just write out the history ourselves.
-    import readline
-    import codecs
-    if _detect_gnu_readline():
-        readline.write_history_file(historyPath)
-    else:
-        try:
-            f = open(historyPath, 'w')
-        except IOError:
-            print "Couldn't write history to %s. Exiting without saving history." % (historyPath,)
-            return
-        # We work around an oddity in readline.get_history_item
-        # indexing in the presence of libedit by just manually putting
-        # this line in the file.
-        for next_line in _readline_history_iterator():
-            f.write(codecs.raw_unicode_escape_encode(next_line)[0])
-            f.write('\n')
+  # OSX libedit seems to screw up writing the file, dropping \040
+  # instead of ' '. (this is just the octal encoding of that
+  # character, but who knows why it ends up in the file.) we work
+  # around this in the most naive way possible: if we're using
+  # libedit, we just write out the history ourselves.
+  import readline
+  import codecs
+  if _detect_gnu_readline():
+    readline.write_history_file(historyPath)
+  else:
+    try:
+      f = open(historyPath, 'w')
+    except IOError:
+      print "Couldn't write history to %s. Exiting without saving history." % (historyPath,)
+      return
+    # We work around an oddity in readline.get_history_item
+    # indexing in the presence of libedit by just manually putting
+    # this line in the file.
+    for next_line in _readline_history_iterator():
+      f.write(codecs.raw_unicode_escape_encode(next_line)[0])
+      f.write('\n')
 
 atexit.register(save_history)
 
 # load the command history for this session
 try:
-    if os.path.exists(historyPath):
-        if os.environ.has_key('PY_DEBUG_PYTHONRC'):
-            print "Reading history from %s ..." % (historyPath,)
-        if _detect_gnu_readline():
-            readline.read_history_file(historyPath)
-        else:
-            try:
-                f = open(historyPath, 'r')
-                # throw away the _HiStOrY_V2_ entry
-                f.readline()
-                for line in open(historyPath, 'r'):
-                    readline.add_history(codecs.raw_unicode_escape_decode(line[:-1])[0])
-            finally:
-                f.close()
-except Exception, e:
-    print "Failed to import history file!"
+  if os.path.exists(historyPath):
     if os.environ.has_key('PY_DEBUG_PYTHONRC'):
-        print "Raised exception of type %s" % (type(e),)
-        print "  Message: %s" % (e.message,)
+      print "Reading history from %s ..." % (historyPath,)
+    if _detect_gnu_readline():
+      readline.read_history_file(historyPath)
+    else:
+      try:
+        f = open(historyPath, 'r')
+        # throw away the _HiStOrY_V2_ entry
+        f.readline()
+        for line in open(historyPath, 'r'):
+          readline.add_history(codecs.raw_unicode_escape_decode(line[:-1])[0])
+      finally:
+        f.close()
+except Exception, e:
+  print "Failed to import history file!"
+  if os.environ.has_key('PY_DEBUG_PYTHONRC'):
+    print "Raised exception of type %s" % (type(e),)
+    print "  Message: %s" % (e.message,)
 
 del os, atexit, save_history, historyPath
 del _naive_detect_gnu_readline
@@ -211,30 +211,30 @@ del warnings
 # hand. These are four common choices, which I abbreviate because
 # they're so much more useful that way.
 def dpub(o):
-    """Return a sorted list of all public members of an object."""
-    return sorted(filter(lambda x: not x.startswith('_'),
-                         dir(o)))
+  """Return a sorted list of all public members of an object."""
+  return sorted(filter(lambda x: not x.startswith('_'),
+    dir(o)))
 
 def dpri(o):
-    """Return a sorted list of all private members of an object."""
-    return sorted(filter(lambda x: x.startswith('_'),
-                         dir(o)))
+  """Return a sorted list of all private members of an object."""
+  return sorted(filter(lambda x: x.startswith('_'),
+    dir(o)))
 
 def ddata(o):
-    """Return a sorted list of all non-callable members of an object."""
-    return sorted(filter(lambda x: not hasattr(getattr(o, x), '__call__'),
-                         dir(o)))
+  """Return a sorted list of all non-callable members of an object."""
+  return sorted(filter(lambda x: not hasattr(getattr(o, x), '__call__'),
+    dir(o)))
 
 def dmeth(o):
-    """Return a sorted list of all callable members of an object."""
-    return sorted(filter(lambda x: hasattr(getattr(o, x), '__call__'),
-                         dir(o)))
+  """Return a sorted list of all callable members of an object."""
+  return sorted(filter(lambda x: hasattr(getattr(o, x), '__call__'),
+    dir(o)))
 
 # One or two useful combinations of those
 def dpmeth(o):
-    """Return a sorted list of all public callable members of an object."""
-    return sorted(filter(lambda x: hasattr(getattr(o, x), '__call__') and not x.startswith('_'),
-                         dir(o)))
+  """Return a sorted list of all public callable members of an object."""
+  return sorted(filter(lambda x: hasattr(getattr(o, x), '__call__') and not x.startswith('_'),
+    dir(o)))
 
 import pprint
 pp = pprint.pprint
