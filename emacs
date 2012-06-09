@@ -606,42 +606,14 @@ after-make-frame-functions."
 
 ;; tab completion in the Eval: prompt!
 (define-key read-expression-map [(tab)] 'hippie-expand)
-;; This second binding takes care of console clients.
 (define-key read-expression-map [(control i)] 'hippie-expand)
-;; I really want this keybinding to be "previous completion" ...
-;;(define-key read-expression-map [(shift tab)] 'unexpand)
+(define-key read-expression-map [(backtab)] "\C-u\C-i")
 
 ;;------------------------
 ;; Shell scripts
 ;;------------------------
 (add-to-list 'auto-mode-alist '("bash[^/]*$" . shell-script-mode))
 (add-to-list 'auto-mode-alist '("rc$" . shell-script-mode))
-
-;;----------------------------------------
-;; Javascript and friends
-;;----------------------------------------
-(autoload 'js2-mode "js2-mode" nil t)
-(add-to-list 'auto-mode-alist '("\\.js$" . js2-mode))
-(add-to-list 'auto-mode-alist '("\\.json$" . js2-mode))
-;; More js2 customization in the custom blocks at the bottom.
-
-;;------------------------
-;; html
-;;------------------------
-
-;; Jump into the late 90s for tag names ... there has to be a better
-;; way to do this.
-(add-hook 'html-mode
-          (lambda ()
-            (assq-delete-all 'bold html-face-tag-alist)
-            (add-to-list 'html-face-tag-alist '(bold . "strong"))
-            (assq-delete-all 'italic html-face-tag-alist)
-            (add-to-list 'html-face-tag-alist '(italic . "em"))
-            (rassq-delete-all 'bold html-tag-face-alist)
-            (add-to-list 'html-tag-face-alist '("strong" . bold))
-            (rassq-delete-all 'italic html-tag-face-alist)
-            (add-to-list 'html-tag-face-alist '("em" . italic))))
-;; (2010 Sep 25) Does this even work? Investigate something smarter.
 
 ;;------------------------
 ;; ess-mode
@@ -706,7 +678,7 @@ after-make-frame-functions."
 ;; It probably makes sense to have a default major mode other than
 ;; Fundamental (which seems to be unexciting); I'm torn between
 ;; text-mode and markdown-mode.
-(setq major-mode 'paragraph-indent-text-mode)
+(setq-default major-mode 'paragraph-indent-text-mode)
 
 ;;==============================================================================
 ;; Utility functions
@@ -912,30 +884,6 @@ after-make-frame-functions."
 ;; Read about some nice window movement stuff on Nathan's blog here:
 ;;  http://nex-3.com/posts/45-efficient-window-switching-in-emacs
 (setq windmove-wrap-around t)
-
-;;======================================================
-;; M-x customize
-;;======================================================
-(custom-set-variables
- ;; js2-mode
- ;; All the cool kids use 2.
- '(js2-basic-offset 2)
- '(js2-cleanup-whitespace t)
- '(js2-enter-indents-newline t)
- '(js2-highlight-level 3)
- '(js2-indent-on-enter-key t)
- ;; js2-mode is smart enough to escape quotes when I insert
- ;; them in a string; in theory that's cool, but so far it's
- ;; been annoying more often than not.
- '(js2-mode-escape-quotes nil)
- ;; three cheers for spastic typing.
- '(js2-mode-indent-ignore-first-tab t))
-
-(custom-set-faces
- ;; js2
- ;; Underlines don't seem to work well in my emacs setup.
- '(js2-magic-paren-face ((t (:foreground "blue"))))
- '(js2-warning-face ((((class color) (background dark)) (:foreground "pink")))))
 
 ;;-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
 ;; NO OTHER CODE BELOW THIS COMMAND
