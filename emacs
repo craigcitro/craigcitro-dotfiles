@@ -541,33 +541,26 @@ after-make-frame-functions."
   (define-key haskell-mode-map "\C-c?" 'haskell-hoogle))
 
 ;;---------------------------
-;; Python, Cython
+;; Python
 ;;---------------------------
-;; TODO(craigcitro): Merge this and the other python mode.
-;; Currently, there are problems with this cython/python mode,
-;; so just ignore them.
-;; (add-to-list 'load-path (expand-file-name "/sage/data/emacs"))
 (cc-add-to-load-path-if-exists "src/python-mode")
-(defun cc/change-py-indentation ()
-  ;; (setq py-smart-indentation nil)
-  (setq py-indent-offset 2)
-  (setq python-indent 2))
-(add-hook 'python-mode-hook 'cc/change-py-indentation)
+(add-hook 'python-mode-hook
+	  '(lambda ()
+	     (defadvice py-indent-line (after ad-return-value)
+	       (when (< (current-column) ad-return-value)
+		 (move-to-column ad-return-value)))
+	     (ad-activate 'py-indent-line)))
 (defun cc/better-py-shifting ()
   (define-key python-mode-map "\C-c<" 'cc/shift-left)
   (define-key python-mode-map "\C-c>" 'cc/shift-right))
 (add-hook 'python-mode-hook 'cc/better-py-shifting)
-(when (require 'python-mode nil t)
-  (cc/change-py-indentation))
+;; I find the python startup time is irritating.
+(setq py-start-run-py-shell nil)
+(unless (require 'python-mode nil t)
+  (message "python-mode not found!"))
 ;; Some other python-files-by-another-name.
 (add-to-list 'auto-mode-alist '("\\.?pythonrc$" . python-mode))
 (add-to-list 'auto-mode-alist '("\\.?pdbrc$" . python-mode))
-;; (require 'pyrex "pyrex-mode")
-;; (load (concat (getenv "HOME") "/.emacs.d/lisp/cython-mode.el"))
-;; (load (concat (getenv "HOME") "/.emacs.d/lisp/python-mode.el"))
-;; (add-to-list 'auto-mode-alist '("^SConstruct$" . python-mode))
-;; (add-to-list 'auto-mode-alist '("\\.pxi$" . cython-mode))
-;; (add-to-list 'auto-mode-alist '("\\.pxd$" . cython-mode))
 
 ;; Unison
 (add-to-list 'auto-mode-alist '("\\.prf$" . python-mode))
