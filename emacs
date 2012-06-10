@@ -488,7 +488,8 @@ after-make-frame-functions."
          (setq fill-column 78)
          (auto-fill-mode 1)
          (abbrev-mode 1)))
-(add-to-list 'auto-mode-alist '("config$" . conf-unix-mode))
+;; add this at the end
+(add-to-list 'auto-mode-alist '("config$" . conf-unix-mode) t)
 
 ;;---------------
 ;; scratch
@@ -559,8 +560,8 @@ after-make-frame-functions."
 (when (require 'python-mode nil t)
   (cc/change-py-indentation))
 ;; Some other python-files-by-another-name.
-(add-to-list 'auto-mode-alist '("/\\.?pythonrc$" . python-mode))
-(add-to-list 'auto-mode-alist '("/\\.?pdbrc$" . python-mode))
+(add-to-list 'auto-mode-alist '("\\.?pythonrc$" . python-mode))
+(add-to-list 'auto-mode-alist '("\\.?pdbrc$" . python-mode))
 ;; (require 'pyrex "pyrex-mode")
 ;; (load (concat (getenv "HOME") "/.emacs.d/lisp/cython-mode.el"))
 ;; (load (concat (getenv "HOME") "/.emacs.d/lisp/python-mode.el"))
@@ -640,7 +641,8 @@ after-make-frame-functions."
 ;; Shell scripts
 ;;------------------------
 (add-to-list 'auto-mode-alist '("bash[^/]*$" . shell-script-mode))
-(add-to-list 'auto-mode-alist '("rc$" . shell-script-mode))
+;; add rc files as shell as a last resort
+(add-to-list 'auto-mode-alist '("rc$" . shell-script-mode) t)
 
 ;;------------------------
 ;; ess-mode
