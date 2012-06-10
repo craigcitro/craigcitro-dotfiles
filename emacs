@@ -549,7 +549,7 @@ after-make-frame-functions."
 ;; (add-to-list 'load-path (expand-file-name "/sage/data/emacs"))
 (cc-add-to-load-path-if-exists "src/python-mode")
 (defun cc/change-py-indentation ()
-  (setq py-smart-indentation nil)
+  ;; (setq py-smart-indentation nil)
   (setq py-indent-offset 2)
   (setq python-indent 2))
 (add-hook 'python-mode-hook 'cc/change-py-indentation)
