@@ -153,7 +153,7 @@ export EMACS_SERVERNAME='craigcitro'
 
 # We want everything to route through one central set of emacs
 # commands ...
-alias emacsdaemon='$(which emacs) --daemon'
+alias emacsdaemon='\emacs --daemon'
 alias emacs="emacsclient -c -s ${EMACS_SERVERNAME}"
 alias e='emacs'
 alias et='emacs -t'
@@ -161,7 +161,7 @@ alias et='emacs -t'
 export EDITOR="emacsclient -c -s ${EMACS_SERVERNAME} -t"
 export VISUAL="emacsclient -c -s ${EMACS_SERVERNAME} -t"
 export CVSEDITOR="emacsclient -c -s ${EMACS_SERVERNAME} -t"
-export GIT_EDITOR="$(which emacsclient) -c -s ${EMACS_SERVERNAME} -t"
+export GIT_EDITOR="\emacsclient -c -s ${EMACS_SERVERNAME} -t"
 # (2011 Sep 13) Here's the old version:
 # if [ "$(ps awx -U ${USER} | grep macs | grep daemon | grep ${EMACS_SERVERNAME})xxx" == "xxx" ]; then
 # Amusingly, it's actually a bit more robust: a server can crash and
