@@ -554,6 +554,19 @@ after-make-frame-functions."
   (define-key python-mode-map "\C-c<" 'cc/shift-left)
   (define-key python-mode-map "\C-c>" 'cc/shift-right))
 (add-hook 'python-mode-hook 'cc/better-py-shifting)
+;; I give up on python-mode "smart" indentation -- I like 2, and I can
+;; change it manually on the off chance I need it.
+(defun cc/py-guess-indent-offset (&rest ignored)
+  (interactive "P")
+  (message "Not so smart now, are you?"))
+(defun cc/change-py-indentation ()
+  (define-key python-mode-map "\C-c:" nil)
+  (fset 'cc/original-py-guess-indent-offset 'py-guess-indent-offset)
+  (fset 'py-guess-indent-offset 'cc/py-guess-indent-offset)
+  (setq py-smart-indentation nil)
+  (setq py-indent-offset 2)
+  (setq python-indent 2))
+(add-hook 'python-mode-hook 'cc/change-py-indentation)
 ;; I find the python startup time is irritating.
 (setq py-start-run-py-shell nil)
 (unless (require 'python-mode nil t)
