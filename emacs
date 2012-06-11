@@ -550,9 +550,10 @@ after-make-frame-functions."
 	       (when (< (current-column) ad-return-value)
 		 (move-to-column ad-return-value)))
 	     (ad-activate 'py-indent-line)))
-(defun cc/better-py-shifting ()
+(defun cc/python-mode-keys ()
   (define-key python-mode-map "\C-c<" 'cc/shift-left)
-  (define-key python-mode-map "\C-c>" 'cc/shift-right))
+  (define-key python-mode-map "\C-c>" 'cc/shift-right)
+  (define-key python-mode-map "\C-ca" 'py-indent-region))
 (add-hook 'python-mode-hook 'cc/better-py-shifting)
 ;; I give up on python-mode "smart" indentation -- I like 2, and I can
 ;; change it manually on the off chance I need it.
