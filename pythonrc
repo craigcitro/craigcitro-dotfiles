@@ -19,8 +19,36 @@ print "Reading .pythonrc ..."
 # potentially breaking something if we do want to import it at
 # runtime.
 import readline
-import rlcompleter as _rlcompleter
 import codecs
+
+_original_completer = readline.get_completer()
+import rlcompleter as _rlcompleter
+readline.set_completer(_original_completer)
+
+class _SmartCompleter(_rlcompleter.Completer):
+  def _callable_postfix(self, val, word):
+    import readline
+    if ('(' in readline.get_line_buffer() or
+        not callable(val)):
+      return word
+    else:
+      return word + '('
+
+  def complete(self, text, state):
+    import readline
+    if not readline.get_line_buffer().strip():
+      if not state:
+        return '\t'
+      else:
+        return None
+    return _rlcompleter.Completer.complete(self, text, state)
+
+readline.set_completer(_SmartCompleter().complete)
+
+def _global_matches():
+  import __main__
+  c = _rlcompleter.Completer(namespace=__main__.__dict__)
+  return c.global_matches('')
 
 # set tab to autocomplete, which is far superior to, uh, tab.
 # we need different versions based on what architecture we're on.
@@ -59,6 +87,8 @@ import codecs
 # a possibility I didn't consider above: what if readline was
 # *statically* linked, not dynamically. Duh ... so try `nm -u` to see
 # what we see.
+
+# TODO(craigcitro): Handle the _HiStOrY_V2_ nonsense.
 
 def _naive_detect_gnu_readline(method='path'):
   """Try to determine whether or not we have GNU readline.
@@ -105,7 +135,7 @@ history_path = os.path.expanduser("~/.pyhistory")
 
 class _readline_history_iterator(object):
   def __init__(self):
-    self._ind = 0
+    self._ind = 2
     if not _detect_gnu_readline():
       self._ind = 1
 
@@ -115,7 +145,7 @@ class _readline_history_iterator(object):
 
   def append(self, val):
     import readline
-    if not isinstance(val, str):
+    if not isinstance(val, basestring):
       raise ValueError, "cannot set history line to non-str value %s" % (val,)
     if '\n' in val:
       raise ValueError, "history line must not contain newlines"
@@ -149,45 +179,44 @@ def save_history(history_path=history_path):
   if _detect_gnu_readline():
     readline.write_history_file(history_path)
     return
-  
+
   try:
     f = open(history_path, 'w')
   except IOError:
     print "Couldn't write history to %s. Exiting without saving history." % (
       history_path,)
     return
-  # We work around an oddity in readline.get_history_item
-  # indexing in the presence of libedit by just manually putting
-  # this line in the file.
+  # This line is a turd left by libedit.
+  f.write('_HiStOrY_V2_\n')
   f.writelines(itertools.imap(
     lambda line: codecs.raw_unicode_escape_encode(line)[0] + '\n',
     _readline_history_iterator()))
 
+def load_history(history_path=history_path):
+  try:
+    if os.path.exists(history_path):
+      if os.environ.has_key('PY_DEBUG_PYTHONRC'):
+        print "Reading history from %s ..." % (history_path,)
+      if _detect_gnu_readline():
+        readline.read_history_file(history_path)
+      else:
+        with open(history_path) as f:
+          f.next()
+          for line in f:
+            cleaned_line = codecs.raw_unicode_escape_encode(line[:-1])[0]
+            readline.add_history(cleaned_line)
+  except Exception, e:
+    print "Failed to import history file!"
+    if os.environ.has_key('PY_DEBUG_PYTHONRC'):
+      print "Raised exception of type %s" % (type(e),)
+      print "  Message: %s" % (e.message,)
+
 atexit.register(save_history)
 
 # load the command history for this session
-try:
-  if os.path.exists(history_path):
-    if os.environ.has_key('PY_DEBUG_PYTHONRC'):
-      print "Reading history from %s ..." % (history_path,)
-    if _detect_gnu_readline():
-      readline.read_history_file(history_path)
-    else:
-      try:
-        f = open(history_path, 'r')
-        # throw away the _HiStOrY_V2_ entry
-        f.readline()
-        for line in open(history_path, 'r'):
-          readline.add_history(codecs.raw_unicode_escape_decode(line[:-1])[0])
-      finally:
-        f.close()
-except Exception, e:
-  print "Failed to import history file!"
-  if os.environ.has_key('PY_DEBUG_PYTHONRC'):
-    print "Raised exception of type %s" % (type(e),)
-    print "  Message: %s" % (e.message,)
+load_history()
 
-del os, atexit, save_history, history_path
+del os, atexit, save_history, load_history, history_path
 del _naive_detect_gnu_readline
 del readline, codecs
 
