@@ -9,45 +9,31 @@
 ;; Global Settings
 ;;=======================================
 
-;; ANSI colors FTW!
 (ansi-color-for-comint-mode-on)
-;; Turn on fonts and syntax highlighting *always*
 (global-font-lock-mode t)
 
-;; show matching parens
 (show-paren-mode t)
-;; Automatically wrap over-long lines
 (auto-fill-mode t)
-;; I like seeing the column in the display at the bottom:
 (column-number-mode t)
-;; Don't need the splash screen
 (setq inhibit-splash-screen t)
-;; narrow-to-region sounds annoying
-(put 'narrow-to-region 'disabled nil)
-;; Spaces are better than tabs.
 (setq indent-tabs-mode nil)
-;; Mask password in shell
 (add-hook 'comint-output-filter-functions 'comint-watch-for-password-prompt)
-;; Display the time
 (display-time-mode t)
-;; Infinity messages
 (setq message-log-max t)
-
-;; Consistently add newlines at end of file
 (setq require-final-newline t)
-
-;; Here's a whole chunk I stole from nweiz.
-;; Fewer annoying files laying around ...
 (setq make-backup-files nil)
 (setq completion-ignored-extensions '(".a" ".so" ".o" "~" ".bak" ".class"))
-;; Save hitting "y" all the time
 (setq vc-follow-symlinks t)
-;; This is just smart:
 (setq sentence-end-double-space nil)
-;; I think I'm a grown-up.
-(setq disabled-command-function nil)
-;; This is so much nicer than Fundamental.
 (setq-default major-mode 'paragraph-indent-text-mode)
+(fset 'yes-or-no-p 'y-or-n-p)
+
+(defun cc/disabled-command-message (&rest args)
+  "Show a simple message when a command has been disabled."
+  (interactive)
+  (message "Command %s has been disabled"
+	   (substring (this-command-keys) 0 -1)))
+(setq disabled-command-function 'cc/disabled-command-message)
 
 ;; I fiddled with this for a while, but this seems to be the right
 ;; setting for my Mac. If this isn't good in X on Ubuntu, I should
@@ -66,8 +52,6 @@
 
 ;; It's nice when copy-paste is sane
 (setq x-select-enable-clipboard t)
-;; This is just handy
-(fset 'yes-or-no-p 'y-or-n-p)
 
 ;; start the server if it's not already up
 (defconst default-server-name "craigcitro" "Default server name.")
@@ -161,7 +145,9 @@
 
 ;; Wow, scroll-left and scroll-right are horrific. Disable them.
 (put 'scroll-left 'disabled t)
-(put 'scroll-left 'disabled t)
+(put 'scroll-right 'disabled t)
+(global-unset-key "\C-x<")
+(global-unset-key "\C-x>")
 
 ;;------------------------------------------------------------
 ;; Better buffer switching -- Nick Alexander showed me this.
@@ -564,8 +550,7 @@ after-make-frame-functions."
   (message "Not so smart now, are you?"))
 (defun cc/change-py-indentation ()
   (define-key python-mode-map "\C-c:" nil)
-  (fset 'cc/original-py-guess-indent-offset 'py-guess-indent-offset)
-  (fset 'py-guess-indent-offset 'cc/py-guess-indent-offset)
+  (put 'py-guess-indent-offset 'disabled t)
   (setq py-smart-indentation nil)
   (setq py-indent-offset 2)
   (setq python-indent 2))
