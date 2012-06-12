@@ -1,28 +1,6 @@
 #!/bin/bash
 ##
 ## .bashrc
-## Craig Citro
-##
-## ==================================================
-## CHANGES:
-##
-## [2010.06.15] Wow, I never update these comments.
-## 
-## [2007.12.19] Removing all the fink-related stuff, because
-## I'm at least temporarily not using fink.
-##
-## [2006.02.08] Stole ryan's .bashrc, finally editing it. To
-## be fair, it was once mine. :)
-##
-## [2005.09.24] Tried to unify the code in my .bashrc_laptop 
-## and start switch my laptop over to this script.  
-## Still have some path problems.
-##
-## [2005.09.29] I like the append_path and prepend_path
-## functions defined in /sw/bin/init.sh.  They prevent duplicates.
-## I'm going to use them myself.
-##
-## ==================================================
 
 ##################
 ## Basics
@@ -35,11 +13,9 @@ else
   SYSTEM='unknown'
 fi
 
-# if [ -f /etc/bashrc ] ;  then (source /etc/bashrc); fi
-
 # Stolen from: 
 #   http://www.linuxfromscratch.org/blfs/view/svn/postlfs/profile.html
-# Functions to help us manage paths.  Second argument is the name of the
+# Functions to help us manage paths. Second argument is the name of the
 # path variable to be modified (default: PATH)
 pathremove () {
   local IFS=':'
@@ -70,8 +46,6 @@ pathappend () {
   fi
 }
 
-# BE VERY CAREFUL MUNGING YOUR PATH, YOUNG PADAWAN! Don't forget
-# the nsscache snafu from your first week at Google.
 if [ "$SYSTEM" == "Darwin" ]; then
   if [ "$LD_LIBRARY_PATH" = "" ]; then
     LD_LIBRARY_PATH="/usr/lib"
@@ -138,21 +112,9 @@ elif [ -d "/Applications/Emacs.app/" ]; then
   export PATH;
 fi
 
-# TMUX + Emacs
-# (2011 Jun 29) I've gotten slightly annoyed at having *one* emacs session; I'd like
-# to experiment with just a few, tied to my tmux sessions.
-# (2011 Sep 13) ... and a name for the non-tmux one.
-# (2011 Sep 25) Even better -- done with this "many servers" nonsense. Just record
-# the TMUX_SESSION for use in various places.
-if [ ${#TMUX} -gt 0 ]; then
-  export TMUX_SESSION="$(tmux display -p \#S)"
-else
-  export TMUX_SESSION='craigcitro'
-fi
-export EMACS_SERVERNAME='craigcitro'
-
 # We want everything to route through one central set of emacs
 # commands ...
+export EMACS_SERVERNAME='craigcitro'
 alias emacsdaemon='\emacs --daemon'
 alias emacs="emacsclient -c -s ${EMACS_SERVERNAME}"
 alias e='emacs'
@@ -193,10 +155,6 @@ fi
 
 ###############################
 ## other unix default stuff
-
-# color TERM types.
-# i'm still no expert on this stuff -- but honestly, is there really
-# a point in *not* using a color term type in this day and age?
 if [ "$TERM" = "xterm" ]; then
   export TERM=xterm-256color
 fi
@@ -204,10 +162,6 @@ if [ "$TERM" = "screen" ]; then
   export TERM=screen-256color
 fi
 
-# set up less. 
-#  - at some point, i included the '-e' option (which quits less
-#    when you hit EOF the *second* time). it annoyed me, but maybe
-#    i'll change my mind at some point?
 export PAGER='less -qFRX'
 alias less='less -qFRX'
 
@@ -218,11 +172,6 @@ pathappend '/Developer/usr/share/man' MANPATH;
 pathappend '/usr/share/man' MANPATH;
 pathappend '/usr/local/man' MANPATH;
 export MANPATH
-
-# Try and save myself from trouble
-alias rm="rm -i"
-alias cp="cp -i"
-alias mv="mv -i"
 
 #######################
 ## Play with shopt
@@ -239,8 +188,6 @@ shopt -s extglob
 shopt -s no_empty_cmd_completion
 # don't overwrite history
 shopt -s histappend
-# This would uniq the history ... which kinda sucks.
-#HISTCONTROL=ignoredups:ignorespace
 # really really large history
 HISTFILESIZE=100000000
 HISTSIZE=100000000
@@ -269,7 +216,6 @@ fi
 alias c=clear
 alias cut="cut -d' '"
 alias d=date
-# Why isn't this the default?
 alias df='df -h'
 alias g='grep -n --color=always -E'
 alias gg='grep --color=always -E'
@@ -279,29 +225,21 @@ alias ny=nyxmms2
 alias p=echo
 alias scp='scp -p'
 alias sigh='echo You let out a good, long sigh of relief.'
-# So I'm going to try using emacs as my only editor, just
-# for kicks. 
-# alias v=vim
-# alias vw=view
 alias v=et
 alias vw=et
-
-# (2011 Jul 16) I like using the dir stack -- but it's awfully
-# primitive.
+alias rm="rm -i"
+alias cp="cp -i"
+alias mv="mv -i"
 alias pd=pushd
 alias po=popd
 alias di='dirs -v'
 
-# It's better to just overwrite du, and then we can re-specify
-# --max-depth if needed.
 if [ "$SYSTEM" == "Darwin" ]; then
   alias du='du -h -d 1'
 else
   alias du='du -h --max-depth 1'
 fi
 
-# ps is in the same boat as du. I always use the same options, so just
-# make those the default.
 if [ "$SYSTEM" == "Darwin" ]; then
   # wide by default on OSX
   alias ps="ps -U $USER"
@@ -408,9 +346,9 @@ LIGHT_PURPLE_PROMPT_COLOR="\[\033[1;35m\]"
 #############################################################
 
 case $HOSTNAME in
-craigcitro-macbookpro.local)
+cc-mbp.local)
   BRACKET_COLOR="$PURPLE_PROMPT_COLOR"
-  PROMPT_TEXT="\h \$(prompt_pwd)"
+  PROMPT_TEXT="\$(prompt_pwd)"
   PROMPT_TEXT_COLOR="$RED_PROMPT_COLOR"
   PROMPT_DOLLAR_COLOR="$CYAN_PROMPT_COLOR"
   ;;
@@ -430,11 +368,10 @@ NORMAL_TEXT_COLOR="$LIGHT_GRAY_PROMPT_COLOR"
 ## Changes the prompt and saves history information somewhere other
 ## than just the HISTFILE; this whole section was "deeply inspired" by
 ## Ami's .bashrc, i.e. I stole it and modified it.
-
 export CC_SHELL_LOG="${HOME}/.shell.log"
 function gh() {
   grep -a "$@" $CC_SHELL_LOG | cut -d' ' -f9- | sed -e 's/^ *//' | cut -c-2000;
-} #
+}
 export -f gh
 
 function export_git_info() {
@@ -477,7 +414,7 @@ function abbrev_string () {
     local len=${#1}
     local width=${2:-35}
     if [ $len -gt $width ]; then
-      echo "..."${1:len-($width-3)}
+      echo "${1:0:7}...${1:len-($width-10)}"
     else
       echo "$1"
     fi
@@ -516,16 +453,6 @@ function exit_status() {
 export -f exit_status
 
 export PROMPT_COMMAND=""
-
-###################################################
-## Unused config
-###################################################
-
-# Michael Sheldon asked me this: how can you make ^D *not*
-# kill your shell, but still get passed through as EOF for
-# any other program? Here's the answer:
-# export IGNOREEOF=1
-# ... which apparently doesn't completely work.
 
 ####################################################
 # Google config
