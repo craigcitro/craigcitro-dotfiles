@@ -30,6 +30,8 @@
 (add-hook 'comint-output-filter-functions 'comint-watch-for-password-prompt)
 ;; Display the time
 (display-time-mode t)
+;; Infinity messages
+(setq message-log-max t)
 
 ;; Consistently add newlines at end of file
 (setq require-final-newline t)
