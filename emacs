@@ -27,6 +27,12 @@
 (setq sentence-end-double-space nil)
 (setq-default major-mode 'paragraph-indent-text-mode)
 (fset 'yes-or-no-p 'y-or-n-p)
+(setq x-select-enable-clipboard t)
+(setq transient-mark-mode nil)
+(setq windmove-wrap-around t)
+(setq line-move-visual nil)
+(setq tooltip-use-echo-area t)
+(setq split-width-threshold nil)
 
 (defun cc/disabled-command-message (&rest args)
   "Show a simple message when a command has been disabled."
@@ -35,23 +41,7 @@
 	   (substring (this-command-keys) 0 -1)))
 (setq disabled-command-function 'cc/disabled-command-message)
 
-;; I fiddled with this for a while, but this seems to be the right
-;; setting for my Mac. If this isn't good in X on Ubuntu, I should
-;; configure it based on that. Note that this can be annoying to get
-;; right when a server starts in a terminal, but the clients live in X
-;; (or vice-versa).
 (normal-erase-is-backspace-mode nil)
-;; this was my old code for handling it:
-;; emacs gets easily confused about what backspace should do when the
-;; server is running in a windowing system, but the client is in a
-;; terminal. this teaches it.
-;; (defun configure-backspace-behavior (&optional frame)
-;;   "Tell emacs how to handle backspace."
-;;   (normal-erase-is-backspace-mode (not (in-terminal))))
-;; (add-to-list 'after-make-frame-functions 'configure-backspace-behavior)
-
-;; It's nice when copy-paste is sane
-(setq x-select-enable-clipboard t)
 
 ;; start the server if it's not already up
 (defconst default-server-name "craigcitro" "Default server name.")
@@ -110,11 +100,6 @@
                                          (remq 'select-frame
                                                after-make-frame-functions))))
 
-;; Stole these from a wiki on Emacs 23 vs. 22 compatibility:
-;; Make ^N work based on the document structure. The default setting
-;; of 't' makes it change behavior based on how wide the Emacs window
-;; is.
-(setq line-move-visual nil)
 ;; It's annoying that this is only controlled by the global variable;
 ;; this is the best way around it I can find:
 (defun next-visual-line (&optional arg try-vscroll)
@@ -133,17 +118,7 @@
     (setq line-move-visual nil)))
 (global-set-key "\C-n" 'next-visual-line)
 (global-set-key "\C-p" 'previous-visual-line)
-;; Emacs 23 likes to pop up real X windows for tooltips, which is
-;; highly annoying on slow connections, especially using VNC or NX.
-;; This makes it use the echo-area like it used to.
-(setq tooltip-use-echo-area t)
-;; In some situations Emacs will try to guess whether to split
-;; horizontally or vertically. Put a stop to that by changing
-;; split-window-preferred-function, split-width-threshold, or
-;; split-height-threshold:
-(setq split-width-threshold nil)
 
-;; Wow, scroll-left and scroll-right are horrific. Disable them.
 (put 'scroll-left 'disabled t)
 (put 'scroll-right 'disabled t)
 (global-unset-key "\C-x<")
@@ -247,11 +222,8 @@
 ;;------------------------------------------------------------
 ;; Buffer naming
 ;;------------------------------------------------------------
-;; I'm pretty happy with uniquify and forward naming -- see details
-;; here:
-;;  http://www.gnu.org/software/emacs/manual/html_node/emacs/Uniquify.html
 (require 'uniquify)
-(setq uniquify-buffer-name-style 'forward)
+(setq uniquify-buffer-name-style 'post-forward)
 
 ;;======================================================
 ;; Extra config
@@ -264,9 +236,6 @@
 (defun byte-compile-dest-file (filename)
   (concat filename "c"))
 
-
-;; I originally used the python.el hooks for this, but there's
-;; no reason not to just use my own.
 (defun cc/indent-region-rigidly (count start end)
   "Indent the region rigidly by count, using indent-code-rigidly."
   (indent-code-rigidly start end count))
@@ -293,7 +262,7 @@
   "Run a handful of Mac-specific configuration commands."
   (when (eq 'darwin system-type)
     ;; Is this necessary?
-    (robust-select-frame frame)
+    ;; (robust-select-frame frame)
     ;; This is documented in the manual, but not in the description of
     ;; this variable. Set this to nil for option as meta, and non-nil
     ;; for command as meta. Given that I always use cmd-key-happy on any
@@ -555,16 +524,13 @@ after-make-frame-functions."
   (setq py-indent-offset 2)
   (setq python-indent 2))
 (add-hook 'python-mode-hook 'cc/change-py-indentation)
-;; I find the python startup time is irritating.
+;; I find the python startup time irritating.
 (setq py-start-run-py-shell nil)
 (unless (require 'python-mode nil t)
   (message "python-mode not found!"))
 ;; Some other python-files-by-another-name.
 (add-to-list 'auto-mode-alist '("\\.?pythonrc$" . python-mode))
 (add-to-list 'auto-mode-alist '("\\.?pdbrc$" . python-mode))
-
-;; Unison
-(add-to-list 'auto-mode-alist '("\\.prf$" . python-mode))
 
 ;; Nick Alexander and I wrote this at SD12
 (defun bs (name)
@@ -583,10 +549,7 @@ after-make-frame-functions."
 ;;------------------------
 ;; Emacs Lisp
 ;;------------------------
-(add-to-list 'auto-mode-alist '("\\.emacs$" . emacs-lisp-mode))
-;; (2010 Dec 02) Now that I rearranged my git repos, this name comes
-;; up differently ...
-(add-to-list 'auto-mode-alist '("/emacs$" . emacs-lisp-mode))
+(add-to-list 'auto-mode-alist '("[./]emacs$" . emacs-lisp-mode))
 ;; A basic "step and execute" function -- am I reinventing this wheel?
 (defun eval-sexp-and-advance (line-mode)
   "Eval the top-level containing sexp. If the next line after
@@ -673,20 +636,6 @@ after-make-frame-functions."
 (when (require 'magit nil t)
   (global-set-key "\C-c\C-g" 'magit-status))
 
-;;------------------------
-;; Other stuff
-;;------------------------
-
-;; Honestly, I really prefer newline-and-indent in general. I'm going
-;; to be brave and set it universally, as follows:
-(define-key global-map (kbd "RET") 'newline-and-indent)
-;; That may be too much; if so, something like this is a little more
-;; moderate:
-;;   (defun set-newline-and-indent ()
-;;     (local-set-key (kbd "RET") 'newline-and-indent))
-;;   (add-hook 'lisp-mode-hook 'set-newline-and-indent)
-;;   (add-hook 'html-mode-hook 'set-newline-and-indent)
-
 ;;==============================================================================
 ;; Utility functions
 ;;==============================================================================
@@ -724,12 +673,6 @@ after-make-frame-functions."
     (insert ?\n)))
 (global-set-key "\C-c\C-b" 'insert-bare-date)
 
-;; I often find myself wanting to *update* the values in an alist. I'm
-;; sure there's a good way to do this, but I didn't find it: so I'm
-;; going to write something that does it. I'm not doing anything
-;; clever with the implementation. Note that this simply returns an
-;; updated list; for most of my use-cases, I'll actually need to do
-;; `(setq alist (update-alist alist key val))` ...
 (defun update-alist (alist key &optional val)
   "Update alist to contain (key . val). If key is already a key
   in alist, we replace the existing entry. If val is nil and key
@@ -746,67 +689,48 @@ after-make-frame-functions."
 ;;==============================================================================
 ;; MISC KEY SETTINGS
 ;; ==============================================================================
-;; (2010 Sep 24) Did something break this? Why did I feel the need to re-bind?
-(global-unset-key [(control t)])
-(global-set-key [(control t)] 'fill-paragraph)
-
-;; This second binding is pretty good -- I should use it more.
-(global-set-key "\C-c\C-j" 'goto-line)
-(global-set-key "\M-\C-g" 'goto-line)
-
-(global-set-key "\C-c\C-z" 'shell)
-
-;; because I don't like "key not found" messages?
-(global-set-key "\C-x\C-g" 'keyboard-quit)
-
-;; This is just smart.
-(global-set-key "\M-s" 'isearch-forward-regexp)
-(global-set-key "\M-r" 'isearch-backward-regexp)
-
-;; it's nice to easily comment or uncomment a whole region
-(global-set-key "\C-c#" 'comment-or-uncomment-region)
-;; quickly sort
-(global-set-key "\C-cs" 'sort-lines)
-;; align a whole region (usually after copy-paste)
-(global-set-key "\C-ca" 'indent-region)
-
-;; Transpose!!
-(global-set-key "\C-ct" 'transpose-chars)
-(global-set-key "\C-c\C-t" 'transpose-words)
-
-;; this is still experimentation -- but I think I prefer that the
-;; default is copy, and you request cut. this will also match the
-;; keystrokes in tmux, making it easier on my fingers.
-;; (2010 Sep 24) Man, I totally prefer this.
+;; Overrides of defaults
+(global-set-key "\C-t" 'fill-paragraph)
 (global-set-key "\C-w" 'kill-ring-save)
 (global-set-key "\M-w" 'kill-region)
-
-;; \M-: is harder to type than \C-:
-(global-set-key [(control :)] 'eval-expression)
-
-;; \C-backspace seems just as good as \M-backspace ...
+(global-set-key "\C-xa" 'mark-whole-buffer)
+(global-set-key "\C-x3" 'split-window-vertically)
+(global-set-key "\C-x\C-c" 'delete-frame)
+(global-set-key "\C-x\C-y" 'save-buffers-kill-emacs)
+(global-set-key "\C-x\C-n" 'new-frame)
+;; Handy choices
+(global-set-key (kbd "RET") 'newline-and-indent)
+(global-set-key "\C-c\C-j" 'goto-line)
+(global-set-key "\C-c\C-z" 'shell)
+(global-set-key "\M-s" 'isearch-forward-regexp)
+(global-set-key "\M-r" 'isearch-backward-regexp)
+(global-set-key "\C-ct" 'transpose-chars)
+(global-set-key "\C-c\C-t" 'transpose-words)
 (global-set-key [C-backspace] 'backward-kill-word)
 (global-set-key [C-delete] 'backward-kill-word)
-
-;; \C-x\C-o and \C-xo should be the same.
+(global-set-key [(control :)] 'eval-expression)
+(global-set-key "\C-c#" 'comment-or-uncomment-region)
+(global-set-key "\C-cs" 'sort-lines)
+(global-set-key "\C-ca" 'indent-region)
+(global-set-key "\C-c!" 'toggle-read-only)
+;; Sloppy keys
+(global-set-key "\C-x\C-g" 'keyboard-quit)
 (global-unset-key [(control x) (control o)])
 (global-set-key "\C-x\C-o" 'other-window)
 
-;; I want for a better keystroke here:
-(global-set-key "\C-xa" 'mark-whole-buffer)
-
-;; The default binding only ever annoys me in my tmux world:
-(global-set-key "\C-x3" 'split-window-vertically)
-
-;; I miss vim's J command, and I always seem to mix up this and
-;; "join-above" (i.e. delete-indentation). I'm going to switch them to
-;; what I find most natural.
+;; vim-inspired
 (defun join-below ()
   """Join the next line to the current line."""
   (interactive)
   (delete-indentation t))
 (global-set-key "\M-^" 'join-below)
 (global-set-key "\C-^" 'delete-indentation)
+(defun up-one () (interactive) (scroll-up 1))
+(defun down-one () (interactive) (scroll-down 1))
+(global-set-key "\M-z" 'down-one)
+(global-set-key "\C-z" 'up-one)
+(global-set-key [C-S-up] 'down-one)
+(global-set-key [C-S-down] 'up-one)
 
 ;; get that mouse scroll going:
 (defun up-slightly () (interactive) (scroll-up 5))
@@ -814,8 +738,7 @@ after-make-frame-functions."
 (global-set-key [mouse-4] 'down-slightly)
 (global-set-key [mouse-5] 'up-slightly)
 
-;; It's silly to page up and page down when a page is a bajillion
-;; rows. Instead, make them half a page, capped at 40.
+;; Sane pageup/pagedown.
 (defvar largest-page-movement-size '40
   "Largest reasonable size for pageup/pagedown.")
 (defun up-one-bounded-page ()
@@ -833,64 +756,18 @@ after-make-frame-functions."
     (global-set-key "\C-v" 'up-one-bounded-page)
     (global-set-key [M-up] 'down-one-bounded-page)
     (global-set-key [M-down] 'up-one-bounded-page)))
-;; I don't know that I need to do this more often than at program
-;; start ...
 (adjust-pageup-pagedown)
-;; ... but that doesn't seem to hold, so let's just do it at
-;; frame creation time.
 (add-to-list 'after-make-frame-functions 'adjust-pageup-pagedown)
-
-;; M-up and M-down seem like good pageup/pagedown keys
 (global-set-key [M-up] 'down-one-bounded-page)
 (global-set-key [M-down] 'up-one-bounded-page)
 
-(defun up-one () (interactive) (scroll-up 1))
-(defun down-one () (interactive) (scroll-down 1))
-(global-set-key "\M-z" 'down-one)
-(global-set-key "\C-z" 'up-one)
-(global-set-key [C-S-up] 'down-one)
-(global-set-key [C-S-down] 'up-one)
-
-;; transient-mark-mode
-;; turned off by default, but easy to turn on
-(global-set-key "\C-xt" 'transient-mark-mode)
-(setq transient-mark-mode nil)
-
-;; (2011 Sep 05) Well this use of revert-buffer is a marked
-;; improvement. Thanks to:
+;; revert-buffer from:
 ;;  http://www.stokebloke.com/wordpress/2008/04/17/emacs-refresh-f5-key/
 (defun reload-buffer ()
   "Reload the current buffer with the current cursor position."
   (interactive)
   (revert-buffer t (not (buffer-modified-p)) t))
 (global-set-key "\C-c\C-r" 'reload-buffer)
-
-;; Maybe useful:
-(global-set-key "\C-c!" 'toggle-read-only)
-
-;; this is for programmable completion ... maybe one day I'll set that up?
-;; (pcomplete-autolist t)
-
-;;----------------------------------------
-;; frame-related
-;;----------------------------------------
-
-;;; switch kill frame and exit emacs keystrokes
-(global-set-key "\C-x\C-n" 'new-frame)
-(defun crazy-exit-stuff ()
-  (global-set-key "\C-x\C-c" 'delete-frame)
-  (global-set-key "\C-x\C-y" 'save-buffers-kill-emacs))
-(defun normal-exit-stuff ()
-  (global-set-key "\C-x\C-c" 'save-buffers-kill-emacs)
-  (global-set-key "\C-x\C-y" 'delete-frame))
-(crazy-exit-stuff)
-
-;;----------------------------------------
-;; new movement-related stuff
-;;----------------------------------------
-;; Read about some nice window movement stuff on Nathan's blog here:
-;;  http://nex-3.com/posts/45-efficient-window-switching-in-emacs
-(setq windmove-wrap-around t)
 
 ;;-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
 ;; NO OTHER CODE BELOW THIS COMMAND
