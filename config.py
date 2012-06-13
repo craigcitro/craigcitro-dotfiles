@@ -14,6 +14,7 @@ import sys
 HOMEDIR = os.path.expanduser('~')
 
 BASIC_LINKS = [
+  'Rprofile',
   'Xdefaults',
   'bash_profile',
   'bashrc',
@@ -29,6 +30,7 @@ BASIC_LINKS = [
   'pythonrc',
   'screenrc',
   'tmux.conf',
+  'vimrc',
   ]
 MAC_LINKS = [
   'cmd-key-happy.lua',
@@ -41,10 +43,8 @@ XWINDOWS_LINKS = [
   'xsettingsd',
   ]
 
-SCRIPTS = [
-  (['./create_vimrc.py']),
-  (['mv', '.vimrc', HOMEDIR]),
-  ]
+
+SCRIPTS = []
 
 
 def _SetupLinks(links_to_create):
