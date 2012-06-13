@@ -1,0 +1,103 @@
+#
+# .ratpoisonrc
+# config file for ratpoison
+#
+
+# I'm not sure I'm in love with this binding yet.
+#
+# (2010 Oct 25) Several weeks later, I'm fairly happy with it, but it
+# makes it hard to get to the address bar in a browser. Since that's
+# my only complaint so far, I think I'll stick with it.
+# escape C-l
+#
+# (2011 Mar 22) Trying something new after a few months ... the
+# address bar thing is my only complaint, but it's annoying. Maybe
+# use the keystroke everyone else uses for tmux?
+#
+# (2011 Nov 12) So I switched to C-q, hoping this would be a way to
+# stop me from accidentally quitting Chrome; turns out that getting
+# your fingers in the habit of always hitting C-q twice in a row isn't
+# a win. :)
+escape C-b
+# escape C-q
+
+# (2010 Oct 25) It's frustrating/embarassing to accidentally hit a
+# key and do something you don't know how to undo in your WM. I think
+# I'm going to start by unbinding everything, and add things back
+# as I want them.
+#
+# This is horribly inelegant ... don't look in this file. You'll vomit.
+source ~/.ratpoisonrc.ugly
+
+# Work-specific bindings.
+source ~/.ratpoisonrc.google
+
+# These get reset by the "blast everything" approach.
+bind b meta
+bind \C-b other
+bind w windows
+
+# We need to re-bind redisplay from t ...
+bind redisplay d
+
+# Ahh, emacs/tmux-like keystrokes.
+bind o nextscreen
+bind \C-o nextscreen
+
+# Various configuration
+set bgcolor blue
+set fgcolor white
+
+# browsers, emacs, etc?
+bind c exec chrome
+bind \C-c exec chrome
+bind e exec emacsclient -a '' -c
+bind \C-e exec emacsclient -a '' -c
+bind f exec firefox
+bind \C-f exec firefox
+bind t exec xterm
+bind \C-t exec xterm
+
+# More random bindings ...
+bind W curframe
+bind \C-g abort
+bind \C-r source ~/.ratpoisonrc
+
+# nyxmms2-related stuff: m for "music"
+bind m exec nyxmms2 toggle
+bind \C-m exec nyxmms2 toggle
+# Both of these are stolen from Ami, too -- I like them a lot.
+bind bracketleft exec ~/bin/rat-volume Master 5%-
+bind bracketright exec ~/bin/rat-volume Master 5%+
+bind \C-bracketleft exec ~/bin/rat-volume PCM 5%-
+bind \C-bracketright exec ~/bin/rat-volume PCM 5%+
+
+# Need a key to lock the screen
+bind BackSpace exec xscreensaver-command -lock
+
+# (2011 Apr 12) Playing with splitting windows in my new
+# configuration; need some keys to switch focus. Still not completely
+# sure.
+bind bar hsplit
+bind \C-Right focusright
+bind Right focusright
+bind \C-Left focusleft
+bind Left focusleft
+bind \C-Down focusright
+bind Down focusright
+bind \C-Up focusleft
+bind Up focusleft
+bind s only
+bind \M-Up resize 10 0
+bind \M-Down resize -10 0
+
+# Stolen from Ami -- hopefully start to make 
+# cut/paste more sane.
+exec autocutsel -fork -selection PRIMARY
+exec autocutsel -fork -selection CLIPBOARD 
+
+# (2011 Nov 07) IntelliJ likes to lose my cursor, but a quick
+# right-click-left-click seems to fix it. Add a script and bind to a
+# key.
+bind \C-j exec ~/bin/rat-kick-intellij
+
