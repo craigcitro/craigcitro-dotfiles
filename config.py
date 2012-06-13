@@ -36,8 +36,6 @@ MAC_LINKS = [
   'cmd-key-happy.lua',
   ]
 XWINDOWS_LINKS = [
-  'ratpoisonrc',
-  'ratpoisonrc.ugly',
   'xmodmaprc',
   'xsession',
   'xsettingsd',

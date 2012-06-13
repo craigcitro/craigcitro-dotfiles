@@ -29,13 +29,6 @@ export XAUTHORITY=~/.Xauthority
 /usr/bin/xsetroot -solid black
 
 # stolen
-#/usr/bin/gnome-settings-daemon &
-
-# stolen
-~/ext/xsettingsd/xsettingsd &
-
-# stolen
-# /usr/lib/gnome-volume-manager/gnome-volume-manager --sm-disable
 /usr/bin/xmodmap ~/.xmodmaprc
 
 # stolen
