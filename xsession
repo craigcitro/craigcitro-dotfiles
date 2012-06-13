@@ -8,7 +8,7 @@
 
 # I'm not sure if I should need this at the beginning, but it doesn't
 # seem to get loaded by default:
-xrdb </home/craigcitro/.Xdefaults
+xrdb <~/.Xdefaults
 
 # I love a reasonable repeat rate
 xset r rate 200 40
@@ -24,10 +24,6 @@ export XAUTHORITY=~/.Xauthority
 
 # fix the nvidia monitor flicker
 /usr/bin/nvidia-settings -a [gpu:0]/GPUPowerMizerMode=1
-# in theory, this would have worked, but it seems that I'm not the 
-# only one running into this problem:
-#  https://groups.google.com/a/google.com/group/goobuntu-discuss/browse_frm/thread/875e891504d8d708?pli=1
-# /usr/bin/nvidia-settings -l
 
 # stolen
 /usr/bin/xsetroot -solid black

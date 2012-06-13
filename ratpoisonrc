@@ -27,10 +27,10 @@ escape C-b
 # as I want them.
 #
 # This is horribly inelegant ... don't look in this file. You'll vomit.
-source /home/craigcitro/.ratpoisonrc.ugly
+source ~/.ratpoisonrc.ugly
 
 # Work-specific bindings.
-source /home/craigcitro/.ratpoisonrc.google
+source ~/.ratpoisonrc.google
 
 # These get reset by the "blast everything" approach.
 bind b meta
@@ -61,7 +61,7 @@ bind \C-t exec xterm
 # More random bindings ...
 bind W curframe
 bind \C-g abort
-bind \C-r source /home/craigcitro/.ratpoisonrc
+bind \C-r source ~/.ratpoisonrc
 
 # nyxmms2-related stuff: m for "music"
 bind m exec nyxmms2 toggle
