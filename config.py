@@ -104,4 +104,5 @@ if __name__ == '__main__':
       links_to_create += XWINDOWS_LINKS
 
   _SetupLinks(links_to_create)
+  print "Don't forget to link something to .tmux.conf.colors."
   _RunScripts(SCRIPTS)
