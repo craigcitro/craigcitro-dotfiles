@@ -604,7 +604,7 @@ after-make-frame-functions."
 ;;------------------------
 ;; ess-mode
 ;;------------------------
-(cc-add-to-load-path-if-exists "ess-5.14/lisp")
+(cc-add-to-load-path-if-exists "ess")
 (when (require 'ess-site nil t)
   (add-to-list 'auto-mode-alist '("\\.R$" . r-mode))
   (add-to-list 'auto-mode-alist '("\\.valclass$" . r-mode))
