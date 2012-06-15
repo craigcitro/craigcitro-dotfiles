@@ -196,9 +196,7 @@ HISTSIZE=100000000
 ## tab completion!
 COMPLETE_BASE='/etc/bash_completion'
 if [ -e $COMPLETE_BASE ]; then
-  stupid=1
-  # echo 'skipping bash_completion'
-  # source $COMPLETE_BASE
+  source $COMPLETE_BASE
 fi
 
 # I found this clever trick here:
