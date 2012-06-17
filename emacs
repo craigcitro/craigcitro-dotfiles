@@ -54,7 +54,6 @@
 (let ((cc-server-name (or (getenv "EMACS_SERVERNAME") default-server-name)))
   (unless (server-running-p cc-server-name)
     (setq server-name cc-server-name)))
-(server-start nil)
 
 ;;--------------------
 ;; utilities
