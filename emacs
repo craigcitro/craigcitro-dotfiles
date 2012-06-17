@@ -43,6 +43,11 @@
 
 (normal-erase-is-backspace-mode nil)
 
+;; package initialization
+(package-initialize)
+(add-to-list 'package-archives
+	     '("marmalade" . "http://marmalade-repo.org/packages/"))
+
 ;; start the server if it's not already up
 (defconst default-server-name "craigcitro" "Default server name.")
 (require 'server)
