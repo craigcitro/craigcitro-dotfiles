@@ -582,7 +582,7 @@ after-make-frame-functions."
 ;;------------------------
 ;; Emacs Lisp
 ;;------------------------
-(add-to-list 'auto-mode-alist '("[./]emacs$" . emacs-lisp-mode))
+(add-to-list 'auto-mode-alist '("[./-]emacs$" . emacs-lisp-mode))
 ;; A basic "step and execute" function -- am I reinventing this wheel?
 (defun eval-sexp-and-advance (line-mode)
   "Eval the top-level containing sexp. If the next line after
