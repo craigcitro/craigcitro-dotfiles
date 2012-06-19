@@ -1,0 +1,148 @@
+;; org-mode config
+;;
+
+(message "Setting up org-mode ...")
+
+;;------------------
+;; org-mode
+;;------------------
+;; This initial configuration draws heavily from:
+;;   http://doc.norang.ca/org-mode.html
+
+(defun cc/org-set-todo-state (target-state)
+  (interactive)
+  (if (not (member target-state org-todo-keywords-for-agenda))
+      (message "Unknown TODO state: %s" target-state)
+    (while (not (string= (org-get-todo-state) target-state))
+      (org-shiftright))))
+
+(defun cc/org-insert-next-subheading ()
+  "Insert a subheading just as org-insert-todo-subheading,
+  but in state NEXT."
+  (interactive)
+  (end-of-buffer)
+  (if (string= (org-get-todo-state) "TODO")
+      (progn
+        (org-insert-todo-subheading nil)
+        (cc/org-set-todo-state "NEXT")
+        (insert " "))
+    (org-insert-todo-heading nil)))
+
+;; Undefine C-c [ and C-c ], in favor of explicit management of the
+;; org-agenda-files variable.
+(add-hook 'org-mode-hook
+          '(lambda ()
+             (org-defkey org-mode-map "\C-c[" 'undefined)
+             (org-defkey org-mode-map "\C-c]" 'undefined)
+             (org-defkey org-mode-map "\C-c;" 'undefined))
+          'append)
+;; I want some single-chord shortcuts for movement; this seems
+;; like a good set, but we'll see.
+(add-hook 'org-mode-hook
+          '(lambda ()
+             (org-defkey org-mode-map "\M-\C-n" 'outline-next-visible-heading)
+             (org-defkey org-mode-map "\M-\C-p" 'outline-previous-visible-heading)
+             (org-defkey org-mode-map "\M-\C-f" 'org-forward-same-level)
+             (org-defkey org-mode-map "\M-\C-b" 'org-backward-same-level)
+             (org-defkey org-mode-map "\M-\C-u" 'outline-up-heading)))
+;; More keys for my workflow.
+(add-hook 'org-mode-hook
+          '(lambda ()
+             (org-defkey org-mode-map "\M-\C-t" 'cc/org-insert-next-subheading)))
+
+;; More org-mode variable settings, in lieu of customize.
+(eval-after-load 'org
+  '(progn
+     ;; General config
+     (setq org-startup-indented t)
+     (setq org-M-RET-may-split-line
+           '((default . nil) (table . t)))
+     (setq org-special-ctrl-a/e t)
+     (setq org-special-ctrl-k t)
+     (setq org-yank-adjusted-subtrees t)
+     (setq org-id-method 'uuidgen)
+     (setq org-cycle-separator-lines 0)
+     (setq org-blank-before-new-entry '((heading) (plain-list-item)))
+     ;; Where the org files live
+     (setq org-directory "~/w/org")
+     (setq org-agenda-files (list org-directory))
+     (setq org-default-notes-file (concat org-directory "/refile.org"))
+     (setq org-default-tips-file (concat org-directory "/tips.org"))
+     ;; Agenda-related config.
+     (setq org-agenda-ndays 4)
+     ;; mobile org
+     (setq org-mobile-directory "~/w/mobile-org")
+     (setq org-mobile-force-id-on-agenda-items nil)
+     (setq org-mobile-inbox-for-pull (concat org-directory "/mobile-inbox.org"))
+     ;; Configure the capture templates
+     (setq org-capture-templates
+           (quote (("t" "todo" entry (file+headline org-default-notes-file "Tasks")
+                    "* TODO %?\n%T\n")
+                   ("c" "todo with context" entry
+                    (file+headline org-default-notes-file "Tasks")
+                    "* TODO %?\n%T\n%a\n")
+                   ("p" "tips" entry (file+headline org-default-tips-file "Tips")
+                    "* %?\n%^G\n%U\n%a\n")
+                   ("n" "note" entry (file+headline org-default-notes-file "Notes")
+                    "* %? :NOTE:\n%U\n%a\n")
+                   ("j" "Journal" entry (file+datetree org-default-notes-file)
+                    "* %?\nEntered on %U\n  %i\n  %a")
+                   )))
+     ;; ido-based refile completion
+     (setq org-refile-targets '((nil :maxlevel . 9)
+                                (org-agenda-files :maxlevel . 9)))
+     (setq org-refile-use-outline-path t)
+     (setq org-outline-path-complete-in-steps nil)
+     (setq org-refile-allow-creating-parent-nodes 'confirm)
+     (setq org-completion-use-ido t)
+     ;; Task states and related configuration
+     (setq org-todo-keywords
+           '((sequence "TODO(t)" "|" "DONE(d!/!)")
+             (sequence "NEXT(n)" "WAITING(w@/!)")))
+     (setq org-use-fast-todo-selection t)
+     (setq org-treat-S-cursor-todo-selection-as-state-change nil)
+     (setq org-todo-state-tags-triggers
+           (quote (("WAITING" ("WAITING" . t))
+                   (done ("WAITING"))
+                   ("TODO" ("WAITING"))
+                   ("NEXT" ("WAITING"))
+                   ("DONE" ("WAITING")))))
+     ;; Tags
+     (setq org-fast-tag-selection-single-key nil)
+     ;; I tend to use this as a complete list of common tags.
+     (setq org-tag-alist (quote ((:startgroup)
+                                 ("@bigscience" . ?b)
+                                 ("@bigquery" . ?q)
+                                 ("@config" . ?C)
+                                 ("@life" . ?l)
+                                 (:endgroup)
+                                 ("googs" . ?g)
+                                 ("bq-cli" . ?c)
+                                 ("statsy" . ?s)
+                                 ("emacs" . ?E)
+                                 ("tmux" . ?T)
+                                 ("git" . ?G)
+                                 ("Rstats" . ?R)
+                                 ("julia" . ?J)
+                                 ("python" . ?P)
+                                 ("org" . ?O)
+                                 )))
+     ))
+
+(when (require 'org-install nil t)
+  (add-to-list 'auto-mode-alist '("\\.org$" . org-mode))
+  (add-to-list 'auto-mode-alist '("\\.org_archive$" . org-mode))
+  ;; Global org keys
+  (global-set-key "\C-cl" 'org-store-link)
+  (global-set-key "\C-cg" 'org-agenda)
+  (global-set-key "\C-cb" 'org-iswitchb)
+  (global-set-key "\C-cc" 'org-capture)
+  ;; Secondary keystrokes for each:
+  (global-set-key "\M-\C-l" 'org-store-link)
+  (global-set-key "\M-\C-a" 'org-agenda)
+  (global-set-key "\M-\C-b" 'org-iswitchb)
+  (global-set-key "\M-\C-r" 'org-capture)
+  ;; Auto-save org buffers every 30 min
+  (run-at-time "00:07" 1800 'org-save-all-org-buffers)
+  )
+
