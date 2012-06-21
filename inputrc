@@ -64,7 +64,8 @@ set convert-meta off
 set output-meta on
 
 # These are useful for debugging purposes: remember that C-x C-r
-# rereads the .inputrc.
+# rereads the .inputrc. The last one is here for resetting.
 #
 #"\C-f": dump-variables
 #"\C-f": dump-functions
+#"\C-f": forward-char
