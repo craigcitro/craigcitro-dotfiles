@@ -409,7 +409,7 @@ after-make-frame-functions."
   (define-key python-mode-map "\C-c<" 'cc/shift-left)
   (define-key python-mode-map "\C-c>" 'cc/shift-right)
   (define-key python-mode-map "\C-ca" 'py-indent-region))
-(add-hook 'python-mode-hook 'cc/better-py-shifting)
+(add-hook 'python-mode-hook 'cc/python-mode-keys)
 ;; I give up on python-mode "smart" indentation -- I like 2, and I can
 ;; change it manually on the off chance I need it.
 (defun cc/py-guess-indent-offset (&rest ignored)
