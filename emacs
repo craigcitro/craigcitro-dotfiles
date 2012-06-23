@@ -1,6 +1,6 @@
+;; -*- mode: Lisp; lexical-binding: t -*-
 ;;
-;; This is my .emacs file -- I stole this from Ryan long, long ago,
-;; and started modifying it a fair bit recently.
+;; emacs configuration
 ;;
 
 (message "Starting .emacs ...")
@@ -245,11 +245,11 @@
   (indent-code-rigidly start end count))
 (defun cc/shift-left (&optional start end moves)
   (interactive "r\np")
-  (lexical-let ((count (* -2 (if (null moves) 1 moves))))
+  (let ((count (* -2 (if (null moves) 1 moves))))
     (cc/indent-region-rigidly count start end)))
 (defun cc/shift-right (&optional start end moves)
   (interactive "r\np")
-  (lexical-let ((count (* 2 (if (null moves) 1 moves))))
+  (let ((count (* 2 (if (null moves) 1 moves))))
     (cc/indent-region-rigidly count start end)))
 (global-set-key "\C-c<" 'cc/shift-left)
 (global-set-key "\C-c>" 'cc/shift-right)
@@ -328,7 +328,7 @@ after-make-frame-functions."
 ;;------------------
 ;; org-mode
 ;;------------------
-(lexical-let ((org-file (cc-find-file-or-nil "dotfiles/cc-org-emacs")))
+(let ((org-file (cc-find-file-or-nil "dotfiles/cc-org-emacs")))
   (when org-file
     (load org-file)))
 
@@ -457,24 +457,23 @@ after-make-frame-functions."
 
   With any prefix arg, steps by sexps at the current level."
   (interactive "P")
-  (lexical-let
-      ((step (lambda (&optional forward-first)
-               (if line-mode
-                   (progn
-                     (if forward-first
-                         (forward-sexp)
-                       (end-of-line)))
-                 (progn
-                     (if forward-first
-                         (forward-line))
-                     (end-of-defun)
-                     (forward-line -1)
-                     (end-of-line)))))
-       (continue t)
-       (final-position (point)))
+  (let ((step (lambda (&optional forward-first)
+		(if line-mode
+		    (progn
+		      (if forward-first
+			  (forward-sexp)
+			(end-of-line)))
+		  (progn
+		    (if forward-first
+			(forward-line))
+		    (end-of-defun)
+		    (forward-line -1)
+		    (end-of-line)))))
+	(continue t)
+	(final-position (point)))
     (funcall step)
     (while continue
-      (lexical-let ((val (eval-last-sexp nil)))
+      (let ((val (eval-last-sexp nil)))
         (setq final-position (point))
         (funcall step t)
         (message "(Type e to execute next sexp) Last result: %s" val)
