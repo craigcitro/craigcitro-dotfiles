@@ -179,7 +179,7 @@
 (defface cc-iswitchb-this-buffer-face
   '((t (:foreground "Blue")))
   "*Face used to highlight the current buffer in the iswitchb matches list.")
-(defun empty-or-nil-p (x)
+(defun cc/empty-or-nil-p (x)
   (or (null x) (string= "" x)))
 (defun cc-filter-buffers ()
   (let ((frame-git-root (frame-parameter nil 'cc-git-root))
@@ -198,8 +198,8 @@
            ((char-equal ?* (elt buf 0))
             (add-to-list 'colored-buflist
                          (propertize buf 'face 'cc-iswitchb-system-buffer-face)))
-           ((empty-or-nil-p frame-git-root)
-            (when (empty-or-nil-p buffer-git-root)
+           ((cc/empty-or-nil-p frame-git-root)
+            (when (cc/empty-or-nil-p buffer-git-root)
               (add-to-list 'colored-buflist buf)))
            ((or (null buffer-git-branch) (null buffer-git-root))
             (add-to-list 'colored-buflist buf))
@@ -210,7 +210,7 @@
            ((string= frame-git-root buffer-git-root)
             (add-to-list 'colored-buflist
                          (propertize buf 'face 'cc-iswitchb-different-branch-face)))
-           ((empty-or-nil-p buffer-git-root)
+           ((cc/empty-or-nil-p buffer-git-root)
             (add-to-list 'colored-buflist buf)))))
       (setq iswitchb-temp-buflist (reverse colored-buflist)))))
 (add-hook 'iswitchb-make-buflist-hook 'cc-filter-buffers)
