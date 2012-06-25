@@ -35,6 +35,8 @@ set history-size 100000000
 # also for the emacs keys
 "\C-s": history-search-forward
 "\C-r": history-search-backward
+"\C-n": history-search-forward
+"\C-p": history-search-backward
 # These are necessary when XTerm*eightBitInput is set to false, which
 # I currently do based on some mac config issues. I'd like to find a
 # way to include a conditional construct in this file that lets me
