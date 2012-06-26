@@ -442,7 +442,7 @@ after-make-frame-functions."
 ;;------------------------
 (add-to-list 'auto-mode-alist '("[./-]emacs$" . emacs-lisp-mode))
 ;; A basic "step and execute" function -- am I reinventing this wheel?
-(defun eval-sexp-and-advance (line-mode)
+(defun cc/eval-sexp-and-advance (line-mode)
   "Eval the top-level containing sexp. If the next line after
   this sexp is blank, do nothing. If next line is not blank, move
   to the end of that sexp. This command can be repeated by
@@ -474,10 +474,13 @@ after-make-frame-functions."
           (setq continue nil))))
     (when last-input-event
       (clear-this-command-keys t)
-      (setq unread-command-events (list last-input-event))
-      (goto-char final-position)
+      (if (equal (event-convert-list '(E)) last-input-event)
+	  (eval-last-sexp nil)
+	(progn
+	  (setq unread-command-events (list last-input-event))
+	  (goto-char final-position)))
       )))
-(global-set-key "\C-c\C-e" 'eval-sexp-and-advance)
+(global-set-key "\C-c\C-e" 'cc/eval-sexp-and-advance)
 
 ;; tab completion in the Eval: prompt!
 (define-key read-expression-map [(tab)] 'hippie-expand)
