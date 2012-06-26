@@ -51,41 +51,41 @@
 ;; start the server if it's not already up
 (defconst default-server-name "craigcitro" "Default server name.")
 (require 'server)
-(let ((cc-server-name (or (getenv "EMACS_SERVERNAME") default-server-name)))
-  (unless (server-running-p cc-server-name)
-    (setq server-name cc-server-name)))
+(let ((cc/server-name (or (getenv "EMACS_SERVERNAME") default-server-name)))
+  (unless (server-running-p cc/server-name)
+    (setq server-name cc/server-name)))
 
 ;;--------------------
 ;; utilities
 ;;--------------------
-(defun cc-first-non-nil (ls)
+(defun cc/first-non-nil (ls)
   (cond
    ((null ls) nil)
-   ((null (car ls)) (cc-first-non-nil (cdr ls)))
+   ((null (car ls)) (cc/first-non-nil (cdr ls)))
    (t (car ls))))
 
-(defun cc-find-file-or-nil (path &optional prefix)
+(defun cc/find-file-or-nil (path &optional prefix)
   (let ((dirs (list ""
                     prefix
                     (getenv "HOME")
                     (concat (getenv "HOME") "/.emacs.d/lisp")
                     (concat (getenv "HOME") "/ext")
 		    (concat (getenv "HOME") "/ext/share/emacs/site-lisp"))))
-    (cc-first-non-nil
+    (cc/first-non-nil
      (mapcar (lambda (x)
                (let ((full-path (command-line-normalize-file-name (concat x "/" path))))
                  (when (file-exists-p full-path) full-path)))
              dirs))))
 
-(defun cc-add-to-load-path-if-exists (path &optional prefix)
+(defun cc/add-to-load-path-if-exists (path &optional prefix)
   "Add a path to load-path if it exists."
-  (let ((full-path (cc-find-file-or-nil path prefix)))
+  (let ((full-path (cc/find-file-or-nil path prefix)))
     (when (and full-path (file-exists-p full-path))
       (add-to-list 'load-path full-path))))
 
 ;; Set up local path for lisp files
-(cc-add-to-load-path-if-exists ".emacs.d/lisp")
-(cc-add-to-load-path-if-exists "share/emacs/site-lisp")
+(cc/add-to-load-path-if-exists ".emacs.d/lisp")
+(cc/add-to-load-path-if-exists "share/emacs/site-lisp")
 
 ;; I haven't used this much yet, but it seems like it could be cool.
 ;; (2010 Sep 24) Okay, this is exactly as described: you only need it
@@ -155,43 +155,43 @@
 
 ;; (2011 Sep 24) Experimenting with smarter iswitchb configuration.
 ;; TODO(craigcitro): Use symbols instead of strings.
-(defun cc-set-frame-params (&optional frame)
-  (set-frame-parameter frame 'cc-git-branch (getenv "CC_GIT_BRANCH" frame))
-  (set-frame-parameter frame 'cc-git-root (getenv "CC_GIT_ROOT" frame)))
-(add-hook 'after-make-frame-functions 'cc-set-frame-params)
-(defvar cc-buffer-git-root)
-(defvar cc-buffer-git-branch)
-(make-variable-buffer-local 'cc-buffer-git-root)
-(make-variable-buffer-local 'cc-buffer-git-branch)
-(defun cc-set-session-name (&optional frame)
-  (setq cc-buffer-git-branch (frame-parameter frame 'cc-git-branch))
-  (setq cc-buffer-git-root (frame-parameter frame 'cc-git-root)))
-(add-hook 'find-file-hook 'cc-set-session-name)
-(defface cc-iswitchb-same-branch-face
+(defun cc/set-frame-params (&optional frame)
+  (set-frame-parameter frame 'cc/git-branch (getenv "CC_GIT_BRANCH" frame))
+  (set-frame-parameter frame 'cc/git-root (getenv "CC_GIT_ROOT" frame)))
+(add-hook 'after-make-frame-functions 'cc/set-frame-params)
+(defvar cc/buffer-git-root)
+(defvar cc/buffer-git-branch)
+(make-variable-buffer-local 'cc/buffer-git-root)
+(make-variable-buffer-local 'cc/buffer-git-branch)
+(defun cc/set-session-name (&optional frame)
+  (setq cc/buffer-git-branch (frame-parameter frame 'cc/git-branch))
+  (setq cc/buffer-git-root (frame-parameter frame 'cc/git-root)))
+(add-hook 'find-file-hook 'cc/set-session-name)
+(defface cc/iswitchb-same-branch-face
   '((t (:foreground "Green")))
   "*Face used to highlight iswitchb matches in the same git repo/branch.")
-(defface cc-iswitchb-different-branch-face
+(defface cc/iswitchb-different-branch-face
   '((t (:foreground "Red")))
   "*Face used to highlight iswitchb matches in the same git repo, but a different branch.")
-(defface cc-iswitchb-system-buffer-face
+(defface cc/iswitchb-system-buffer-face
   '((t (:foreground "BrightBlack")))
   "*Face used to highlight system buffers in the iswitchb matches list.")
-(defface cc-iswitchb-this-buffer-face
+(defface cc/iswitchb-this-buffer-face
   '((t (:foreground "Blue")))
   "*Face used to highlight the current buffer in the iswitchb matches list.")
 (defun cc/empty-or-nil-p (x)
   (or (null x) (string= "" x)))
 (defun cc/iswitchb-colorize-bufname (buf &optional frame)
-  (let ((frame-git-root (frame-parameter frame 'cc-git-root))
-	(frame-git-branch (frame-parameter frame 'cc-git-branch)))
+  (let ((frame-git-root (frame-parameter frame 'cc/git-root))
+	(frame-git-branch (frame-parameter frame 'cc/git-branch)))
     (let* ((buffer (get-buffer buf))
-	   (buffer-git-branch (buffer-local-value 'cc-buffer-git-branch buffer))
-	   (buffer-git-root (buffer-local-value 'cc-buffer-git-root buffer)))
+	   (buffer-git-branch (buffer-local-value 'cc/buffer-git-branch buffer))
+	   (buffer-git-root (buffer-local-value 'cc/buffer-git-root buffer)))
       (cond
        ((string= buf (buffer-name (current-buffer)))
-	(propertize buf 'face 'cc-iswitchb-this-buffer-face))
+	(propertize buf 'face 'cc/iswitchb-this-buffer-face))
        ((char-equal ?* (elt buf 0))
-	(propertize buf 'face 'cc-iswitchb-system-buffer-face))
+	(propertize buf 'face 'cc/iswitchb-system-buffer-face))
        ((cc/empty-or-nil-p frame-git-root)
 	(when (cc/empty-or-nil-p buffer-git-root)
 	  buf))
@@ -199,14 +199,14 @@
 	buf)
        ((and (string= frame-git-root buffer-git-root)
 	     (string= frame-git-branch buffer-git-branch))
-	(propertize buf 'face 'cc-iswitchb-same-branch-face))
+	(propertize buf 'face 'cc/iswitchb-same-branch-face))
        ((string= frame-git-root buffer-git-root)
-	(propertize buf 'face 'cc-iswitchb-different-branch-face))
+	(propertize buf 'face 'cc/iswitchb-different-branch-face))
        ((cc/empty-or-nil-p buffer-git-root)
 	buf)))))
-(defun cc-filter-buffers ()
+(defun cc/filter-buffers ()
   (setq iswitchb-temp-buflist (reverse (mapcar 'cc/iswitchb-colorize-bufname iswitchb-temp-buflist))))
-(add-hook 'iswitchb-make-buflist-hook 'cc-filter-buffers)
+(add-hook 'iswitchb-make-buflist-hook 'cc/filter-buffers)
 
 ;;------------------------------------------------------------
 ;; ido-based file switching
@@ -225,7 +225,7 @@
 ;;======================================================
 ;; Extra config
 ;;======================================================
-(let ((gconfig (cc-find-file-or-nil ".emacs.google")))
+(let ((gconfig (cc/find-file-or-nil ".emacs.google")))
   (when gconfig
     (load-file gconfig)))
 
@@ -321,7 +321,7 @@ after-make-frame-functions."
 ;;------------------
 ;; org-mode
 ;;------------------
-(let ((org-file (cc-find-file-or-nil "dotfiles/cc-org-emacs")))
+(let ((org-file (cc/find-file-or-nil "dotfiles/cc-org-emacs")))
   (when org-file
     (load org-file)))
 
@@ -342,7 +342,7 @@ after-make-frame-functions."
 ;;---------------
 ;; scratch
 ;;---------------
-(cc-add-to-load-path-if-exists "scratch-el")
+(cc/add-to-load-path-if-exists "scratch-el")
 (require 'scratch nil t)
 
 ;;-------------------
@@ -351,7 +351,7 @@ after-make-frame-functions."
 (when (require 'rst nil t)
   (add-to-list 'auto-mode-alist '("\\.rst$" . rst-mode))
   (add-to-list 'auto-mode-alist '("\\.rest$" . rst-mode))
-  (cc-add-to-load-path-if-exists "markdown-mode")
+  (cc/add-to-load-path-if-exists "markdown-mode")
   (autoload 'markdown-mode "markdown-mode.el"
     "Major mode for editing Markdown files" t)
   (add-to-list 'auto-mode-alist '("\\.md$" . markdown-mode))
@@ -367,7 +367,7 @@ after-make-frame-functions."
 ;; Haskell
 ;;------------------
 ;; Generic bit
-(let ((haskell-site-file (cc-find-file-or-nil "haskell-mode/haskell-site-file.el")))
+(let ((haskell-site-file (cc/find-file-or-nil "haskell-mode/haskell-site-file.el")))
   (when haskell-site-file
     (load haskell-site-file)
     (add-to-list 'auto-mode-alist '("\\.hs$" . haskell-mode))
@@ -376,7 +376,7 @@ after-make-frame-functions."
 
 ;; ghc-mod:
 ;;   https://github.com/kazu-yamamoto/ghc-mod
-(cc-add-to-load-path-if-exists "ghc-mod/elisp")
+(cc/add-to-load-path-if-exists "ghc-mod/elisp")
 (let ((cabal-path (concat (getenv "HOME") "/cabal/bin")))
   (when (file-exists-p cabal-path)
     (add-to-list 'exec-path cabal-path)))
@@ -391,7 +391,7 @@ after-make-frame-functions."
 ;;---------------------------
 ;; Python
 ;;---------------------------
-(cc-add-to-load-path-if-exists "src/python-mode")
+(cc/add-to-load-path-if-exists "src/python-mode")
 (add-hook 'python-mode-hook
 	  '(lambda ()
 	     (defadvice py-indent-line (after ad-return-value)
@@ -496,7 +496,7 @@ after-make-frame-functions."
 ;;------------------------
 ;; ess-mode
 ;;------------------------
-(cc-add-to-load-path-if-exists "ess")
+(cc/add-to-load-path-if-exists "ess")
 (when (require 'ess-site nil t)
   (add-to-list 'auto-mode-alist '("\\.R$" . r-mode))
   (add-to-list 'auto-mode-alist '("\\.valclass$" . r-mode))
@@ -511,7 +511,7 @@ after-make-frame-functions."
 ;;------------------------
 ;; julia mode
 ;;------------------------
-(cc-add-to-load-path-if-exists "src/julia/contrib/")
+(cc/add-to-load-path-if-exists "src/julia/contrib/")
 (when (require 'julia-mode nil t)
   (add-to-list 'auto-mode-alist '("\\.jl$" . julia-mode)))
 
