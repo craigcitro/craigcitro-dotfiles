@@ -478,8 +478,7 @@ after-make-frame-functions."
 	  (eval-last-sexp nil)
 	(progn
 	  (setq unread-command-events (list last-input-event))
-	  (goto-char final-position)))
-      )))
+	  (goto-char final-position))))))
 (global-set-key "\C-c\C-e" 'cc/eval-sexp-and-advance)
 
 ;; tab completion in the Eval: prompt!
