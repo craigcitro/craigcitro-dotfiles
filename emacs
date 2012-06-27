@@ -506,7 +506,10 @@ after-make-frame-functions."
   (ess-toggle-underscore 1)
   (ess-toggle-underscore nil)
   ;; Indent 4 spaces on a continued line in parens
-  (setq ess-arg-function-offset 4))
+  (setq ess-arg-function-offset 4)
+  ;; no one puts my keymappings in a corner
+  (define-key ess-mode-map "\C-c\C-j" 'goto-line)
+  )
 
 ;;------------------------
 ;; julia mode
