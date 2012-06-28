@@ -346,7 +346,7 @@ LIGHT_PURPLE_PROMPT_COLOR="\[\033[1;35m\]"
 #############################################################
 
 case $HOSTNAME in
-cc-mbp.local|craigcitro-macbookpro.local|dhcp*.google.com)
+cc-mbp|cc-mbp.local|craigcitro-macbookpro.local|dhcp*.google.com)
   BRACKET_COLOR="$BLUE_PROMPT_COLOR"
   PROMPT_TEXT="\$(prompt_pwd)"
   PROMPT_TEXT_COLOR="$RED_PROMPT_COLOR"
