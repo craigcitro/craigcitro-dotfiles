@@ -135,19 +135,13 @@
 ;; \C-x\C-b is too close to \C-xb
 (global-unset-key "\C-x\C-b")
 (global-set-key "\C-x\C-b" 'iswitchb-buffer)
-;; Make arrows work in iswitchb menu, stolen from:
-;;   http://www.emacswiki.org/emacs/IswitchBuffers
-(require 'edmacro)
 (defun iswitchb-local-keys ()
-  (mapc (lambda (K)
-          (let* ((key (car K)) (fun (cdr K)))
-            (define-key iswitchb-mode-map (edmacro-parse-keys key) fun)))
-        '(("<right>" . iswitchb-next-match)
-          ("<left>"  . iswitchb-prev-match)
-          ("\C-r"    . (lambda ()
-                         (interactive)
-                         (setq iswitchb-temp-buflist iswitchb-buflist)))
-          )))
+  (define-key iswitchb-mode-map "\C-r" 'iswitchb-next-match)
+  (define-key iswitchb-mode-map "\C-s" 'iswitchb-prev-match)
+  (define-key iswitchb-mode-map [right] 'iswitchb-next-match)
+  (define-key iswitchb-mode-map [left] 'iswitchb-prev-match)
+  (define-key iswitchb-mode-map [down] 'iswitchb-next-match)
+  (define-key iswitchb-mode-map [up] 'iswitchb-prev-match))
 (add-hook 'iswitchb-define-mode-map-hook 'iswitchb-local-keys)
 ;; (2010 Oct 01) It's curious to me why I spontaneously started
 ;; needing this:
@@ -485,6 +479,8 @@ after-make-frame-functions."
 (define-key read-expression-map [(tab)] 'hippie-expand)
 (define-key read-expression-map [(control i)] 'hippie-expand)
 (define-key read-expression-map [(backtab)] "\C-u\C-i")
+(define-key read-expression-map "\C-p" 'previous-history-element)
+(define-key read-expression-map "\C-n" 'next-history-element)
 
 ;;------------------------
 ;; Shell scripts
