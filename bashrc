@@ -299,6 +299,7 @@ export PYTHONSTARTUP
 
 pathappend $HOME'/ext/cabal/bin';
 pathappend $HOME'/ext/cabal/share/man' MANPATH;
+pathappend $HOME'/ext/Haskell/bin';
 
 ################################################################
 ######################## Prompt stuff ##########################
