@@ -54,6 +54,9 @@
 (let ((cc/server-name (or (getenv "EMACS_SERVERNAME") default-server-name)))
   (unless (server-running-p cc/server-name)
     (setq server-name cc/server-name)))
+;; this isn't strictly required, but will cause simultaneous server starts
+;; to (hopefully?) fail faster.
+(server-start nil)
 
 ;;--------------------
 ;; utilities
