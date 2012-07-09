@@ -16,3 +16,5 @@
 [grep]
         lineNumber = true
         
+[push]
+	default = tracking
