@@ -491,6 +491,10 @@ after-make-frame-functions."
 (add-to-list 'auto-mode-alist '("bash[^/]*$" . shell-script-mode))
 ;; add rc files as shell as a last resort
 (add-to-list 'auto-mode-alist '("rc$" . shell-script-mode) t)
+(add-hook 'sh-mode-hook
+	  '(lambda ()
+	     (setq sh-basic-offset 2)
+	     (setq sh-indentation 2)))
 
 ;;------------------------
 ;; ess-mode
