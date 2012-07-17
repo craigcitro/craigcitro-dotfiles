@@ -398,6 +398,8 @@ after-make-frame-functions."
 (defun cc/python-mode-keys ()
   (define-key python-mode-map "\C-c<" 'cc/shift-left)
   (define-key python-mode-map "\C-c>" 'cc/shift-right)
+  (define-key python-mode-map "#" 'self-insert-command)
+  (define-key python-mode-map "\C-c#" 'comment-or-uncomment-region)
   (define-key python-mode-map "\C-ca" 'py-indent-region))
 (add-hook 'python-mode-hook 'cc/python-mode-keys)
 ;; I give up on python-mode "smart" indentation -- I like 2, and I can
