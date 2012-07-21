@@ -619,6 +619,9 @@ after-make-frame-functions."
 (global-set-key "\C-x\C-g" 'keyboard-quit)
 (global-unset-key [(control x) (control o)])
 (global-set-key "\C-x\C-o" 'other-window)
+;; Minibuffer keys
+(define-key minibuffer-local-map "\C-p" 'previous-history-element)
+(define-key minibuffer-local-map "\C-n" 'next-history-element)
 
 ;; vim-inspired
 (defun join-below ()
