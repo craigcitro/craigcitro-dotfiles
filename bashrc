@@ -378,7 +378,6 @@ export -f gh
 function export_git_info() {
   if [ "$PWD" = ~ -o "$PWD" = "/home" ]; then
     export CC_GIT_BRANCH=""
-    export CC_GIT_ROOT=""
     return
   fi
   if [ "${PWD##~}" = "$PWD" -a "${PWD##/home}" != "$PWD" ]; then
@@ -387,17 +386,25 @@ function export_git_info() {
   local b="$(git symbolic-ref HEAD 2>/dev/null)"
   if [ ${#b} -gt 0 ]; then
     export CC_GIT_BRANCH="${b##refs/heads/}"
-    export CC_GIT_ROOT="$(git rev-parse --show-toplevel)"
     return
   fi
   export CC_GIT_BRANCH=""
-  export CC_GIT_ROOT=""
 }
 export -f export_git_info
 
 function git_prompt_info () {
   if [ ${#CC_GIT_BRANCH} -gt 0 ]; then
-    echo " {${CC_GIT_BRANCH}}"
+    local prompt_info="${CC_GIT_BRANCH}"
+    if git status --porcelain | grep -q '^??'; then
+      prompt_info="${prompt_info}?"
+    fi
+    if git status --porcelain | grep -q '^ M'; then
+      prompt_info="${prompt_info}!"
+    fi
+    if git branch -v | grep "$CC_GIT_BRANCH" | grep -q '\[ahead '; then
+      prompt_info="${prompt_info}+"
+    fi
+    echo " {${prompt_info}}"
   fi
 }
 export -f git_prompt_info
