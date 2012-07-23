@@ -4,6 +4,9 @@
 ;;
 
 (message "Starting .emacs ...")
+;; There's simply no way forward without basic programming
+;; facilities.
+(require 'cl)
 
 ;;=======================================
 ;; Global Settings
@@ -61,6 +64,12 @@
 ;;--------------------
 ;; utilities
 ;;--------------------
+(defun cc/empty-or-nil-p (x)
+  (or (null x) (string= "" x)))
+(defun cc/any (ls)
+  (reduce '(lambda (x y) (or x y)) ls))
+(defun cc/all (ls)
+  (reduce '(lambda (x y) (and x y)) ls))
 (defun cc/first-non-nil (ls)
   (cond
    ((null ls) nil)
@@ -132,7 +141,7 @@
 (global-unset-key "\C-x>")
 
 ;;------------------------------------------------------------
-;; Better buffer switching -- Nick Alexander showed me this.
+;; iswitchb
 ;;------------------------------------------------------------
 (iswitchb-mode t)
 ;; \C-x\C-b is too close to \C-xb
@@ -152,18 +161,6 @@
 
 ;; (2011 Sep 24) Experimenting with smarter iswitchb configuration.
 ;; TODO(craigcitro): Use symbols instead of strings.
-(defun cc/set-frame-params (&optional frame)
-  (set-frame-parameter frame 'cc/git-branch (getenv "CC_GIT_BRANCH" frame))
-  (set-frame-parameter frame 'cc/git-root (getenv "CC_GIT_ROOT" frame)))
-(add-hook 'after-make-frame-functions 'cc/set-frame-params)
-(defvar cc/buffer-git-root)
-(defvar cc/buffer-git-branch)
-(make-variable-buffer-local 'cc/buffer-git-root)
-(make-variable-buffer-local 'cc/buffer-git-branch)
-(defun cc/set-session-name (&optional frame)
-  (setq cc/buffer-git-branch (frame-parameter frame 'cc/git-branch))
-  (setq cc/buffer-git-root (frame-parameter frame 'cc/git-root)))
-(add-hook 'find-file-hook 'cc/set-session-name)
 (defface cc/iswitchb-same-branch-face
   '((t (:foreground "Green")))
   "*Face used to highlight iswitchb matches in the same git repo/branch.")
@@ -176,33 +173,60 @@
 (defface cc/iswitchb-this-buffer-face
   '((t (:foreground "Blue")))
   "*Face used to highlight the current buffer in the iswitchb matches list.")
-(defun cc/empty-or-nil-p (x)
-  (or (null x) (string= "" x)))
-(defun cc/iswitchb-colorize-bufname (buf &optional frame)
-  (let ((frame-git-root (frame-parameter frame 'cc/git-root))
-	(frame-git-branch (frame-parameter frame 'cc/git-branch)))
-    (let* ((buffer (get-buffer buf))
-	   (buffer-git-branch (buffer-local-value 'cc/buffer-git-branch buffer))
-	   (buffer-git-root (buffer-local-value 'cc/buffer-git-root buffer)))
+(defun cc/parse-git-branch (&optional buf)
+  "Get the git branch from a buffer."
+  (let ((git-info (buffer-local-value 'vc-mode (or buf (current-buffer)))))
+    (if (null git-info)
+	""
+      (substring-no-properties git-info (length " Git-")))))
+(defstruct (cc/buffer-git-info
+	    (:constructor cc/make-git-info))
+  "Git-specific info about a given buffer."
+  root branch filename)
+(defun cc/make-git-info-from-buffer (&optional buf)
+  (let* ((buf (or buf (current-buffer)))
+	 (filename (buffer-file-name buf)))
+    (when (and (not (cc/empty-or-nil-p filename))
+	       (vc-git-root filename))
+      (make-cc/buffer-git-info
+       :root (vc-git-root filename)
+       :branch (cc/parse-git-branch buf)
+       :filename filename))))
+(defun cc/iswitchb-colorize-bufname (&optional buf-name)
+  "Return the name of the given or current buffer, propertized with a color as follows:
+     BrightBlack: buffer is a system buffer
+     Blue: this is the current buffer
+   When called from a buffer in a git repo:
+     Green: buffer is in the same repo and branch as current
+     Red: buffer is in the same repo and a DIFFERENT branch as current
+   Files in different git repos return nil."
+  (let* ((buf (or (get-buffer buf-name) (current-buffer)))
+	 (buf-name (buffer-name buf)))
+    (let ((buf-git-info (cc/make-git-info-from-buffer buf))
+	  (current-git-info (cc/make-git-info-from-buffer)))
       (cond
-       ((string= buf (buffer-name (current-buffer)))
-	(propertize buf 'face 'cc/iswitchb-this-buffer-face))
-       ((char-equal ?* (elt buf 0))
-	(propertize buf 'face 'cc/iswitchb-system-buffer-face))
-       ((cc/empty-or-nil-p frame-git-root)
-	(when (cc/empty-or-nil-p buffer-git-root)
-	  buf))
-       ((or (null buffer-git-branch) (null buffer-git-root))
-	buf)
-       ((and (string= frame-git-root buffer-git-root)
-	     (string= frame-git-branch buffer-git-branch))
-	(propertize buf 'face 'cc/iswitchb-same-branch-face))
-       ((string= frame-git-root buffer-git-root)
-	(propertize buf 'face 'cc/iswitchb-different-branch-face))
-       ((cc/empty-or-nil-p buffer-git-root)
-	buf)))))
+       ;; buf is current buffer
+       ((string= buf-name (buffer-name (current-buffer)))
+	(propertize buf-name 'face 'cc/iswitchb-this-buffer-face))
+       ;; system buffer
+       ((char-equal ?* (elt buf-name 0))
+	(propertize buf-name 'face 'cc/iswitchb-system-buffer-face))
+       ;; buf or current buffer is not in a git repo
+       ((or (null buf-git-info) (null current-git-info)) buf-name)
+       ;; current buffer is in the same git repo as buf
+       ((string= (cc/buffer-git-info-root buf-git-info)
+		 (cc/buffer-git-info-root current-git-info))
+	(propertize
+	 buf-name 'face
+	 (if (string= (cc/buffer-git-info-branch buf-git-info)
+		      (cc/buffer-git-info-branch current-git-info))
+	     'cc/iswitchb-same-branch-face
+	   'cc/iswitchb-different-branch-face)))
+       ;; current buffer and buf are in different repos
+       (T nil)))))
 (defun cc/filter-buffers ()
-  (setq iswitchb-temp-buflist (reverse (mapcar 'cc/iswitchb-colorize-bufname iswitchb-temp-buflist))))
+  (setq iswitchb-temp-buflist
+	(reverse (mapcar 'cc/iswitchb-colorize-bufname iswitchb-temp-buflist))))
 (add-hook 'iswitchb-make-buflist-hook 'cc/filter-buffers)
 
 ;;------------------------------------------------------------
