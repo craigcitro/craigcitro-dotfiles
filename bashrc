@@ -395,14 +395,16 @@ export -f export_git_info
 function git_prompt_info () {
   if [ ${#CC_GIT_BRANCH} -gt 0 ]; then
     local prompt_info="${CC_GIT_BRANCH}"
-    if git status --porcelain | grep -q '^??'; then
-      prompt_info="${prompt_info}?"
-    fi
-    if git status --porcelain | grep -q '^ M'; then
-      prompt_info="${prompt_info}!"
-    fi
-    if git branch -v | grep "$CC_GIT_BRANCH" | grep -q '\[ahead '; then
-      prompt_info="${prompt_info}+"
+    if git symbolic-ref HEAD >/dev/null 2>/dev/null; then
+      if git status --porcelain | grep -q '^??'; then
+        prompt_info="${prompt_info}?"
+      fi
+      if git status --porcelain | grep -q '^ M'; then
+        prompt_info="${prompt_info}!"
+      fi
+      if git branch -v | grep "$CC_GIT_BRANCH" | grep -q '\[ahead '; then
+        prompt_info="${prompt_info}+"
+      fi
     fi
     echo " {${prompt_info}}"
   fi
