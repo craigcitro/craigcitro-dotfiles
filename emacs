@@ -416,10 +416,9 @@ after-make-frame-functions."
 (cc/add-to-load-path-if-exists "src/python-mode")
 (add-hook 'python-mode-hook
 	  '(lambda ()
-	     (defadvice py-indent-line (after ad-return-value)
+	     (defadvice py-indent-line (after ad-return-value activate)
 	       (when (< (current-column) ad-return-value)
-		 (move-to-column ad-return-value)))
-	     (ad-activate 'py-indent-line)))
+		 (move-to-column ad-return-value)))))
 (defun cc/python-mode-keys ()
   (define-key python-mode-map "\C-c<" 'cc/shift-left)
   (define-key python-mode-map "\C-c>" 'cc/shift-right)
