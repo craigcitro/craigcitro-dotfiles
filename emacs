@@ -189,7 +189,7 @@
 	 (filename (buffer-file-name buf)))
     (when (and (not (cc/empty-or-nil-p filename))
 	       (vc-git-root filename))
-      (make-cc/buffer-git-info
+      (cc/make-git-info
        :root (vc-git-root filename)
        :branch (cc/parse-git-branch buf)
        :filename filename))))
@@ -224,7 +224,7 @@
 	     'cc/iswitchb-same-branch-face
 	   'cc/iswitchb-different-branch-face)))
        ;; current buffer and buf are in different repos
-       (T nil)))))
+       (t nil)))))
 (defun cc/filter-buffers ()
   (setq iswitchb-temp-buflist
 	(reverse (mapcar 'cc/iswitchb-colorize-bufname iswitchb-temp-buflist))))
