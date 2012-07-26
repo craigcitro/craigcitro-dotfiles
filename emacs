@@ -1,3 +1,4 @@
+
 ;; -*- mode: Lisp; lexical-binding: t -*-
 ;;
 ;; emacs configuration
@@ -544,6 +545,9 @@ after-make-frame-functions."
 ;; julia mode
 ;;------------------------
 (cc/add-to-load-path-if-exists "src/julia/contrib/")
+(add-hook 'julia-mode-hook
+	  '(lambda ()
+	     (setq 'julia-basic-offset 2)))
 (when (require 'julia-mode nil t)
   (add-to-list 'auto-mode-alist '("\\.jl$" . julia-mode)))
 
