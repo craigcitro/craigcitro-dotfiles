@@ -237,30 +237,26 @@ def _is_private(attribute_name):
   """Return True if attribute_name is a private attribute."""
   return attribute_name.startswith('_')
 
-def _is_callable(obj, attribute_name):
-  """Return True if attribute_name is a callable attribute of obj."""
-  return callable(getattr(obj, attribute_name, None))
-
-def dpub(o):
+def dp(o):
   """Return a sorted list of all public members of an object."""
-  return sorted(filter(lambda x: not _is_private(x), dir(o)))
+  return sorted(list(set(dir(o)).difference(d_(o))))
 
-def dpri(o):
+def d_(o):
   """Return a sorted list of all private members of an object."""
   return sorted(filter(_is_private, dir(o)))
 
-def ddata(o):
+def dd(o):
   """Return a sorted list of all non-callable members of an object."""
-  return sorted(filter(lambda x: not _is_callable(x), dir(o)))
+  return sorted(filter(lambda name: callable(getattr(o, name)), dir(o)))
 
-def dmeth(o):
+def dm(o):
   """Return a sorted list of all callable members of an object."""
-  return sorted(filter(_is_callable, dir(o)))
+  return sorted(list(set(dir(o)).difference(dd(o))))
 
 # One or two useful combinations of those
-def dpmeth(o):
+def dpm(o):
   """Return a sorted list of all public callable members of an object."""
-  return sorted(filter(lambda x: _is_private(x) and _is_callable(x), dir(o)))
+  return sorted(list(set(dp(o)).intersection(set(dm(o)))))
 
 import pprint
 pp = pprint.pprint
