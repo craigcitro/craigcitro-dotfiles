@@ -650,6 +650,10 @@ after-make-frame-functions."
 (define-key minibuffer-local-map "\C-p" 'previous-history-element)
 (define-key minibuffer-local-map "\C-n" 'next-history-element)
 
+;; How did these get disabled?
+(put 'upcase-region 'disabled nil)
+(put 'downcase-region 'disabled nil)
+
 ;; vim-inspired
 (defun join-below ()
   """Join the next line to the current line."""
