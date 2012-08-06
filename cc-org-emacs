@@ -16,17 +16,52 @@
     (while (not (string= (org-get-todo-state) target-state))
       (org-shiftright))))
 
-(defun cc/org-insert-next-subheading ()
-  "Insert a subheading just as org-insert-todo-subheading,
-  but in state NEXT."
+(defun cc/org-todo-toggle-started ()
   (interactive)
-  (end-of-buffer)
   (if (string= (org-get-todo-state) "TODO")
-      (progn
-        (org-insert-todo-subheading nil)
-        (cc/org-set-todo-state "NEXT")
-        (insert " "))
-    (org-insert-todo-heading nil)))
+      (org-todo "LIVE")
+    (org-todo "TODO")))
+
+(defun cc/org-todo-finish (&optional prefix)
+  (interactive "P")
+  (org-todo "DONE")
+  (org-cycle)
+  (let ((parent-is-todo
+	 (save-excursion
+	   (org-up-heading-safe)
+	   (org-entry-is-todo-p))))
+    (unless (or parent-is-todo prefix)
+      (org-archive-subtree))))
+
+(defun cc/org-parent-is-todo-p ()
+  "Return t iff the parent of this entry is a todo item (in any state)."
+  (save-excursion
+    (org-up-heading-safe)
+    (org-entry-is-todo-p)))
+
+(defun cc/org-insert-next-subheading ()
+  "Insert a TODO, either at the current level or below. Used in capture."
+  (interactive)
+  (if (cc/org-parent-is-todo-p)
+      (org-insert-todo-heading nil)
+    (org-insert-todo-subheading nil)))
+
+(defconst cc/org-icebox-file nil
+  "Default file for iceboxed TODOs.")
+
+(defconst cc/org-default-tips-file nil
+  "Default file for tips.")
+
+(defconst cc/org-default-quotes-file nil
+  "Default file for quotes.")
+
+(defun cc/org-icebox ()
+  "Move this entry to the icebox, cc/org-icebox-file."
+  (interactive)
+  (org-refile nil nil (list "Iceboxed Tasks/" cc/org-icebox-file nil 42))
+  (with-current-buffer (find-file-noselect cc/org-icebox-file)
+    (save-buffer 0))
+  (save-buffer 0))
 
 ;; Undefine C-c [ and C-c ], in favor of explicit management of the
 ;; org-agenda-files variable.
@@ -40,14 +75,17 @@
 ;; like a good set, but we'll see.
 (add-hook 'org-mode-hook
           '(lambda ()
-             (org-defkey org-mode-map "\M-\C-n" 'outline-next-visible-heading)
-             (org-defkey org-mode-map "\M-\C-p" 'outline-previous-visible-heading)
-             (org-defkey org-mode-map "\M-\C-f" 'org-forward-same-level)
-             (org-defkey org-mode-map "\M-\C-b" 'org-backward-same-level)
+             (org-defkey org-mode-map "\M-\C-f" 'outline-next-visible-heading)
+             (org-defkey org-mode-map "\M-\C-b" 'outline-previous-visible-heading)
+             (org-defkey org-mode-map "\M-\C-n" 'org-forward-same-level)
+             (org-defkey org-mode-map "\M-\C-p" 'org-backward-same-level)
              (org-defkey org-mode-map "\M-\C-u" 'outline-up-heading)))
 ;; More keys for my workflow.
 (add-hook 'org-mode-hook
           '(lambda ()
+	     (org-defkey org-mode-map "\M-\C-d" 'cc/org-todo-finish)
+	     (org-defkey org-mode-map "\M-\C-s" 'cc/org-todo-toggle-started)
+	     (org-defkey org-mode-map "\M-\C-i" 'cc/org-icebox)
              (org-defkey org-mode-map "\M-\C-t" 'cc/org-insert-next-subheading)))
 
 ;; More org-mode variable settings, in lieu of customize.
@@ -66,15 +104,21 @@
      ;; Where the org files live
      (setq org-directory "~/w/org")
      (setq org-agenda-files (list org-directory))
-     (setq org-default-notes-file (concat org-directory "/refile.org"))
-     (setq org-default-tips-file (concat org-directory "/tips.org"))
-     (setq org-default-quotes-file (concat org-directory "/quotes.org"))
+     (setq org-default-notes-file (concat org-directory "/notes.org"))
+     (setq cc/org-default-tips-file (concat org-directory "/tips.org"))
+     (setq cc/org-default-quotes-file (concat org-directory "/quotes.org"))
+     (setq cc/org-icebox-file (concat org-directory "/icebox.org"))
      ;; Add contrib/ to the load path
      (cc/add-to-load-path-if-exists "org-contrib/lisp")
      ;; Agenda-related config.
      (setq org-agenda-ndays 4)
+     ;; Archive into a tree.
+     (setq org-archive-location "%s_archive::* Archived Tasks")
      ;; org-velocity
      (require 'org-velocity)
+     (setq org-velocity-bucket (concat org-directory "/velocity-bucket.org"))
+     (setq org-velocity-exit-on-match t)
+     (setq org-velocity-use-completion t)
      ;; mobile org
      (setq org-mobile-directory "~/w/mobile-org")
      (setq org-mobile-force-id-on-agenda-items nil)
@@ -82,40 +126,40 @@
      ;; Configure the capture templates
      (setq org-capture-templates
            (quote (("t" "todo" entry (file+headline org-default-notes-file "Tasks")
-                    "* TODO %?\n%T\n")
+                    "* TODO %? %^G\n%T\n")
                    ("c" "todo with context" entry
                     (file+headline org-default-notes-file "Tasks")
-                    "* TODO %?\n%T\n%a\n")
-                   ("p" "tips" entry (file+headline org-default-tips-file "Tips")
-                    "* %?\n%^G\n%U\n%a\n")
-		   ("q" "quote" entry (file+headline org-default-quotes-file "Quotes")
-		    "* QUOTE %?\n%T\n")
-                   ("n" "note" entry (file+headline org-default-notes-file "Notes")
-                    "* %? :NOTE:\n%U\n%a\n")
-                   ("j" "Journal" entry (file+datetree org-default-notes-file)
+                    "* TODO %? %^G\n%T\n%a\n")
+                   ("p" "tips" entry
+		    (file+headline cc/org-default-tips-file "Tips")
+                    "* %? %^G\n%U\n%a\n")
+		   ("q" "quote" entry
+		    (file+headline cc/org-default-quotes-file "Quotes")
+		    "* %?\n%^{AUTHOR}p\n%T\n")
+                   ("n" "note" entry
+		    (file+headline org-default-notes-file "Notes")
+                    "* %? :NOTE:%^G\n%U\n%a\n")
+                   ("j" "Journal" entry
+		    (file+datetree org-default-notes-file)
                     "* %?\nEntered on %U\n  %i\n  %a")
+		   ("v" "velocity entry" entry
+		    (file org-velocity-bucket)
+		    "* %:search\n\n%i%?")
                    )))
      ;; ido-based refile completion
-     (setq org-refile-targets '((nil :maxlevel . 3)
-                                (org-agenda-files :maxlevel . 3)))
-     (setq org-refile-use-outline-path t)
+     (setq org-refile-targets '((nil :maxlevel . 1)
+                                (org-agenda-files :maxlevel . 1)))
+     (setq org-refile-use-outline-path 'file)
      (setq org-outline-path-complete-in-steps nil)
      (setq org-refile-allow-creating-parent-nodes 'confirm)
      (setq org-completion-use-ido t)
      ;; Task states and related configuration
      (setq org-todo-keywords
            '((type "TODO(t!)" "|" "DONE(d!)")
-             (sequence "NEXT(n!)" "HOLDING(h@/!)")))
+             (sequence "LIVE(l!)" "HOLDING(h@/!)")))
      (setq org-use-fast-todo-selection t)
      (setq org-treat-S-cursor-todo-selection-as-state-change nil)
      (setq org-log-into-drawer t)
-     ;; Not sure that I actually need this.
-     ;; (setq org-todo-state-tags-triggers
-     ;;       (quote (("WAITING" ("WAITING" . t))
-     ;;               (done ("WAITING"))
-     ;;               ("TODO" ("WAITING"))
-     ;;               ("NEXT" ("WAITING"))
-     ;;               ("DONE" ("WAITING")))))
      ;; Tags
      (setq org-fast-tag-selection-single-key nil)
      ;; I tend to use this as a complete list of common tags.
@@ -124,18 +168,16 @@
 		   ("@bigscience" . ?b)
 		   ("@config" . ?c)
 		   ("@life" . ?l)
-		   ("@read" . ?r)
-		   ("@watch" . ?w)
 		   (:endgroup)
-		   ("googs" . ?g)
-		   ("bq-cli" . ?q)
-		   ("statsy" . ?s)
-		   ("emacs" . ?E)
-		   ("git" . ?G)
 		   ("Rstats" . ?R)
-		   ("julia" . ?J)
-		   ("python" . ?P)
-		   ("org" . ?O)
+		   ("emacs" . ?e)
+		   ("googs" . ?g)
+		   ("julia" . ?j)
+		   ("org" . ?o)
+		   ("python" . ?p)
+		   ("read" . ?r)
+		   ("statsy" . ?s)
+		   ("watch" . ?w)
 		   )))
      ))
 
@@ -147,6 +189,7 @@
   (global-set-key "\C-cg" 'org-agenda)
   (global-set-key "\C-cb" 'org-iswitchb)
   (global-set-key "\C-cc" 'org-capture)
+  (global-set-key "\C-cv" 'org-velocity-read)
   ;; Secondary keystrokes for each:
   (global-set-key "\M-\C-l" 'org-store-link)
   (global-set-key "\M-\C-a" 'org-agenda)
