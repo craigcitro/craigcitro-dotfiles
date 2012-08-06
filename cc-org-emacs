@@ -104,7 +104,7 @@
      ;; Where the org files live
      (setq org-directory "~/w/org")
      (setq org-agenda-files (list org-directory))
-     (setq org-default-notes-file (concat org-directory "/notes.org"))
+     (setq org-default-notes-file (concat org-directory "/todo.org"))
      (setq cc/org-default-tips-file (concat org-directory "/tips.org"))
      (setq cc/org-default-quotes-file (concat org-directory "/quotes.org"))
      (setq cc/org-icebox-file (concat org-directory "/icebox.org"))
