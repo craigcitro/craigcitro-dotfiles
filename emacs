@@ -413,7 +413,6 @@ after-make-frame-functions."
 ;;---------------------------
 ;; Python
 ;;---------------------------
-(cc/add-to-load-path-if-exists "src/python-mode")
 (add-hook 'python-mode-hook
 	  '(lambda ()
 	     (defadvice py-indent-line (after ad-return-value activate)
