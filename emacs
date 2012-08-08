@@ -542,7 +542,7 @@ after-make-frame-functions."
 ;;------------------------
 ;; julia mode
 ;;------------------------
-(cc/add-to-load-path-if-exists "src/julia/contrib/")
+(cc/add-to-load-path-if-exists "upstream/julia/contrib/")
 (add-hook 'julia-mode-hook
 	  '(lambda ()
 	     (setq 'julia-basic-offset 2)))
