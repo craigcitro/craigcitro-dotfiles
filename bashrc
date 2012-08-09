@@ -399,7 +399,7 @@ function git_prompt_info () {
       if git status --porcelain | grep -q '^??'; then
         prompt_info="${prompt_info}?"
       fi
-      if git status --porcelain | grep -q '^[ A][ M]'; then
+      if git status --porcelain | grep -E -q '^(A|AA|AD| M|M)'; then
         prompt_info="${prompt_info}!"
       fi
       if git branch -v | grep "$CC_GIT_BRANCH" | grep -q '\[ahead '; then
