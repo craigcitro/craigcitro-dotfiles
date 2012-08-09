@@ -7,14 +7,15 @@
         br = branch
         ch = checkout
         substatus = submodule foreach "git status; true"
-	l = "log -30 --abbrev-commit --relative-date --format='%Cred%h%Cgreen %aN%Cblue %ar %Creset %s'"
-	lg = "log -60 --graph --color=always --abbrev-commit --date=relative --format='%Cred%h%Cgreen %aN%Cblue %ar %Creset %s'"
+	l = "log -30 --oneline --decorate"
+	ll = "log -30 --abbrev-commit --relative-date --format='%C(yellow)%h %C(cyan)%aN %C(red)%ar %Creset%s%C(magenta bold)%d'"
+	lg = "log -60 --graph --oneline --decorate"
+	llg = "log -60 --graph --abbrev-commit --relative-date --format='%C(yellow)%h %C(cyan)%aN %C(red)%ar %Creset%s%C(magenta bold)%d'"
 [color]
         ui = true
 [core]
         excludesfile = ~/.gitignore
 [grep]
         lineNumber = true
-        
 [push]
 	default = tracking
