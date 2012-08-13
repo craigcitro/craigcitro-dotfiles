@@ -416,9 +416,17 @@ after-make-frame-functions."
 ;;---------------------------
 (add-hook 'python-mode-hook
 	  '(lambda ()
+	     (defadvice py-compute-indentation (after ad-return-value activate)
+	       (save-excursion
+		 (beginning-of-line)
+		 (skip-chars-backward " \t\r\n\f")
+		 (when (eq (char-before (point)) 40)
+		   (message "hihi: %s" ad-return-value)
+		   (setq ad-return-value (+ 2 ad-return-value)))))
 	     (defadvice py-indent-line (after ad-return-value activate)
 	       (when (< (current-column) ad-return-value)
-		 (move-to-column ad-return-value)))))
+		 (move-to-column ad-return-value)))
+	     ))
 (defun cc/python-mode-keys ()
   (define-key python-mode-map "\C-c<" 'cc/shift-left)
   (define-key python-mode-map "\C-c>" 'cc/shift-right)
