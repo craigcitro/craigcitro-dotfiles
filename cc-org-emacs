@@ -87,7 +87,7 @@
 	     (org-defkey org-mode-map "\M-\C-d" 'cc/org-todo-finish)
 	     (org-defkey org-mode-map "\M-\C-w" 'cc/org-todo-finish) 
 	     (org-defkey org-mode-map "\M-\C-s" 'cc/org-todo-toggle-started)
-	     (org-defkey org-mode-map "\M-\C-i" 'cc/org-icebox)
+	     (org-defkey org-mode-map "\M-\C-z" 'cc/org-icebox)
              (org-defkey org-mode-map "\M-\C-t" 'cc/org-insert-next-subheading)))
 
 ;; More org-mode variable settings, in lieu of customize.
