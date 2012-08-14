@@ -1,4 +1,4 @@
-;; -*- mode: Lisp; lexical-binding: t -*-
+;; -*- mode: Emacs-lisp; lexical-binding: t -*-
 ;;
 ;; emacs configuration
 ;;
@@ -41,7 +41,7 @@
   "Show a simple message when a command has been disabled."
   (interactive)
   (message "Command %s has been disabled"
-	   (substring (this-command-keys) 0 -1)))
+           (substring (this-command-keys) 0 -1)))
 (setq disabled-command-function 'cc/disabled-command-message)
 
 (normal-erase-is-backspace-mode nil)
@@ -49,7 +49,7 @@
 ;; package initialization
 (package-initialize)
 (add-to-list 'package-archives
-	     '("marmalade" . "http://marmalade-repo.org/packages/"))
+             '("marmalade" . "http://marmalade-repo.org/packages/"))
 
 ;; start the server if it's not already up
 (defconst default-server-name "craigcitro" "Default server name.")
@@ -82,7 +82,7 @@
                     (getenv "HOME")
                     (concat (getenv "HOME") "/.emacs.d/lisp")
                     (concat (getenv "HOME") "/ext")
-		    (concat (getenv "HOME") "/ext/share/emacs/site-lisp"))))
+                    (concat (getenv "HOME") "/ext/share/emacs/site-lisp"))))
     (cc/first-non-nil
      (mapcar (lambda (x)
                (let ((full-path (command-line-normalize-file-name (concat x "/" path))))
@@ -177,18 +177,18 @@
   "Get the git branch from a buffer."
   (let ((git-info (buffer-local-value 'vc-mode (or buf (current-buffer)))))
     (if (null git-info)
-	""
+        ""
       (substring-no-properties git-info (length " Git-")))))
 (defstruct (cc/buffer-git-info
-	    (:constructor cc/make-git-info))
+            (:constructor cc/make-git-info))
   "Git-specific info about a given buffer."
   root branch filename)
 (defun cc/make-git-info-from-buffer (&optional buf)
   (let* ((buf (or buf (current-buffer)))
-	 (filename (buffer-file-name buf)))
+         (filename (buffer-file-name buf)))
     (when (and (not (cc/empty-or-nil-p filename))
-	       (fboundp 'vc-git-root)
-	       (vc-git-root filename))
+               (fboundp 'vc-git-root)
+               (vc-git-root filename))
       (cc/make-git-info
        :root (vc-git-root filename)
        :branch (cc/parse-git-branch buf)
@@ -202,32 +202,32 @@
      Red: buffer is in the same repo and a DIFFERENT branch as current
    Files in different git repos return nil."
   (let* ((buf (or (get-buffer buf-name) (current-buffer)))
-	 (buf-name (buffer-name buf)))
+         (buf-name (buffer-name buf)))
     (let ((buf-git-info (cc/make-git-info-from-buffer buf))
-	  (current-git-info (cc/make-git-info-from-buffer)))
+          (current-git-info (cc/make-git-info-from-buffer)))
       (cond
        ;; buf is current buffer
        ((string= buf-name (buffer-name (current-buffer)))
-	(propertize buf-name 'face 'cc/iswitchb-this-buffer-face))
+        (propertize buf-name 'face 'cc/iswitchb-this-buffer-face))
        ;; system buffer
        ((char-equal ?* (elt buf-name 0))
-	(propertize buf-name 'face 'cc/iswitchb-system-buffer-face))
+        (propertize buf-name 'face 'cc/iswitchb-system-buffer-face))
        ;; buf or current buffer is not in a git repo
        ((or (null buf-git-info) (null current-git-info)) buf-name)
        ;; current buffer is in the same git repo as buf
        ((string= (cc/buffer-git-info-root buf-git-info)
-		 (cc/buffer-git-info-root current-git-info))
-	(propertize
-	 buf-name 'face
-	 (if (string= (cc/buffer-git-info-branch buf-git-info)
-		      (cc/buffer-git-info-branch current-git-info))
-	     'cc/iswitchb-same-branch-face
-	   'cc/iswitchb-different-branch-face)))
+                 (cc/buffer-git-info-root current-git-info))
+        (propertize
+         buf-name 'face
+         (if (string= (cc/buffer-git-info-branch buf-git-info)
+                      (cc/buffer-git-info-branch current-git-info))
+             'cc/iswitchb-same-branch-face
+           'cc/iswitchb-different-branch-face)))
        ;; current buffer and buf are in different repos
        (t nil)))))
 (defun cc/filter-buffers ()
   (setq iswitchb-temp-buflist
-	(reverse (mapcar 'cc/iswitchb-colorize-bufname iswitchb-temp-buflist))))
+        (reverse (mapcar 'cc/iswitchb-colorize-bufname iswitchb-temp-buflist))))
 (add-hook 'iswitchb-make-buflist-hook 'cc/filter-buffers)
 
 ;;------------------------------------------------------------
@@ -288,14 +288,14 @@
     "Determine if a url is work-related."
     (interactive)
     (or (string-match "/a/google.com/" url)
-	(string-match "\\(^\\|//\\)[^./]/" url)))
+        (string-match "\\(^\\|//\\)[^./]/" url)))
   (defun cc/browse-url-chrome-mac (url &optional new-window)
     "Open a URL in the appropriate chrome instance."
     (interactive)
     (let ((is-home (if (cc/is-work-url url) "" "true")))
       (shell-command
        (format "osascript /Users/craigcitro/dotfiles/load-url.scpt %s %s"
-	       url is-home))))
+               url is-home))))
   (setq browse-url-browser-function 'cc/browse-url-chrome-mac))
 
 ;;===========================================
@@ -415,17 +415,17 @@ after-make-frame-functions."
 ;; Python
 ;;---------------------------
 (add-hook 'python-mode-hook
-	  '(lambda ()
-	     (defadvice py-compute-indentation (after ad-return-value activate)
-	       (save-excursion
-		 (beginning-of-line)
-		 (skip-chars-backward " \t\r\n\f")
-		 (when (eq (char-before (point)) 40)
-		   (setq ad-return-value (+ 2 ad-return-value)))))
-	     (defadvice py-indent-line (after ad-return-value activate)
-	       (when (< (current-column) ad-return-value)
-		 (move-to-column ad-return-value)))
-	     ))
+          '(lambda ()
+             (defadvice py-compute-indentation (after ad-return-value activate)
+               (save-excursion
+                 (beginning-of-line)
+                 (skip-chars-backward " \t\r\n\f")
+                 (when (eq (char-before (point)) 40)
+                   (setq ad-return-value (+ 2 ad-return-value)))))
+             (defadvice py-indent-line (after ad-return-value activate)
+               (when (< (current-column) ad-return-value)
+                 (move-to-column ad-return-value)))
+             ))
 (defun cc/python-mode-keys ()
   (define-key python-mode-map "\C-c<" 'cc/shift-left)
   (define-key python-mode-map "\C-c>" 'cc/shift-right)
@@ -460,6 +460,24 @@ after-make-frame-functions."
   (interactive "sFind name in hierarchy: ")
   (occur (format "^\\( *\\(cp\\|c\\)?def.*%s\\|class\\|cdef class\\).*:$" name)))
 
+(defun cc/hack-find-block ()
+  (interactive)
+  (flet ((find-empty-line
+          (&optional aaaa)
+          (save-excursion
+            (beginning-of-line)
+            (while (not (= (progn (end-of-line) (point))
+                           (progn (beginning-of-line) (point))))
+              (message "moving moving")
+              (if (null aaaa)
+                  (forward-line)
+                (forward-line -1)))
+            (point))))
+    (let ((start (find-empty-line t))
+          (end (find-empty-line)))
+      (sort-lines nil start end)
+      )))
+
 ;;-------------------------
 ;; Java
 ;;-------------------------
@@ -481,19 +499,19 @@ after-make-frame-functions."
   With any prefix arg, steps by sexps at the current level."
   (interactive "P")
   (let ((step (lambda (&optional forward-first)
-		(if line-mode
-		    (progn
-		      (if forward-first
-			  (forward-sexp)
-			(end-of-line)))
-		  (progn
-		    (if forward-first
-			(forward-line))
-		    (end-of-defun)
-		    (forward-line -1)
-		    (end-of-line)))))
-	(continue t)
-	(final-position (point)))
+                (if line-mode
+                    (progn
+                      (if forward-first
+                          (forward-sexp)
+                        (end-of-line)))
+                  (progn
+                    (if forward-first
+                        (forward-line))
+                    (end-of-defun)
+                    (forward-line -1)
+                    (end-of-line)))))
+        (continue t)
+        (final-position (point)))
     (funcall step)
     (while continue
       (let ((val (eval-last-sexp nil)))
@@ -505,10 +523,10 @@ after-make-frame-functions."
     (when last-input-event
       (clear-this-command-keys t)
       (if (equal (event-convert-list '(E)) last-input-event)
-	  (eval-last-sexp nil)
-	(progn
-	  (setq unread-command-events (list last-input-event))
-	  (goto-char final-position))))))
+          (eval-last-sexp nil)
+        (progn
+          (setq unread-command-events (list last-input-event))
+          (goto-char final-position))))))
 (global-set-key "\C-c\C-e" 'cc/eval-sexp-and-advance)
 
 ;; tab completion in the Eval: prompt!
@@ -525,9 +543,9 @@ after-make-frame-functions."
 ;; add rc files as shell as a last resort
 (add-to-list 'auto-mode-alist '("rc$" . shell-script-mode) t)
 (add-hook 'sh-mode-hook
-	  '(lambda ()
-	     (setq sh-basic-offset 2)
-	     (setq sh-indentation 2)))
+          '(lambda ()
+             (setq sh-basic-offset 2)
+             (setq sh-indentation 2)))
 
 ;;------------------------
 ;; ess-mode
@@ -551,8 +569,8 @@ after-make-frame-functions."
 ;; julia mode
 ;;------------------------
 (add-hook 'julia-mode-hook
-	  '(lambda ()
-	     (setq 'julia-basic-offset 2)))
+          '(lambda ()
+             (setq 'julia-basic-offset 2)))
 (when (require 'julia-mode nil t)
   (add-to-list 'auto-mode-alist '("\\.jl$" . julia-mode)))
 
@@ -569,6 +587,9 @@ after-make-frame-functions."
        (set-face-background 'magit-item-highlight "black"))))
 (when (require 'magit nil t)
   (global-set-key "\C-c\C-g" 'magit-status))
+
+
+
 
 ;;==============================================================================
 ;; Utility functions
@@ -616,7 +637,7 @@ after-make-frame-functions."
    ((null key) alist)
    ((and (null val) (listp key))
     (cc/update-alist (cc/update-alist alist (caar key) (cdar key))
-		  (cdr key)))
+                  (cdr key)))
    ((null alist) (list (cons key val)))
    ((equal key (caar alist)) (cons (cons key val) (cdr alist)))
    (t (cons (car alist) (cc/update-alist (cdr alist) key val)))))
