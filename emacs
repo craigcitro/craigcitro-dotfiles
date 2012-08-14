@@ -609,8 +609,12 @@ after-make-frame-functions."
        (,(format "^%s\\(.+\\)" (make-string width ?.)) (1 font-lock-warning-face t))
        ))))
 (add-hook 'python-mode-hook 'make-mode-pedantic)
-(add-hook 'lisp-mode-hook 'make-mode-pedantic)
-(add-hook 'emacs-lisp-mode-hook 'make-mode-pedantic)
+(eval-after-load 'lisp-mode
+  '(progn
+     (add-hook 'lisp-mode-hook 'make-mode-pedantic)))
+(eval-after-load 'emacs-lisp-mode
+  '(progn
+     (add-hook 'emacs-lisp-mode-hook 'make-mode-pedantic)))
 
 ;;---------------------
 ;; flymake
