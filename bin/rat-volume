@@ -1,0 +1,28 @@
+#!/bin/bash
+# rat-volume by Stephan Walter <stephan@walter.name>, License: BSD
+#
+# Stolen from Ami's bin dir on 2010 sep 13.
+#
+# (2010 Oct 26) Modified to handle multiple controls.
+
+if [ $# == 1 ]; then
+  CONTROL="Master"
+  DIFF=$1
+elif [ $# == 2 ]; then
+  CONTROL=$1
+  DIFF=$2
+else
+  CONTROL="Master"
+  DIFF="5%-"
+fi
+
+# echo "Args: "$#
+# echo "Control: "$CONTROL
+# echo "Diff: "$DIFF
+
+amixer set $CONTROL $DIFF
+
+ratpoison -c "echo `amixer get $CONTROL \
+              | grep Left: \
+              | sed 's/^.*\[\(.*\)%\].*/\1/' \
+              | awk '{for(i=0;i<\$1;i++)printf \"#\"; for(;i<100;i++)printf \" \"}'`"

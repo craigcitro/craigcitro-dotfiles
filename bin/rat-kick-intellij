@@ -1,0 +1,9 @@
+#!/bin/bash
+# rat-kick-intellij
+# 2011 Nov 07
+#
+# Revive the cursor by right clicking and then left clicking; this
+# will wake up IntelliJ when the cursor disappears.
+
+ratpoison -c 'ratclick 2'
+ratpoison -c 'ratclick 1'

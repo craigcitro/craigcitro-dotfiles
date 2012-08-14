@@ -1,0 +1,23 @@
+#!/usr/bin/env python
+# -*- mode: python -*-
+
+import itertools
+import os
+import subprocess
+import sys
+
+def GetTerminalWidth():
+  if os.environ.get('COLUMNS'):
+    return int(os.environ['COLUMNS'])
+  elif sys.stdout.isatty():
+    return int(subprocess.check_output(['stty', 'size']).split(' ')[1])
+  else:
+    return 80
+
+def PrintCols(width):
+  print ''.join('%10s' % x for x in xrange(1, 1 + (width // 10)))
+  digits = itertools.cycle('1234567890')
+  print ''.join(digits.next() for _ in xrange(width))
+
+if __name__ == '__main__':
+  PrintCols(GetTerminalWidth())

@@ -1,0 +1,10 @@
+#!/bin/sh
+# 
+# craig citro
+# 2012 july 7
+# 
+# quick hack for mirroring from osx clipboard to the tmux copy buffers
+
+#reattach-to-user-namespace pbpaste >/Users/craigcitro/.tmux.paste-buffer && tmux load-buffer /Users/craigcitro/.tmux.paste-buffer
+
+reattach-to-user-namespace pbpaste | tmux set-buffer -
