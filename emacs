@@ -615,8 +615,7 @@ after-make-frame-functions."
 ;;---------------------
 ;; flymake
 ;;---------------------
-(cc/find-file-or-nil "flymake-by-mode")
-(require 'cc/flymake-by-mode)
+(require 'cc/flymake-by-mode "flymake-by-mode")
 
 ;;==============================================================================
 ;; Utility functions
