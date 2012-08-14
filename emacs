@@ -1,4 +1,3 @@
-
 ;; -*- mode: Lisp; lexical-binding: t -*-
 ;;
 ;; emacs configuration
@@ -188,6 +187,7 @@
   (let* ((buf (or buf (current-buffer)))
 	 (filename (buffer-file-name buf)))
     (when (and (not (cc/empty-or-nil-p filename))
+	       (fboundp 'vc-git-root)
 	       (vc-git-root filename))
       (cc/make-git-info
        :root (vc-git-root filename)
