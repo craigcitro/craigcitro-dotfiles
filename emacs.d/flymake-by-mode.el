@@ -1,13 +1,13 @@
 ;; Configure flymake for python
 (defun cc/flymake-pylint-init ()
   (let* ((temp-file (flymake-init-create-temp-buffer-copy
-		     'flymake-create-temp-with-folder-structure))
-	 (local-file (file-relative-name
-		      temp-file
-		      (file-name-directory buffer-file-name))))
+                     'flymake-create-temp-with-folder-structure))
+         (local-file (file-relative-name
+                      temp-file
+                      (file-name-directory buffer-file-name))))
     (list "fpylint"
-	  (list local-file
-		(format "--indent=%s" py-indent-offset)))))
+          (list local-file
+                (format "--indent=%s" py-indent-offset)))))
 
 (defvar cc/flymake-by-mode-alist
   '((python-mode cc/flymake-pylint-init)))
@@ -17,7 +17,7 @@
     (when tool
       (make-variable-buffer-local 'flymake-allowed-file-name-masks)
       (setq flymake-allowed-file-name-masks
-	    `(("" ,@(cdr tool))))
+            `(("" ,@(cdr tool))))
       (flymake-mode-on)
       (cc/flymake-by-mode-on)
       )))
@@ -28,11 +28,11 @@
   '(progn
      (defun cc/flymake-err-at (pos)
        (let ((overlays (overlays-at pos)))
-	 (remove nil
-		 (mapcar (lambda (overlay)
-			   (and (overlay-get overlay 'flymake-overlay)
-				(overlay-get overlay 'help-echo)))
-			 overlays))))
+         (remove nil
+                 (mapcar (lambda (overlay)
+                           (and (overlay-get overlay 'flymake-overlay)
+                                (overlay-get overlay 'help-echo)))
+                         overlays))))
      (defun cc/echo-flymake-error ()
        (interactive)
        (message "%s" (mapconcat 'identity (cc/flymake-err-at (point)) "\n")))
