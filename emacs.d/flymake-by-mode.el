@@ -1,3 +1,6 @@
+;; A handful of configuration to configure flymake by mode instead of
+;; by filename regexp.
+
 ;; Configure flymake for python
 (defun cc/flymake-pylint-init ()
   (let* ((temp-file (flymake-init-create-temp-buffer-copy
@@ -50,6 +53,7 @@
     map))
 
 (define-minor-mode cc/flymake-by-mode-minor-mode
+  "Minor mode with my flymake-related keybindings."
   nil
   nil
   :keymap cc/flymake-by-mode-keymap)
@@ -58,30 +62,4 @@
   (unless cc/flymake-by-mode-minor-mode
     (cc/flymake-by-mode-minor-mode)))
 
-;;;;;;;;;;;;;;;
-;; trailing whitespace and whatnot
-
-(defface cc/long-line-face
-  '((t (:foreground "red")))
-  "*Face used for long lines.")
-(defface cc/bad-whitespace-face
-  '((t (:foreground "red" :background "red")))
-  "*Face used for trailing spaces or tabs.")
-
-(defun make-mode-pedantic (&optional mode line-width)
-  (interactive)
-  (message "hihihi")
-  (let ((width (if (null line-width) 81 (1+ line-width))))
-    (font-lock-add-keywords
-     mode
-     `(("[ \t]+$" (0 'cc/bad-whitespace-face t))
-       ("\t+" (0 'cc/bad-whitespace-face t))
-       (,(format "^%s\\(.+\\)" (make-string width ?.)) (1 font-lock-warning-face t))
-       ))))
-(add-hook 'python-mode-hook 'make-mode-pedantic)
-(add-hook 'lisp-mode-hook 'make-mode-pedantic)
-(add-hook 'emacs-lisp-mode-hook 'make-mode-pedantic)
-
-(font-lock-add-keywords 'c++-mode (font-lock-width-keyword 80))
-(font-lock-add-keywords 'java-mode (font-lock-width-keyword 100))
-(font-lock-add-keywords 'python-mode (font-lock-width-keyword 80))
+(provide 'cc/flymake-by-mode)

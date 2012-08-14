@@ -390,7 +390,8 @@ after-make-frame-functions."
 ;; Haskell
 ;;------------------
 ;; Generic bit
-(let ((haskell-site-file (cc/find-file-or-nil "haskell-mode/haskell-site-file.el")))
+(let ((haskell-site-file
+       (cc/find-file-or-nil "haskell-mode/haskell-site-file.el")))
   (when haskell-site-file
     (load haskell-site-file)
     (add-to-list 'auto-mode-alist '("\\.hs$" . haskell-mode))
@@ -588,8 +589,34 @@ after-make-frame-functions."
 (when (require 'magit nil t)
   (global-set-key "\C-c\C-g" 'magit-status))
 
+;;------------------------
+;; pedantic coloring
+;;------------------------
+(defface cc/long-line-face
+  '((t (:foreground "red")))
+  "*Face used for long lines.")
+(defface cc/bad-whitespace-face
+  '((t (:background "red")))
+  "*Face used for tabs or trailing whitespace.")
 
+(defun cc/make-mode-pedantic (&optional mode line-width)
+  (interactive)
+  (let ((width (if (null line-width) 81 (1+ line-width))))
+    (font-lock-add-keywords
+     mode
+     `(("[ \t]+$" (0 'cc/bad-whitespace-face t))
+       ("\t+" (0 'cc/bad-whitespace-face t))
+       (,(format "^%s\\(.+\\)" (make-string width ?.)) (1 font-lock-warning-face t))
+       ))))
+(add-hook 'python-mode-hook 'make-mode-pedantic)
+(add-hook 'lisp-mode-hook 'make-mode-pedantic)
+(add-hook 'emacs-lisp-mode-hook 'make-mode-pedantic)
 
+;;---------------------
+;; flymake
+;;---------------------
+(cc/find-file-or-nil "flymake-by-mode")
+(require 'cc/flymake-by-mode)
 
 ;;==============================================================================
 ;; Utility functions
