@@ -380,6 +380,10 @@ function export_git_info() {
     export CC_GIT_BRANCH=""
     return
   fi
+  if [[ "$PWD" == *"/.git"* ]]; then
+    export CC_GIT_BRANCH=""
+    return
+  fi
   if [ "${PWD##~}" = "$PWD" -a "${PWD##/home}" != "$PWD" ]; then
     return
   fi
