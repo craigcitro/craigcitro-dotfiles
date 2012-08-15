@@ -428,6 +428,7 @@ after-make-frame-functions."
                  (move-to-column ad-return-value)))
              ))
 (defun cc/python-mode-keys ()
+  (define-key python-mode-map "\C-?" 'py-electric-backspace)
   (define-key python-mode-map "\C-c<" 'cc/shift-left)
   (define-key python-mode-map "\C-c>" 'cc/shift-right)
   (define-key python-mode-map "#" 'self-insert-command)
