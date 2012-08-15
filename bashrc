@@ -199,6 +199,16 @@ if [ -e $COMPLETE_BASE ]; then
   source $COMPLETE_BASE
 fi
 
+COMPLETE_BASE='/Users/craigcitro/ext/share/bash-completion/bash_completion'
+if [ -e $COMPLETE_BASE ]; then
+  source $COMPLETE_BASE
+fi
+
+GIT_COMPLETION='/Users/craigcitro/ext/share/git-core/git-completion.bash'
+if [ -e $GIT_COMPLETION ]; then
+  source $GIT_COMPLETION
+fi
+
 # I found this clever trick here:
 #   http://www.macosxhints.com/article.php?story=20080317085050719
 # It autocompletes from .ssh/known_hosts, which is pretty useful ...
