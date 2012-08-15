@@ -297,9 +297,7 @@ alias mrd='/bin/ls -BF1t | grep / | head -1'
 
 ################################
 # python-related aliases
-alias py='python2.6'
-alias py2='python2.6'
-alias py3='python3.1'
+alias py='/usr/bin/python2.7'
 
 PYTHONSTARTUP=$HOME'/.pythonrc'
 export PYTHONSTARTUP
