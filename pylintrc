@@ -1,0 +1,96 @@
+[MASTER]
+profile=no
+persistent=yes
+cache-size=500
+#load-plugins=
+
+[MESSAGES CONTROL]
+disable=R0903,W0142
+
+[REPORTS]
+#output-format=text
+output-format=colorized
+include-ids=yes
+files-output=no
+reports=no
+
+[BASIC]
+module-rgx=^(_?[a-z][a-z0-9_]*)|__init__|PRESUBMIT|PRESUBMIT_unittest$
+
+# Regular expression which should only match correct module level names
+const-rgx=^(_?[A-Z][A-Z0-9_]*|__[a-z0-9_]+__|_?[a-z][a-z0-9_]*)$
+
+# Regular expression which should only match correct class names
+class-rgx=^_?[A-Z][a-zA-Z0-9]*$
+
+# Regular expression which should only match correct function names
+function-rgx=^_?[A-Z][a-zA-Z0-9]*$
+
+# Regular expression which should only match correct method names
+method-rgx=^(_{0,2}[A-Z][a-zA-Z0-9]*|__[a-z0-9_]+__|next)$
+
+# Regular expression which should only match correct instance attribute names
+attr-rgx=^_{0,2}[a-z][a-z0-9_]*$
+
+# Regular expression which should only match correct argument names
+argument-rgx=^[a-z][a-z0-9_]*$
+
+# Regular expression which should only match correct variable names
+variable-rgx=^[a-z][a-z0-9_]*$
+
+# Regular expression which should only match correct list comprehension /
+# generator expression variable names
+inlinevar-rgx=^[a-z][a-z0-9_]*$
+
+# Good variable names which should always be accepted, separated by a comma
+good-names=main,_
+
+# Bad variable names which should always be refused, separated by a comma
+bad-names=
+
+# List of builtins function names that should not be used, separated by a comma
+bad-functions=input
+
+# TEMPORARY
+no-docstring-rgx=.*
+
+[FORMAT]
+init-import=no
+indent-string='  '
+additional-builtins=
+max-line-length=80
+max-module-lines=50000
+
+[VARIABLES]
+dummy-variables-rgx=^(_$|unused_|dummy_)
+
+[MODES]
+test=no
+
+[CLASSES]
+defining-attr-methods=__init__,__new__,setUp
+valid-classmethod-first-arg=cls,class_
+
+[EXCEPTIONS]
+# Emits a W0703 warning on catching StandardError, too
+overgeneral-exceptions=StandardError,Exception,BaseException
+
+
+[TEST MODE]
+
+# Regex for method names when --test=y is given.
+test-method-rgx=^((_{0,2}|test|assert)[A-Z][a-zA-Z0-9_]*|__[a-z0-9_]+__|runTest|setUp|tearDown|setUpTestCase|tearDownTestCase|setupSelf|tearDownClass|setUpClass)$
+
+# Regex for function names when --test=y is given.
+test-function-rgx=^((_?[A-Z][a-zA-Z0-9]*)|setUp|tearDown|setUpModule|tearDownModule)$
+
+# List of checkers and msgs to disable when --test=y is given.
+# W0212: Access to a protected member %s of a client class
+# C6111: Missing docstring
+test-disable=W0212,C6111
+
+# unittest2 defines a couple of attributes in its base class, these
+# should not lead to a warning.
+test-attr-rgx=^(_{0,2}[a-z][a-z0-9_]*|maxDiff|longMessage|failureException)$
+test-const-rgx=^(_?[A-Z][A-Z0-9_]*|__[a-z0-9_]+__|_?[a-z][a-z0-9_]*|maxDiff|longMessage|failureException)$
+
