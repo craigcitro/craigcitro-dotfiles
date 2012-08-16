@@ -435,6 +435,10 @@ after-make-frame-functions."
   (define-key python-mode-map "\C-c#" 'comment-or-uncomment-region)
   (define-key python-mode-map "\C-ca" 'py-indent-region))
 (add-hook 'python-mode-hook 'cc/python-mode-keys)
+(defun cc/inferior-python-mode-keys ()
+  (define-key compilation-shell-minor-mode-map "\C-p" 'comint-previous-input)
+  (define-key compilation-shell-minor-mode-map "\C-n" 'comint-next-input))
+(add-hook 'comint-mode-hook 'cc/inferior-python-mode-keys)
 ;; I give up on python-mode "smart" indentation -- I like 2, and I can
 ;; change it manually on the off chance I need it.
 (defun cc/py-guess-indent-offset (&rest ignored)
