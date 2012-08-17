@@ -5,7 +5,7 @@ cache-size=500
 #load-plugins=
 
 [MESSAGES CONTROL]
-disable=R0903,W0142
+disable=R0903,W0142,W0511
 
 [REPORTS]
 #output-format=text
