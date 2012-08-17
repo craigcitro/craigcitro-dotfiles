@@ -421,8 +421,9 @@ after-make-frame-functions."
                (save-excursion
                  (beginning-of-line)
                  (skip-chars-backward " \t\r\n\f")
-                 (when (or (eq (char-before (point)) 40) ;; 40 = (
-			   (eq (char-before (point)) 123)) ;; 123 = {
+		 (when (memq (char-before (point))
+			     ;; ( [ {
+			     (list 40 91 123))
                    (setq ad-return-value (+ 2 ad-return-value)))))
              (defadvice py-indent-line (after ad-return-value activate)
                (when (< (current-column) ad-return-value)
