@@ -30,7 +30,10 @@
 (eval-after-load 'flymake
   '(progn
      (defun cc/flymake-err-at (pos)
-       (let ((overlays (overlays-at pos)))
+       (let ((overlays (save-excursion
+			 (overlays-in
+			  (progn (beginning-of-line) (point))
+			  (progn (end-of-line) (point))))))
          (remove nil
                  (mapcar (lambda (overlay)
                            (and (overlay-get overlay 'flymake-overlay)
