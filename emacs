@@ -423,9 +423,9 @@ after-make-frame-functions."
       (beginning-of-line)
       (skip-chars-backward " \t\r\n\f")
       (when (memq (char-before (point))
-		  ;; ( [ {
-		  (list 40 91 123))
-	(setq ad-return-value (+ 2 ad-return-value)))))
+                  ;; ( [ {
+                  (list 40 91 123))
+        (setq ad-return-value (+ 2 ad-return-value)))))
   (define-key python-mode-map "\C-ca" 'python-indent-region)
   (define-key inferior-python-mode-map "\C-p" 'comint-previous-input)
   (define-key inferior-python-mode-map "\C-n" 'comint-next-input)
