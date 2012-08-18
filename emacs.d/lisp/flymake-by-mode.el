@@ -8,9 +8,13 @@
          (local-file (file-relative-name
                       temp-file
                       (file-name-directory buffer-file-name))))
-    (list "fpylint"
-          (list local-file
-                (format "--indent=%s" py-indent-offset)))))
+    (let ((indent (cond
+		   ((boundp 'python-indent) python-indent)
+		   ((boundp 'py-indent-offset) py-indent-offset)
+		   (t 2))))
+      (list "fpylint"
+	    (list local-file
+		  (format "--indent=%s" indent))))))
 
 (defvar cc/flymake-by-mode-alist
   '((python-mode cc/flymake-pylint-init)))
