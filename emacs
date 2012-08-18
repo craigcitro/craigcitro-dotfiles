@@ -415,49 +415,21 @@ after-make-frame-functions."
 ;;---------------------------
 ;; Python
 ;;---------------------------
-(add-hook 'python-mode-hook
-          '(lambda ()
-             (defadvice py-compute-indentation (after ad-return-value activate)
-               (save-excursion
-                 (beginning-of-line)
-                 (skip-chars-backward " \t\r\n\f")
-		 (when (memq (char-before (point))
-			     ;; ( [ {
-			     (list 40 91 123))
-                   (setq ad-return-value (+ 2 ad-return-value)))))
-             (defadvice py-indent-line (after ad-return-value activate)
-               (when (< (current-column) ad-return-value)
-                 (move-to-column ad-return-value)))
-             ))
-(defun cc/python-mode-keys ()
-  (define-key python-mode-map "\C-?" 'py-electric-backspace)
-  (define-key python-mode-map "\C-c<" 'cc/shift-left)
-  (define-key python-mode-map "\C-c>" 'cc/shift-right)
-  (define-key python-mode-map "#" 'self-insert-command)
-  (define-key python-mode-map "\C-c#" 'comment-or-uncomment-region)
-  (define-key python-mode-map "\C-ca" 'py-indent-region))
-(add-hook 'python-mode-hook 'cc/python-mode-keys)
-(defun cc/inferior-python-mode-keys ()
-  (define-key compilation-shell-minor-mode-map "\C-p" 'comint-previous-input)
-  (define-key compilation-shell-minor-mode-map "\C-n" 'comint-next-input))
-(add-hook 'comint-mode-hook 'cc/inferior-python-mode-keys)
-;; I give up on python-mode "smart" indentation -- I like 2, and I can
-;; change it manually on the off chance I need it.
-(defun cc/py-guess-indent-offset (&rest ignored)
-  (interactive "P")
-  (message "Not so smart now, are you?"))
-(defun cc/change-py-indentation ()
-  (define-key python-mode-map "\C-c:" nil)
-  (put 'py-guess-indent-offset 'disabled t)
-  (setq py-smart-indentation nil)
-  (setq py-indent-offset 2)
-  (setq python-indent 2))
-(add-hook 'python-mode-hook 'cc/change-py-indentation)
-;; I find the python startup time irritating.
-(setq py-start-run-py-shell nil)
-(unless (require 'python-mode nil t)
-  (message "python-mode not found!"))
-;; Some other python-files-by-another-name.
+(when (require 'python)
+  (provide 'python-mode) ;; bye-bye python-mode.el
+  (setq python-indent 2)
+  (defadvice python-calculate-indentation (after ad-return-value activate)
+    (save-excursion
+      (beginning-of-line)
+      (skip-chars-backward " \t\r\n\f")
+      (when (memq (char-before (point))
+		  ;; ( [ {
+		  (list 40 91 123))
+	(setq ad-return-value (+ 2 ad-return-value)))))
+  (define-key python-mode-map "\C-ca" 'python-indent-region)
+  (define-key inferior-python-mode-map "\C-p" 'comint-previous-input)
+  (define-key inferior-python-mode-map "\C-n" 'comint-next-input)
+  )
 (add-to-list 'auto-mode-alist '("\\.?pythonrc$" . python-mode))
 (add-to-list 'auto-mode-alist '("\\.?pdbrc$" . python-mode))
 
