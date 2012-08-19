@@ -27,9 +27,9 @@
   (org-todo "DONE")
   (org-cycle)
   (let ((parent-is-todo
-	 (save-excursion
-	   (org-up-heading-safe)
-	   (org-entry-is-todo-p))))
+         (save-excursion
+           (org-up-heading-safe)
+           (org-entry-is-todo-p))))
     (unless (or parent-is-todo prefix)
       (org-archive-subtree))))
 
@@ -63,32 +63,27 @@
     (save-buffer 0))
   (save-buffer 0))
 
-;; Undefine C-c [ and C-c ], in favor of explicit management of the
-;; org-agenda-files variable.
-(add-hook 'org-mode-hook
-          '(lambda ()
-             (org-defkey org-mode-map "\C-c[" 'undefined)
-             (org-defkey org-mode-map "\C-c]" 'undefined)
-             (org-defkey org-mode-map "\C-c;" 'undefined))
-          'append)
-;; I want some single-chord shortcuts for movement; this seems
-;; like a good set, but we'll see.
-(add-hook 'org-mode-hook
-          '(lambda ()
-             (org-defkey org-mode-map "\M-\C-f" 'outline-next-visible-heading)
-             (org-defkey org-mode-map "\M-\C-b" 'outline-previous-visible-heading)
-             (org-defkey org-mode-map "\M-\C-n" 'org-forward-same-level)
-             (org-defkey org-mode-map "\M-\C-p" 'org-backward-same-level)
-             (org-defkey org-mode-map "\M-\C-u" 'outline-up-heading)))
-;; More keys for my workflow.
-(add-hook 'org-mode-hook
-          '(lambda ()
-	     ;; I'd love M-C-d, but OSX eats that keystroke.
-	     (org-defkey org-mode-map "\M-\C-d" 'cc/org-todo-finish)
-	     (org-defkey org-mode-map "\M-\C-w" 'cc/org-todo-finish) 
-	     (org-defkey org-mode-map "\M-\C-s" 'cc/org-todo-toggle-started)
-	     (org-defkey org-mode-map "\M-\C-z" 'cc/org-icebox)
-             (org-defkey org-mode-map "\M-\C-t" 'cc/org-insert-next-subheading)))
+(defun cc/org-keys-hook ()
+  ;; Undefine C-c [ and C-c ], in favor of explicit management of the
+  ;; org-agenda-files variable.
+  (org-defkey org-mode-map "\C-c[" 'undefined)
+  (org-defkey org-mode-map "\C-c]" 'undefined)
+  (org-defkey org-mode-map "\C-c;" 'undefined)
+  ;; I want some single-chord shortcuts for movement; this seems
+  ;; like a good set, but we'll see.
+  (org-defkey org-mode-map "\M-\C-f" 'outline-next-visible-heading)
+  (org-defkey org-mode-map "\M-\C-b" 'outline-previous-visible-heading)
+  (org-defkey org-mode-map "\M-\C-n" 'org-forward-heading-same-level)
+  (org-defkey org-mode-map "\M-\C-p" 'org-backward-heading-same-level)
+  (org-defkey org-mode-map "\M-\C-u" 'outline-up-heading)
+  ;; I'd love M-C-d, but OSX eats that keystroke.
+  (org-defkey org-mode-map "\M-\C-d" 'cc/org-todo-finish)
+  (org-defkey org-mode-map "\M-\C-w" 'cc/org-todo-finish)
+  (org-defkey org-mode-map "\M-\C-s" 'cc/org-todo-toggle-started)
+  (org-defkey org-mode-map "\M-\C-z" 'cc/org-icebox)
+  (org-defkey org-mode-map "\M-\C-t" 'cc/org-insert-next-subheading))
+;; We append to make sure the undefs above take effect.
+(add-hook 'org-mode-hook 'cc/org-keys-hook 'append)
 
 ;; More org-mode variable settings, in lieu of customize.
 (eval-after-load 'org
@@ -126,7 +121,7 @@
      ;; (setq org-mobile-directory "~/w/mobile-org")
      ;; (setq org-mobile-force-id-on-agenda-items nil)
      ;; (setq org-mobile-inbox-for-pull
-     ;; 	   (concat org-directory "/mobile-inbox.org"))
+     ;;            (concat org-directory "/mobile-inbox.org"))
      ;; Configure the capture templates
      (setq org-capture-templates
            (quote (("t" "todo" entry (file+headline org-default-notes-file "Tasks")
@@ -135,20 +130,20 @@
                     (file+headline org-default-notes-file "Tasks")
                     "* TODO %? %^G\n%T\n%a\n")
                    ("p" "tips" entry
-		    (file+headline cc/org-default-tips-file "Tips")
+                    (file+headline cc/org-default-tips-file "Tips")
                     "* %? %^G\n%U\n%a\n")
-		   ("q" "quote" entry
-		    (file+headline cc/org-default-quotes-file "Quotes")
-		    "* %?\n%^{AUTHOR}p\n%T\n")
+                   ("q" "quote" entry
+                    (file+headline cc/org-default-quotes-file "Quotes")
+                    "* %?\n%^{AUTHOR}p\n%T\n")
                    ("n" "note" entry
-		    (file+headline org-default-notes-file "Notes")
+                    (file+headline org-default-notes-file "Notes")
                     "* %? :NOTE:%^G\n%U\n%a\n")
                    ("j" "Journal" entry
-		    (file+datetree org-default-notes-file)
+                    (file+datetree org-default-notes-file)
                     "* %?\nEntered on %U\n  %i\n  %a")
-		   ("v" "velocity entry" entry
-		    (file org-velocity-bucket)
-		    "* %:search\n\n%i%?")
+                   ("v" "velocity entry" entry
+                    (file org-velocity-bucket)
+                    "* %:search\n\n%i%?")
                    )))
      ;; ido-based refile completion
      (setq org-refile-targets '((nil :maxlevel . 1)
@@ -168,19 +163,19 @@
      (setq org-fast-tag-selection-single-key nil)
      ;; I tend to use this as a complete list of common tags.
      (setq org-tag-persistent-alist
-	   (quote (("Rstats" . ?R)
-		   ("bigscience" . ?b)
-		   ("config" . ?c)
-		   ("emacs" . ?e)
-		   ("googs" . ?g)
-		   ("julia" . ?j)
-		   ("life" . ?l)
-		   ("org" . ?o)
-		   ("python" . ?p)
-		   ("read" . ?r)
-		   ("statsy" . ?s)
-		   ("watch" . ?w)
-		   )))
+           (quote (("Rstats" . ?R)
+                   ("bigscience" . ?b)
+                   ("config" . ?c)
+                   ("emacs" . ?e)
+                   ("googs" . ?g)
+                   ("julia" . ?j)
+                   ("life" . ?l)
+                   ("org" . ?o)
+                   ("python" . ?p)
+                   ("read" . ?r)
+                   ("statsy" . ?s)
+                   ("watch" . ?w)
+                   )))
      ))
 
 (when (require 'org-install nil t)
