@@ -237,6 +237,7 @@
 ;; try it out for finding files.
 (ido-mode 'files)
 (setq ido-max-directory-size 100000)
+(add-to-list 'completion-ignored-extensions ".pyc")
 
 ;;------------------------------------------------------------
 ;; Buffer naming
