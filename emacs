@@ -682,6 +682,9 @@ after-make-frame-functions."
 ;; Minibuffer keys
 (define-key minibuffer-local-map "\C-p" 'previous-history-element)
 (define-key minibuffer-local-map "\C-n" 'next-history-element)
+;; This one continually causes me trouble.
+(global-unset-key "\M-t")
+(global-set-key "\M-p" 'transpose-words)
 
 ;; How did these get disabled?
 (put 'upcase-region 'disabled nil)
