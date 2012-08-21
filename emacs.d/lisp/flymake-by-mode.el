@@ -9,12 +9,12 @@
                       temp-file
                       (file-name-directory buffer-file-name))))
     (let ((indent (cond
-		   ((boundp 'python-indent) python-indent)
-		   ((boundp 'py-indent-offset) py-indent-offset)
-		   (t 2))))
+                   ((boundp 'python-indent) python-indent)
+                   ((boundp 'py-indent-offset) py-indent-offset)
+                   (t 2))))
       (list "fpylint"
-	    (list local-file
-		  (format "--indent=%s" indent))))))
+            (list local-file
+                  (format "--indent=%s" indent))))))
 
 (defvar cc/flymake-by-mode-alist
   '((python-mode cc/flymake-pylint-init)))
@@ -35,9 +35,9 @@
   '(progn
      (defun cc/flymake-err-at (pos)
        (let ((overlays (save-excursion
-			 (overlays-in
-			  (progn (beginning-of-line) (point))
-			  (progn (end-of-line) (point))))))
+                         (overlays-in
+                          (progn (beginning-of-line) (point))
+                          (progn (end-of-line) (point))))))
          (remove nil
                  (mapcar (lambda (overlay)
                            (and (overlay-get overlay 'flymake-overlay)
