@@ -544,6 +544,8 @@ after-make-frame-functions."
   (setq ess-arg-function-offset 4)
   ;; no one puts my keymappings in a corner
   (define-key ess-mode-map "\C-c\C-j" 'goto-line)
+  (define-key inferior-ess-mode-map "\C-p" 'comint-previous-input)
+  (define-key inferior-ess-mode-map "\C-n" 'comint-next-input)
   )
 
 ;;------------------------
