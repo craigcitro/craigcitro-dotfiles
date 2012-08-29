@@ -427,7 +427,10 @@ after-make-frame-functions."
                   ;; ( [ {
                   (list 40 91 123))
         (setq ad-return-value (+ 2 ad-return-value)))))
-  (define-key python-mode-map "\C-ca" 'python-indent-region)
+  (defun cc/python-indent-region ()
+    (interactive)
+    (python-indent-region (region-beginning) (region-end)))
+  (define-key python-mode-map "\C-ca" 'cc/python-indent-region)
   (define-key inferior-python-mode-map "\C-p" 'comint-previous-input)
   (define-key inferior-python-mode-map "\C-n" 'comint-next-input)
   )
