@@ -414,7 +414,7 @@ function git_prompt_info () {
       if git status --porcelain | grep -E -q '^(A|AA|AD| M|M|R)'; then
         prompt_info="${prompt_info}!"
       fi
-      if git branch -v | grep "$CC_GIT_BRANCH" | grep -q '\[ahead '; then
+      if git branch -v | grep "* $CC_GIT_BRANCH" | grep -q '\[ahead '; then
         prompt_info="${prompt_info}+"
       fi
     fi
