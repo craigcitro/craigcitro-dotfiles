@@ -76,6 +76,7 @@
   (org-defkey org-mode-map "\M-\C-n" 'org-forward-heading-same-level)
   (org-defkey org-mode-map "\M-\C-p" 'org-backward-heading-same-level)
   (org-defkey org-mode-map "\M-\C-u" 'outline-up-heading)
+  (org-defkey org-mode-map "\M-\C-k" 'org-cut-subtree)
   ;; I'd love M-C-d, but OSX eats that keystroke.
   (org-defkey org-mode-map "\M-\C-d" 'cc/org-todo-finish)
   (org-defkey org-mode-map "\M-\C-w" 'cc/org-todo-finish)
