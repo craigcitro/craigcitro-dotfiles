@@ -594,6 +594,8 @@ after-make-frame-functions."
        (,(format "^%s\\(.+\\)" (make-string width ?.)) 1 font-lock-warning-face t)
        ))))
 (add-hook 'python-mode-hook 'cc/make-mode-pedantic)
+(eval-after-load 'markdown-mode
+  (add-hook 'markdown-mode-hook 'cc/make-mode-pedantic))
 (when (require 'lisp-mode)
   (add-hook 'lisp-mode-hook 'cc/make-mode-pedantic)
   (add-hook 'emacs-lisp-mode-hook 'cc/make-mode-pedantic))
