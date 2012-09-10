@@ -302,6 +302,8 @@ alias py='/usr/bin/python2.7'
 PYTHONSTARTUP=$HOME'/.pythonrc'
 export PYTHONSTARTUP
 
+pathprepend $HOME'/ext/google_appengine' PYTHONPATH;
+
 #############
 ## Haskell
 
