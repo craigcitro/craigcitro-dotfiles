@@ -36,6 +36,8 @@
 (setq line-move-visual nil)
 (setq tooltip-use-echo-area t)
 (setq split-width-threshold nil)
+(setq scroll-margin 3)
+(setq recenter-positions '(top middle bottom))
 
 (defun cc/disabled-command-message (&rest args)
   "Show a simple message when a command has been disabled."

@@ -91,6 +91,7 @@
   '(progn
      ;; General config
      (setq org-startup-indented t)
+     (setq org-startup-folded 'content)
      (setq org-M-RET-may-split-line
            '((default . nil) (table . t)))
      (setq org-special-ctrl-a/e t)
