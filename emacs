@@ -420,17 +420,20 @@ after-make-frame-functions."
 ;;---------------------------
 ;; Python
 ;;---------------------------
+(defvar cc/python-ignore-correction nil
+  "Temporary hack for indentation woes.")
 (when (require 'python)
   (provide 'python-mode) ;; bye-bye python-mode.el
   (setq python-indent 2)
-  (defadvice python-calculate-indentation (after ad-return-value activate)
-    (save-excursion
-      (beginning-of-line)
-      (skip-chars-backward " \t\r\n\f")
-      (when (memq (char-before (point))
-                  ;; ( [ {
-                  (list 40 91 123))
-        (setq ad-return-value (+ 2 ad-return-value)))))
+  (unless cc/python-ignore-correction
+    (defadvice python-calculate-indentation (after ad-return-value activate)
+      (save-excursion
+        (beginning-of-line)
+        (skip-chars-backward " \t\r\n\f")
+        (when (memq (char-before (point))
+                    ;; ( [ {
+                    (list 40 91 123))
+          (setq ad-return-value (+ 2 ad-return-value))))))
   (defun cc/python-indent-region ()
     (interactive)
     (python-indent-region (region-beginning) (region-end)))
