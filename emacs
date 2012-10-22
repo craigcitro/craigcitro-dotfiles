@@ -137,6 +137,8 @@
 (global-set-key "\C-n" 'next-visual-line)
 (global-set-key "\C-p" 'previous-visual-line)
 
+;; I'm not a fan of horizontal scrolling.
+(setq auto-hscroll-mode nil)
 (put 'scroll-left 'disabled t)
 (put 'scroll-right 'disabled t)
 (global-unset-key "\C-x<")
