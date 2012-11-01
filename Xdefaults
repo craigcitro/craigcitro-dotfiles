@@ -8,16 +8,10 @@
 ! The one true font
 *font: 6x13
 
-! Ask Emacs for the basics
-Emacs*font: 6x13
-Emacs*foreground: white
-Emacs*background: black
-
 ! And xterm
 ! XTerm*font: 6x13
 ! (2011 May 31) Unfortunately, this looks bad: font hinting?
-XTerm*facename: Inconsolata
-XTerm*faceSize: 11
+XTerm*font: inconsolata-12
 XTerm*foreground: white
 XTerm*background: black
 XTerm*saveLines: 99999
