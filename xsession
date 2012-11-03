@@ -1,4 +1,4 @@
-#!/bin/bash -l
+#!/bin/sh
 #
 # I blatantly stole this from Ami when setting up 
 # ratpoison. Lots of stuff is commented out for now.
@@ -49,7 +49,7 @@ xscreensaver &
 /usr/bin/xset -b
 
 # set up my mouse button appropriately:
-xinput set-button-map $(xinput --list | grep "Evoluent" | sed -e "s/.*id=\([0-9]*\).*/\1/g") 1 2 3 4 5 6 7 3 8
+xinput set-button-map $(xinput --list | grep "Evoluent" | sed -e "s/.*id=\([0-9]*\).*/\1/g") 1 2 2 4 5 6 7 3 8
 
 # start the WM
 exec /usr/bin/ratpoison
