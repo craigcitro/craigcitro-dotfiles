@@ -348,10 +348,21 @@ after-make-frame-functions."
 ;;------------------
 ;; org-mode
 ;;------------------
-(cc/add-to-load-path-if-exists "org")
-(let ((org-file (cc/find-file-or-nil "dotfiles/cc-org-emacs")))
-  (when org-file
-    (load org-file)))
+;; Turn off for now.
+;; (cc/add-to-load-path-if-exists "org")
+;; (let ((org-file (cc/find-file-or-nil "dotfiles/cc-org-emacs")))
+;;   (when org-file
+;;     (load org-file)))
+
+;;------------------
+;; deft
+;;------------------
+(when (require 'deft nil t)
+  (setq deft-extension "md")
+  (setq deft-directory "~/w/nv")
+  (setq deft-text-mode 'markdown-mode)
+  (setq deft-use-filename-as-title t)
+  (global-set-key "\M-\C-d" 'deft))
 
 ;;---------------
 ;; text
