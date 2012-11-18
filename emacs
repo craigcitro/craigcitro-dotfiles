@@ -346,15 +346,6 @@ after-make-frame-functions."
 ;;==============================================================================
 
 ;;------------------
-;; org-mode
-;;------------------
-;; Turn off for now.
-;; (cc/add-to-load-path-if-exists "org")
-;; (let ((org-file (cc/find-file-or-nil "dotfiles/cc-org-emacs")))
-;;   (when org-file
-;;     (load org-file)))
-
-;;------------------
 ;; deft
 ;;------------------
 (when (require 'deft nil t)
