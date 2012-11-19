@@ -252,6 +252,9 @@
 ;;======================================================
 ;; Extra config
 ;;======================================================
+(let ((local-config (cc/find-file-or-nil ".emacs.local")))
+  (when local-config
+    (load-file local-config)))
 (let ((gconfig (cc/find-file-or-nil ".emacs.google")))
   (when gconfig
     (load-file gconfig)))
@@ -345,16 +348,6 @@ after-make-frame-functions."
 ;; Major modes and language-specific config
 ;;==============================================================================
 
-;;------------------
-;; deft
-;;------------------
-(when (require 'deft nil t)
-  (setq deft-extension "md")
-  (setq deft-directory "~/w/nv")
-  (setq deft-text-mode 'markdown-mode)
-  (setq deft-use-filename-as-title t)
-  (global-set-key "\M-\C-d" 'deft))
-
 ;;---------------
 ;; text
 ;;---------------
@@ -393,49 +386,12 @@ after-make-frame-functions."
 ;;------------------
 (add-to-list 'auto-mode-alist '("^Makefile$" . makefile-bsdmake-mode))
 
-;;------------------
-;; Haskell
-;;------------------
-;; Generic bit
-(let ((haskell-site-file
-       (cc/find-file-or-nil "haskell-mode/haskell-site-file.el")))
-  (when haskell-site-file
-    (load haskell-site-file)
-    (add-to-list 'auto-mode-alist '("\\.hs$" . haskell-mode))
-    (add-hook 'haskell-mode-hook 'turn-on-haskell-doc-mode)
-    (add-hook 'haskell-mode-hook 'turn-on-haskell-indentation)))
-
-;; ghc-mod:
-;;   https://github.com/kazu-yamamoto/ghc-mod
-(cc/add-to-load-path-if-exists "ghc-mod/elisp")
-(let ((cabal-path (concat (getenv "HOME") "/cabal/bin")))
-  (when (file-exists-p cabal-path)
-    (add-to-list 'exec-path cabal-path)))
-;; (autoload 'ghc-init "ghc" nil t)
-;; (add-hook 'haskell-mode-hook (lambda () (ghc-init) (flymake-mode)))
-
-;; hoogle
-(when (require 'haskell-mode nil t)
-  (setq haskell-hoogle-command "hoogle")
-  (define-key haskell-mode-map "\C-c?" 'haskell-hoogle))
-
 ;;---------------------------
 ;; Python
 ;;---------------------------
-(defvar cc/python-ignore-correction nil
-  "Temporary hack for indentation woes.")
 (when (require 'python)
   (provide 'python-mode) ;; bye-bye python-mode.el
   (setq python-indent 2)
-  (unless cc/python-ignore-correction
-    (defadvice python-calculate-indentation (after ad-return-value activate)
-      (save-excursion
-        (beginning-of-line)
-        (skip-chars-backward " \t\r\n\f")
-        (when (memq (char-before (point))
-                    ;; ( [ {
-                    (list 40 91 123))
-          (setq ad-return-value (+ 2 ad-return-value))))))
   (defun cc/python-indent-region ()
     (interactive)
     (python-indent-region (region-beginning) (region-end)))
@@ -561,15 +517,6 @@ after-make-frame-functions."
   )
 
 ;;------------------------
-;; julia mode
-;;------------------------
-(add-hook 'julia-mode-hook
-          '(lambda ()
-             (setq 'julia-basic-offset 2)))
-(when (require 'julia-mode nil t)
-  (add-to-list 'auto-mode-alist '("\\.jl$" . julia-mode)))
-
-;;------------------------
 ;; magit
 ;;------------------------
 ;; change magit diff colors: stolen from
@@ -608,11 +555,6 @@ after-make-frame-functions."
 (when (require 'lisp-mode)
   (add-hook 'lisp-mode-hook 'cc/make-mode-pedantic)
   (add-hook 'emacs-lisp-mode-hook 'cc/make-mode-pedantic))
-
-;;---------------------
-;; flymake
-;;---------------------
-(require 'cc/flymake-by-mode "flymake-by-mode")
 
 ;;==============================================================================
 ;; Utility functions
