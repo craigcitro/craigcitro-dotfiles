@@ -1,11 +1,6 @@
 ;; -*- mode: Emacs-lisp; lexical-binding: t -*-
 ;;
 
-;;---------------------
-;; flymake
-;;---------------------
-(require 'cc/flymake-by-mode "flymake-by-mode")
-
 ;;------------------------
 ;; julia mode
 ;;------------------------

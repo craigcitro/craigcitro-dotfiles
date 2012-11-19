@@ -427,6 +427,11 @@ after-make-frame-functions."
       (sort-lines nil start end)
       )))
 
+;;---------------------
+;; flymake
+;;---------------------
+(require 'cc/flymake-by-mode "flymake-by-mode")
+
 ;;-------------------------
 ;; Java
 ;;-------------------------
