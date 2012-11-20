@@ -5,5 +5,5 @@
 # 
 # quick hack for mirroring from the tmux copy buffers to the system clipboard 
 
-tmux save-buffer /home/craigcitro/.tmux.paste-buffer && xclip -selection c -d :0 /home/craigcitro/.tmux.paste-buffer
+tmux save-buffer ~/.tmux.paste-buffer && xclip -selection c -d :0 ~/.tmux.paste-buffer
 
