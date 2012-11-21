@@ -278,35 +278,6 @@
 (global-set-key "\C-c>" 'cc/shift-right)
 
 ;;===========================================
-;; browse-url
-;;===========================================
-;; So I got a little neurotic about wanting to be able to use
-;; browse-url on my mac in spite of a chrome issue with
-;; command-line args (crbug 133249), so I ended up writing
-;; some applescript instead. Ugh.
-;;
-;; This applescript isn't robust, as it assumes my personal
-;; chrome window has a smaller index than my work one.
-(when (eq 'darwin system-type)
-  (defun cc/check-chrome-window-order ()
-    "Check the order of my chrome windows."
-    (interactive)
-    (shell-command "osascript /Users/craigcitro/dotfiles/check-order.scpt"))
-  (defun cc/is-work-url (url)
-    "Determine if a url is work-related."
-    (interactive)
-    (or (string-match "/a/google.com/" url)
-        (string-match "\\(^\\|//\\)[^./]/" url)))
-  (defun cc/browse-url-chrome-mac (url &optional new-window)
-    "Open a URL in the appropriate chrome instance."
-    (interactive)
-    (let ((is-home (if (cc/is-work-url url) "" "true")))
-      (shell-command
-       (format "osascript /Users/craigcitro/dotfiles/load-url.scpt %s %s"
-               url is-home))))
-  (setq browse-url-browser-function 'cc/browse-url-chrome-mac))
-
-;;===========================================
 ;; Context-dependent config
 ;;===========================================
 
@@ -408,24 +379,6 @@ after-make-frame-functions."
   ;; (occur "^\( *def\\|class\\|cdef class\\).*:$"))
   (interactive "sFind name in hierarchy: ")
   (occur (format "^\\( *\\(cp\\|c\\)?def.*%s\\|class\\|cdef class\\).*:$" name)))
-
-(defun cc/hack-find-block ()
-  (interactive)
-  (flet ((find-empty-line
-          (&optional aaaa)
-          (save-excursion
-            (beginning-of-line)
-            (while (not (= (progn (end-of-line) (point))
-                           (progn (beginning-of-line) (point))))
-              (message "moving moving")
-              (if (null aaaa)
-                  (forward-line)
-                (forward-line -1)))
-            (point))))
-    (let ((start (find-empty-line t))
-          (end (find-empty-line)))
-      (sort-lines nil start end)
-      )))
 
 ;;---------------------
 ;; flymake
