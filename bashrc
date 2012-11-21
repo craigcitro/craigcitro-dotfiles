@@ -52,10 +52,6 @@ if [ "$SYSTEM" == "Darwin" ]; then
   fi
   
   pathappend /usr/local/lib LD_LIBRARY_PATH;
-  # Why is this here? It at least causes some confusing problems with
-  # loading libpng.dylib in sage, because sage stupidly copies the
-  # LD_LIBRARY_PATH into DYLD_LIBRARY_PATH. I wonder why I put it here
-  # in the first place, though?
   pathappend /usr/X11/lib LD_LIBRARY_PATH;
 
   pathprepend /usr/local/bin; 
@@ -230,8 +226,6 @@ alias df='df -h'
 alias g='grep -n --color=always -E'
 alias gg='grep --color=always -E'
 alias h=history
-alias ht='history | tail -n 20'
-alias ny=nyxmms2
 alias p=echo
 alias scp='scp -p'
 alias sigh='echo You let out a good, long sigh of relief.'
@@ -413,7 +407,7 @@ function git_prompt_info () {
       if git status --porcelain | grep -q '^??'; then
         prompt_info="${prompt_info}?"
       fi
-      if git status --porcelain | grep -E -q '^(A|AA|AD| M|M|R)'; then
+      if git status --porcelain | grep -E -q '^(.[^ ]|R|D)'; then
         prompt_info="${prompt_info}!"
       fi
       if git branch -v | grep "* $CC_GIT_BRANCH" | grep -q '\[ahead '; then
