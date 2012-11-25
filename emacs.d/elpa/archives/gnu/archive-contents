@@ -15,7 +15,7 @@
 	 [(11 86)
 	  nil "Integrated environment for *TeX*" tar])
  (cl-lib .
-	 [(0 1)
+	 [(0 2)
 	  nil "Properly prefixed CL functions and macros" single])
  (coffee-mode .
 	      [(0 4 1)
@@ -99,7 +99,7 @@
 	 [(0 8)
 	  nil "OAuth 2.0 Authorization Protocol" single])
  (org .
-      [(20121112)
+      [(20121119)
        nil "Outline-based notes management and organizer" tar])
  (quarter-plane .
 		[(0 1)
