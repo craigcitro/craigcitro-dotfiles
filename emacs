@@ -384,7 +384,6 @@ after-make-frame-functions."
 ;; flymake
 ;;---------------------
 (require 'cc/flymake-keys "flymake-keys")
-(require 'cc/flymake-by-mode "flymake-by-mode")
 
 ;;-------------------------
 ;; Java

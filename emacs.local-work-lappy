@@ -10,6 +10,11 @@
 (when (require 'julia-mode nil t)
   (add-to-list 'auto-mode-alist '("\\.jl$" . julia-mode)))
 
+;;---------------------
+;; flymake
+;;---------------------
+(require 'cc/flymake-by-mode "flymake-by-mode")
+
 ;;---------------------------
 ;; Python
 ;;---------------------------
