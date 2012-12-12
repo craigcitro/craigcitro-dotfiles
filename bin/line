@@ -1,0 +1,45 @@
+#!/usr/bin/env python
+# -*- mode: python -*-
+
+import collections
+import itertools
+import logging
+import sys
+
+
+def Main(argv, debug=False):
+  if debug:
+    logging.getLogger().setLevel(logging.DEBUG)
+
+  try:
+    desired_line = int(argv[-1])
+  except IndexError, ValueError:
+    print 'Usage: line <line_number>'
+    return '', 1
+  logging.debug('Looking for line: %d', desired_line)
+
+  negative_index = desired_line < 0
+  if desired_line == 0:
+    print 'line numbers are 1-based'
+    return '', 1
+
+  if desired_line < 0:
+    logging.debug('Finding line from end of stream ...')
+    desired_line = -desired_line
+    saved_lines = collections.deque(sys.stdin, desired_line)
+    if len(saved_lines) >= desired_line:
+      return saved_lines[0], 0
+  else:
+    for line_number, line in enumerate(itertools.chain([''], sys.stdin)):
+      logging.debug('Looking at line %d: %s', line_number, line.rstrip())
+      if line_number == desired_line:
+        return line, 0
+
+  return '', 2
+
+
+if __name__ == '__main__':
+  line, retval = Main(sys.argv)
+  if retval:
+    sys.exit(retval)
+  print line.rstrip()
