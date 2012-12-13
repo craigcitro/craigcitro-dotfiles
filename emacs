@@ -198,6 +198,19 @@
        :branch (cc/parse-git-branch buf)
        :filename filename))))
 (defun cc/iswitchb-colorize-bufname (&optional buf-name)
+  "Like the next one, but less wacky."
+  (let* ((buf (or (get-buffer buf-name) (current-buffer)))
+         (buf-name (buffer-name buf)))
+    (cond
+     ;; buf is current buffer
+     ((string= buf-name (buffer-name (current-buffer)))
+      (propertize buf-name 'face 'cc/iswitchb-this-buffer-face))
+     ;; system buffer
+     ((char-equal ?* (elt buf-name 0))
+      (propertize buf-name 'face 'cc/iswitchb-system-buffer-face))
+     ;; buf or current buffer is not in a git repo
+     (t buf-name))))
+(defun cc/iswitchb-colorize-bufname-crazy (&optional buf-name)
   "Return the name of the given or current buffer, propertized with a color as follows:
      BrightBlack: buffer is a system buffer
      Blue: this is the current buffer
