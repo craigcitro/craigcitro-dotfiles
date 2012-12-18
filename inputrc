@@ -12,8 +12,6 @@ set editing-mode emacs
 set show-all-if-ambiguous On
 set bell-style Off
 set visible-stats On
-# the horizontal scroll mode is often useful, but I don't know if I love it. off for now.
-#set horizontal-scroll-mode On
 
 set completion-ignore-case Off
 # make mid-word completion smart
@@ -37,25 +35,8 @@ set history-size 100000000
 "\C-r": history-search-backward
 "\C-n": history-search-forward
 "\C-p": history-search-backward
-# These are necessary when XTerm*eightBitInput is set to false, which
-# I currently do based on some mac config issues. I'd like to find a
-# way to include a conditional construct in this file that lets me
-# decide based on *OS*, not just the name of the running program.
-# "^[[A": history-search-backward
-# "^[[B": history-search-forward
-# (2010 Oct 23) I continue to have problems with these bits -- I
-# discovered that ^ (caret, name included for finding this file when
-# searching) was behaving oddly, all because of (1) these two bindings
-# and (2) possibly the $include /etc/inputrc.
-
-# I kind of want to try out the incremental forward/reverse search,
-# but I like the current behavior I have. Maybe M-r, M-s?
-# Meta-r: reverse-search-history
-# Meta-s: forward-search-history
-# I don't know why, but these don't seem to work. Figure it out later.
-
-# kill word backwards ... figure this out at some point.
-# "\C-\B": kill-word
+"\er": reverse-search-history
+"\es": forward-search-history
 
 # At some point meta started giving me trouble in XTerm; 
 # I found some advice here:
