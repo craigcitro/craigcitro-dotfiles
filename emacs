@@ -584,6 +584,7 @@ after-make-frame-functions."
 ;; Overrides of defaults
 (global-set-key "\C-t" 'fill-paragraph)
 (global-set-key "\C-w" 'kill-ring-save)
+(global-set-key "\C-\M-w" 'kill-region)
 (global-set-key "\M-w" 'kill-region)
 (global-set-key "\C-xa" 'mark-whole-buffer)
 (global-set-key "\C-x3" 'split-window-vertically)
