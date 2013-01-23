@@ -29,7 +29,7 @@ chrome_swaps = Set{
   "cmd-v",
   "cmd-w",
   "cmd-z", "cmd-b", "cmd-f",
-  "cmd-/", "cmd-5", "cmd-t",
+  "cmd-/", "cmd-5",
   "shift-cmd-.", "shift-cmd-,",
 }
 
