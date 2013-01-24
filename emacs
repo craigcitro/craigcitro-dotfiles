@@ -584,7 +584,6 @@ after-make-frame-functions."
 ;; Overrides of defaults
 (global-set-key "\C-t" 'fill-paragraph)
 (global-set-key "\C-w" 'kill-ring-save)
-(global-set-key "\C-\M-w" 'kill-region)
 (global-set-key "\M-w" 'kill-region)
 (global-set-key "\C-xa" 'mark-whole-buffer)
 (global-set-key "\C-x3" 'split-window-vertically)
@@ -616,6 +615,9 @@ after-make-frame-functions."
 ;; This one continually causes me trouble.
 (global-unset-key "\M-t")
 (global-set-key "\M-p" 'transpose-words)
+;; Usability-in-chrome fixes.
+(global-set-key "\C-\M-w" 'kill-region)
+(global-set-key "\C-\M-v" 'down-one-bounded-page)
 
 ;; How did these get disabled?
 (put 'upcase-region 'disabled nil)
