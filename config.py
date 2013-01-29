@@ -14,32 +14,31 @@ import sys
 HOMEDIR = os.path.expanduser('~')
 
 BASIC_LINKS = [
-  'Rprofile',
-  'Xdefaults',
-  'bash_profile',
-  'bashrc',
-  'emacs',
-  'emacs.d',
-  'ghci',
-  'gitconfig',
-  'gitignore',
-  'hgrc',
-  'inputrc',
-  'pdbrc',
-  'pdbrc.py',
-  'pythonrc',
-  'screenrc',
-  'tmux.conf',
-  'vimrc',
-  ]
-MAC_LINKS = [
-  'cmd-key-happy.lua',
-  ]
+    # General
+    'Xdefaults',
+    'bash_profile',
+    'bashrc',
+    'gitconfig',
+    'gitignore',
+    'hgrc',
+    'inputrc',
+    'screenrc',
+    'tmux.conf',
+    # Editors
+    'emacs',
+    'emacs.d',
+    'vimrc',
+    # Languages
+    'Rprofile',
+    'ghci',
+    'pdbrc',
+    'pdbrc.py',
+    'pythonrc',
+    ]
+MAC_LINKS = []
 XWINDOWS_LINKS = [
-  'xmodmaprc',
-  'xsession',
-  'xsettingsd',
-  ]
+    'xinit',
+    ]
 
 
 SCRIPTS = []
