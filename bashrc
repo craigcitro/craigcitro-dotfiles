@@ -497,9 +497,9 @@ fi
 ###############
 ## Prompt
 
-PROMPT_COMMAND="save_last_exit ; export_git_info ; show_last_cmd >>$CC_SHELL_LOG ; $PROMPT_COMMAND"
+PROMPT_COMMAND="save_last_exit ; show_last_cmd >>$CC_SHELL_LOG ; $PROMPT_COMMAND"
 
-export COLOR_PS1="$BRACKET_COLOR[$PROMPT_TEXT_COLOR$PROMPT_TEXT$BRACKET_COLOR]$PROMPT_GIT_COLOR\$(git_prompt_info)$RED_PROMPT_COLOR\$(exit_status) $PROMPT_DOLLAR_COLOR\\$ $NORMAL_TEXT_COLOR"
+export COLOR_PS1="$BRACKET_COLOR[$PROMPT_TEXT_COLOR$PROMPT_TEXT$BRACKET_COLOR]$RED_PROMPT_COLOR\$(exit_status) $PROMPT_DOLLAR_COLOR\\$ $NORMAL_TEXT_COLOR"
 export EMACS_PS1="$COLOR_PS1"
 export MONOPS1="[\h \$(prompt_pwd)] \\$ "
 
