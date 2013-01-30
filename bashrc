@@ -402,6 +402,7 @@ export -f export_git_info
 
 GIT_COLOR="$GREEN_COLOR"
 function git_info () {
+  export_git_info
   if [ ${#CC_GIT_BRANCH} -gt 0 ]; then
     local info="${CC_GIT_BRANCH}"
     if git symbolic-ref HEAD >/dev/null 2>/dev/null; then
