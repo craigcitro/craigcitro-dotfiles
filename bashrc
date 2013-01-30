@@ -309,22 +309,23 @@ pathappend $HOME'/ext/Haskell/bin';
 ######################## Prompt stuff ##########################
 
 # ANSI colors for displays
-       BLACK_COLOR="\033[0;30m"
-   DARK_GRAY_COLOR="\033[1;30m"
-        BLUE_COLOR="\033[0;34m"
-  LIGHT_BLUE_COLOR="\033[1;34m"
-       GREEN_COLOR="\033[0;32m"
- LIGHT_GREEN_COLOR="\033[1;32m"
-        CYAN_COLOR="\033[0;36m"
-  LIGHT_CYAN_COLOR="\033[1;36m"
-         RED_COLOR="\033[0;31m"
-   LIGHT_RED_COLOR="\033[1;31m"
-      PURPLE_COLOR="\033[0;35m"
-LIGHT_PURPLE_COLOR="\033[1;35m"
-       BROWN_COLOR="\033[0;33m"
-      YELLOW_COLOR="\033[1;33m"
-  LIGHT_GRAY_COLOR="\033[0;37m"
-       WHITE_COLOR="\033[1;37m"
+       BLACK_COLOR="\e[0;30m"
+   DARK_GRAY_COLOR="\e[1;30m"
+        BLUE_COLOR="\e[0;34m"
+  LIGHT_BLUE_COLOR="\e[1;34m"
+       GREEN_COLOR="\e[0;32m"
+ LIGHT_GREEN_COLOR="\e[1;32m"
+        CYAN_COLOR="\e[0;36m"
+  LIGHT_CYAN_COLOR="\e[1;36m"
+         RED_COLOR="\e[0;31m"
+   LIGHT_RED_COLOR="\e[1;31m"
+      PURPLE_COLOR="\e[0;35m"
+LIGHT_PURPLE_COLOR="\e[1;35m"
+       BROWN_COLOR="\e[0;33m"
+      YELLOW_COLOR="\e[1;33m"
+  LIGHT_GRAY_COLOR="\e[0;37m"
+       WHITE_COLOR="\e[1;37m"
+         END_COLOR="\e[0m"
 
 ### ANSI prompt colors
 #  note that the \[ and \] are very important -- if they aren't
@@ -332,22 +333,22 @@ LIGHT_PURPLE_COLOR="\033[1;35m"
 #  weird wrapping issues. (see
 #    http://ubuntuforums.org/showthread.php?t=472369 )
 #
-       BLACK_PROMPT_COLOR="\[\033[0;30m\]"
-   DARK_GRAY_PROMPT_COLOR="\[\033[1;30m\]"
-        BLUE_PROMPT_COLOR="\[\033[0;34m\]"
-  LIGHT_BLUE_PROMPT_COLOR="\[\033[1;34m\]"
-       GREEN_PROMPT_COLOR="\[\033[0;32m\]"
- LIGHT_GREEN_PROMPT_COLOR="\[\033[1;32m\]"
-        CYAN_PROMPT_COLOR="\[\033[0;36m\]"
-  LIGHT_CYAN_PROMPT_COLOR="\[\033[1;36m\]"
-         RED_PROMPT_COLOR="\[\033[0;31m\]"
-   LIGHT_RED_PROMPT_COLOR="\[\033[1;31m\]"
-      PURPLE_PROMPT_COLOR="\[\033[0;35m\]"
-LIGHT_PURPLE_PROMPT_COLOR="\[\033[1;35m\]"
-       BROWN_PROMPT_COLOR="\[\033[0;33m\]"
-      YELLOW_PROMPT_COLOR="\[\033[1;33m\]"
-  LIGHT_GRAY_PROMPT_COLOR="\[\033[0;37m\]"
-       WHITE_PROMPT_COLOR="\[\033[1;37m\]"
+       BLACK_PROMPT_COLOR="\[\e[0;30m\]"
+   DARK_GRAY_PROMPT_COLOR="\[\e[1;30m\]"
+        BLUE_PROMPT_COLOR="\[\e[0;34m\]"
+  LIGHT_BLUE_PROMPT_COLOR="\[\e[1;34m\]"
+       GREEN_PROMPT_COLOR="\[\e[0;32m\]"
+ LIGHT_GREEN_PROMPT_COLOR="\[\e[1;32m\]"
+        CYAN_PROMPT_COLOR="\[\e[0;36m\]"
+  LIGHT_CYAN_PROMPT_COLOR="\[\e[1;36m\]"
+         RED_PROMPT_COLOR="\[\e[0;31m\]"
+   LIGHT_RED_PROMPT_COLOR="\[\e[1;31m\]"
+      PURPLE_PROMPT_COLOR="\[\e[0;35m\]"
+LIGHT_PURPLE_PROMPT_COLOR="\[\e[1;35m\]"
+       BROWN_PROMPT_COLOR="\[\e[0;33m\]"
+      YELLOW_PROMPT_COLOR="\[\e[1;33m\]"
+  LIGHT_GRAY_PROMPT_COLOR="\[\e[0;37m\]"
+       WHITE_PROMPT_COLOR="\[\e[1;37m\]"
 #############################################################
 
 case $HOSTNAME in
@@ -364,7 +365,6 @@ cc-mbp2|cc-mbp2.local|craigcitro-macbookpro.local|dhcp*.google.com)
   PROMPT_DOLLAR_COLOR="$GREEN_PROMPT_COLOR"
   ;;
 esac
-PROMPT_GIT_COLOR="$GREEN_PROMPT_COLOR"
 NORMAL_TEXT_COLOR="$LIGHT_GRAY_PROMPT_COLOR"
 
 #################################
@@ -400,24 +400,25 @@ function export_git_info() {
 }
 export -f export_git_info
 
-function git_prompt_info () {
+GIT_COLOR="$GREEN_COLOR"
+function git_info () {
   if [ ${#CC_GIT_BRANCH} -gt 0 ]; then
-    local prompt_info="${CC_GIT_BRANCH}"
+    local info="${CC_GIT_BRANCH}"
     if git symbolic-ref HEAD >/dev/null 2>/dev/null; then
       if git status --porcelain | grep -q '^??'; then
-        prompt_info="${prompt_info}?"
+        info="${info}?"
       fi
       if git status --porcelain | grep -E -q '^([^ ?]|.[^ ?])'; then
-        prompt_info="${prompt_info}!"
+        info="${info}!"
       fi
       if git branch -v | grep "* $CC_GIT_BRANCH" | grep -q '\[ahead '; then
-        prompt_info="${prompt_info}+"
+        info="${info}+"
       fi
     fi
-    echo " {${prompt_info}}"
+    echo -e "$GIT_COLOR{${info}}$END_COLOR"
   fi
 }
-export -f git_prompt_info
+export -f git_info
 
 function show_last_cmd () {
   local cmd=$(history 1 | awk "length() < 5000 {print}")
