@@ -379,47 +379,14 @@ function gh() {
 }
 export -f gh
 
-function export_git_info() {
-  if [ "$PWD" = ~ -o "$PWD" = "/home" ]; then
-    export CC_GIT_BRANCH=""
-    return
-  fi
-  if [[ "$PWD" == *"/.git"* ]]; then
-    export CC_GIT_BRANCH=""
-    return
-  fi
-  if [ "${PWD##~}" = "$PWD" -a "${PWD##/home}" != "$PWD" ]; then
-    return
-  fi
-  local b="$(git symbolic-ref HEAD 2>/dev/null)"
-  if [ ${#b} -gt 0 ]; then
-    export CC_GIT_BRANCH="${b##refs/heads/}"
-    return
-  fi
-  export CC_GIT_BRANCH=""
-}
-export -f export_git_info
-
 GIT_COLOR="$GREEN_COLOR"
-function git_info () {
-  export_git_info
-  if [ ${#CC_GIT_BRANCH} -gt 0 ]; then
-    local info="${CC_GIT_BRANCH}"
-    if git symbolic-ref HEAD >/dev/null 2>/dev/null; then
-      if git status --porcelain | grep -q '^??'; then
-        info="${info}?"
-      fi
-      if git status --porcelain | grep -E -q '^([^ ?]|.[^ ?])'; then
-        info="${info}!"
-      fi
-      if git branch -v | grep "* $CC_GIT_BRANCH" | grep -q '\[ahead '; then
-        info="${info}+"
-      fi
-    fi
-    echo -e "$GIT_COLOR{${info}}$END_COLOR"
+function git_prompt_info () {
+  local b="$(gitinfo)"
+  if [[ -n ${b} ]]; then
+    echo " ${b}"
   fi
 }
-export -f git_info
+export -f git_prompt_info
 
 function show_last_cmd () {
   local cmd=$(history 1 | awk "length() < 5000 {print}")
@@ -501,7 +468,7 @@ fi
 
 PROMPT_COMMAND="save_last_exit ; show_last_cmd >>$CC_SHELL_LOG ; $PROMPT_COMMAND"
 
-export COLOR_PS1="$BRACKET_COLOR[$PROMPT_TEXT_COLOR$PROMPT_TEXT$BRACKET_COLOR]$RED_PROMPT_COLOR\$(exit_status) $PROMPT_DOLLAR_COLOR\\$ $NORMAL_TEXT_COLOR"
+export COLOR_PS1="$BRACKET_COLOR[$PROMPT_TEXT_COLOR$PROMPT_TEXT$BRACKET_COLOR]$GREEN_PROMPT_COLOR\$(git_prompt_info)$RED_PROMPT_COLOR\$(exit_status) $PROMPT_DOLLAR_COLOR\\$ $NORMAL_TEXT_COLOR"
 export EMACS_PS1="$COLOR_PS1"
 export MONOPS1="[\h \$(prompt_pwd)] \\$ "
 

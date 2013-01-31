@@ -1,0 +1,34 @@
+#!/usr/bin/env python
+# -*- mode: python -*-
+
+import os
+import re
+import subprocess
+
+MODIFIED_RE = re.compile(r'([^ ?]|.[^ ?])')
+
+def GitInfo():
+  path = os.getcwd()
+  if path == os.path.expanduser('~') or '/.git' in path:
+    return ''
+  try:
+    full_branch = subprocess.check_output(
+        ('git', 'symbolic-ref', 'HEAD'), stderr=subprocess.PIPE)
+  except subprocess.CalledProcessError:
+    return ''
+  branch = full_branch.splitlines()[0][len('refs/heads/'):]
+  status_out = subprocess.check_output(
+      ('git', 'status', '--porcelain')).splitlines()
+  info = branch
+  if any(line.startswith('??') for line in status_out):
+    info += '?'
+  if any(MODIFIED_RE.match(line) for line in status_out):
+    info += '!'
+  ahead_re = re.compile(r'\* %s.*\[ahead' % branch)
+  branch_out = subprocess.check_output(('git', 'branch', '-v')).splitlines()
+  if any(ahead_re.match(line) for line in branch_out):
+    info += '+'
+  return '{%s}' % info
+
+if __name__ == '__main__':
+  print GitInfo()
