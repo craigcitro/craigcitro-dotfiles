@@ -666,6 +666,10 @@ after-make-frame-functions."
 (global-set-key [M-up] 'down-one-bounded-page)
 (global-set-key [M-down] 'up-one-bounded-page)
 
+;; This is a temporary hack for my ChromeOS config. I need to fix
+;; this.
+(global-set-key [deletechar] 'backward-kill-word)
+
 ;; revert-buffer from:
 ;;  http://www.stokebloke.com/wordpress/2008/04/17/emacs-refresh-f5-key/
 (defun reload-buffer ()
