@@ -666,8 +666,7 @@ after-make-frame-functions."
 (global-set-key [M-up] 'down-one-bounded-page)
 (global-set-key [M-down] 'up-one-bounded-page)
 
-;; This is a temporary hack for my ChromeOS config. I need to fix
-;; this.
+;; I did this to get M-DEL working in chromeos; maybe there's a better way?
 (global-set-key [deletechar] 'backward-kill-word)
 
 ;; revert-buffer from:
