@@ -211,7 +211,8 @@
      ;; buf or current buffer is not in a git repo
      (t buf-name))))
 (defun cc/iswitchb-colorize-bufname-crazy (&optional buf-name)
-  "Return the name of the given or current buffer, propertized with a color as follows:
+  "Return the name of the given or current buffer, propertized with a color
+   as follows:
      BrightBlack: buffer is a system buffer
      Blue: this is the current buffer
    When called from a buffer in a git repo:
@@ -500,6 +501,24 @@ after-make-frame-functions."
        (set-face-background 'magit-item-highlight "black"))))
 (when (require 'magit nil t)
   (global-set-key "\C-c\C-g" 'magit-status))
+
+;;------------------------
+;; ediff
+;;------------------------
+(custom-set-faces
+ '(ediff-current-diff-A
+   ((((type tty))
+     (:weight light :foreground "firebrick" :background "pale green"))))
+ '(ediff-current-diff-B
+   ((((type tty))
+     (:weight light :foreground "firebrick" :background "pale green"))))
+ '(ediff-fine-diff-A
+   ((((type tty))
+     (:weight light :foreground "navy" :background "sky blue"))))
+ '(ediff-fine-diff-B
+   ((((type tty))
+     (:weight light :foreground "navy" :background "sky blue"))))
+ )
 
 ;;------------------------
 ;; pedantic coloring

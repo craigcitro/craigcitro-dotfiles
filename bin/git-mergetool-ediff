@@ -1,0 +1,18 @@
+#!/bin/bash
+#
+# domq's ediff-as-git-mergetool wrapper. To use it, add the following
+# to your ~/.gitconfig:
+#
+# [merge]
+# 	tool = ediff
+# [mergetool.ediff]
+# 	cmd = export MERGED LOCAL REMOTE BASE && /path/to/git-mergetool-ediff
+
+if [ -z "$BASE" -o ! -e "$BASE" ]; then
+  lispmantra="(let ((default-directory \"$PWD\")) (ediff-merge-files \"$REMOTE\" \"$LOCAL\" nil \"$MERGED\"))"
+else
+  lispmantra="(let ((default-directory \"$PWD\")) (ediff-merge-files-with-ancestor \"$REMOTE\" \"$LOCAL\" \"$BASE\" nil \"$MERGED\"))"
+fi
+
+set -x
+emacsclient -c -s "$EMACS_SERVERNAME" -t --eval "$lispmantra"

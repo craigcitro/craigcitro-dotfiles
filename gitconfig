@@ -21,3 +21,7 @@
 	default = simple
 [include]
 	path = .gitconfig.local
+[merge]
+	tool = ediff
+[mergetool.ediff]
+	cmd = export MERGED LOCAL REMOTE BASE && ~/bin/git-mergetool-ediff
