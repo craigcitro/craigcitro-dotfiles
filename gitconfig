@@ -18,4 +18,6 @@
 [grep]
         lineNumber = true
 [push]
-	default = tracking
+	default = simple
+[include]
+	path = .gitconfig.local
