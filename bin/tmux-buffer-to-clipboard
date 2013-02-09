@@ -1,9 +1,0 @@
-#!/bin/sh
-# 
-# craig citro
-# 2010 sep 13
-# 
-# quick hack for mirroring from the tmux copy buffers to the system clipboard 
-
-tmux save-buffer ~/.tmux.paste-buffer && xclip -selection c -d :0 ~/.tmux.paste-buffer
-
