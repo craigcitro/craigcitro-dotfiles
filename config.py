@@ -3,6 +3,7 @@
 
 import contextlib
 import os
+import socket
 import subprocess
 
 BASIC_LINKS = [
@@ -23,32 +24,34 @@ def Chdir(path):
   os.chdir(path)
   yield
   print ' --- Returning to directory to %s ---' % current_dir
+  print
   os.chdir(current_dir)
 
 
-def _CreateLink(filename, linkname):
+def _CreateLink(filename, linkname, indent='    '):
   """Link filename to linkname, returning True on success."""
-  print "== Symlinking %s to %s" % (filename, linkname)
+  print '%s== Symlinking %s to %s' % (indent, filename, linkname)
   if os.path.exists(linkname):
-    print 'File %s already exists, skipping.' % (linkname,)
+    print '%sFile %s already exists, skipping.' % (indent, linkname)
     return True
   if os.path.lexists(linkname):
-    print '    >> Removing broken symlink %s <<' % (linkname,)
+    print '%s>> Removing broken symlink %s <<' % (indent, linkname)
     os.remove(linkname)
   try:
     subprocess.check_call(['ln', '-s', filename, linkname])
   except subprocess.CalledProcessError, e:
-    print "ERROR creating symbolic link: " + str(e)
+    print '%sERROR creating symbolic link: %s' % (indent, e)
     return False
   return True
 
 
 def _SetupLinks(links_to_create):
   print
-  print "Creating symbolic links ..."
+  print 'Creating symbolic links ...'
   print
   repodir = os.getcwd()
   homedir = os.path.expanduser('~')
+  # Link the dotfiles
   with Chdir(homedir):
     for f in links_to_create:
       filename = os.path.join(repodir, f)
@@ -65,8 +68,14 @@ def _SetupLinks(links_to_create):
       filename = os.path.join(binary_src_dir, binary)
       if not _CreateLink(filename, binary):
         break
+  # Don't forget a tmux colors file
+  if 'google.com' in socket.gethostname():
+    tmux_colors = 'tmux.green.conf'
+  else:
+    tmux_colors = 'tmux.blue.conf'
+  with Chdir(homedir):
+    _CreateLink(tmux_colors, '.tmux.colors.conf')
 
 
 if __name__ == '__main__':
   _SetupLinks(BASIC_LINKS)
-  print "Don't forget to link something to .tmux.colors.conf."
