@@ -8,8 +8,8 @@ import subprocess
 
 BASIC_LINKS = [
     # General
-    'Xdefaults', 'bash_profile', 'bashrc', 'gitconfig', 'gitignore', 'hgrc',
-    'inputrc', 'screenrc', 'tmux.conf',
+    'Xdefaults', 'bash_profile', 'bashrc', 'colordiffrc', 'gitconfig',
+    'gitignore', 'hgrc', 'inputrc', 'screenrc', 'tmux.conf',
     # Editors
     'emacs', 'emacs.d', 'vimrc',
     # Languages
