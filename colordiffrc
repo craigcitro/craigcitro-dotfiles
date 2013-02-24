@@ -7,7 +7,7 @@ banner=no
 # to a file, it detects this and does not colour-highlight
 # To make the patch file *include* colours, change the option
 # below to 'yes'
-color_patches=no
+color_patches=yes
 # 
 # available colours are: white, yellow, green, blue,
 #                        cyan, red, magenta, black,
