@@ -191,7 +191,7 @@ HISTSIZE=100000000
 ###############################
 ## tab completion!
 COMPLETE_BASE='/etc/bash_completion'
-if [ -e $COMPLETE_BASE ]; then
+if [ -e $COMPLETE_BASE ] && ! shopt -oq posix; then
   source $COMPLETE_BASE
 fi
 
