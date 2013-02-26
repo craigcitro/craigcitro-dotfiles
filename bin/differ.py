@@ -10,7 +10,6 @@ def main(argv):
   diff_opts = argv[1]
   args = argv[2:]
   with tempfile.NamedTemporaryFile() as out:
-    print 'out.name: ', out.name
     while args:
       if len(args) < 3:
         break
