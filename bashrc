@@ -191,7 +191,7 @@ HISTSIZE=100000000
 ###############################
 ## tab completion!
 COMPLETE_BASE='/etc/bash_completion'
-if [ -e $COMPLETE_BASE ]; then
+if [ -e $COMPLETE_BASE ] && ! shopt -oq posix; then
   source $COMPLETE_BASE
 fi
 
@@ -445,15 +445,9 @@ export PROMPT_COMMAND=""
 # Google config
 ####################################################
 
-function at_work () {
-  local len=${#HOSTNAME}
-  if [ ${HOSTNAME:len-10:len} = "google.com" -a ${HOSTNAME:0:10} = "craigcitro" ]; then
-    echo ${HOSTNAME}
-  fi
-}
-export -f at_work
-if [ -n "$(at_work)" -a -e $HOME"/.bashrc.google" ]; then
-  source $HOME"/.bashrc.google"
+WORK_CONFIG=$HOME"/.bashrc.google"
+if [ -e $WORK_CONFIG ]; then
+  source $WORK_CONFIG
 fi
 
 ####################################################

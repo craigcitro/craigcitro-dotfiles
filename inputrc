@@ -24,6 +24,11 @@ set skip-completed-text On
 # ctrl left/right
 "\e[5C": forward-word
 "\e[5D": backward-word
+"\e[1;5C": forward-word
+"\e[1;5D": backward-word
+# alt left/right
+"\e[1;3C": forward-word
+"\e[1;3D": backward-word
 
 # I like a *huge* history.
 set history-size 100000000
