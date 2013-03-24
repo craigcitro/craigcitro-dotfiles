@@ -37,12 +37,10 @@ set history-size 100000000
 "\e[B": history-search-forward
 "\e[A": history-search-backward
 # also for the emacs keys
-"\C-s": history-search-forward
-"\C-r": history-search-backward
+"\C-r": reverse-search-history
+"\C-s": forward-search-history
 "\C-n": history-search-forward
 "\C-p": history-search-backward
-"\er": reverse-search-history
-"\es": forward-search-history
 
 # At some point meta started giving me trouble in XTerm; 
 # I found some advice here:
