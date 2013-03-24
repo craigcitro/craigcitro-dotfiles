@@ -54,12 +54,13 @@
 
 ;; ghc-mod:
 ;;   https://github.com/kazu-yamamoto/ghc-mod
-(cc/add-to-load-path-if-exists "ghc-mod/elisp")
-(let ((cabal-path (concat (getenv "HOME") "/cabal/bin")))
+(cc/add-to-load-path-if-exists "ext/Haskell/ghc-mod/share")
+(let ((cabal-path (concat (getenv "HOME") "/ext/Haskell/bin")))
   (when (file-exists-p cabal-path)
-    (add-to-list 'exec-path cabal-path)))
-;; (autoload 'ghc-init "ghc" nil t)
-;; (add-hook 'haskell-mode-hook (lambda () (ghc-init) (flymake-mode)))
+    (add-to-list 'exec-path cabal-path))
+  (autoload 'ghc-init "ghc" nil t)
+  (add-hook 'haskell-mode-hook (lambda () (ghc-init) (flymake-mode)))
+  )
 
 ;; hoogle
 (when (require 'haskell-mode nil t)
