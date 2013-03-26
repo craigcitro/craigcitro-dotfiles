@@ -483,7 +483,6 @@ after-make-frame-functions."
   ;; Indent 4 spaces on a continued line in parens
   (setq ess-arg-function-offset 4)
   ;; no one puts my keymappings in a corner
-  (define-key ess-mode-map "\C-c\C-j" 'goto-line)
   (define-key inferior-ess-mode-map "\C-p" 'comint-previous-input)
   (define-key inferior-ess-mode-map "\C-n" 'comint-next-input)
   )
@@ -611,7 +610,6 @@ after-make-frame-functions."
 (global-set-key "\C-x\C-n" 'new-frame)
 ;; Handy choices
 (global-set-key (kbd "RET") 'newline-and-indent)
-(global-set-key "\C-c\C-j" 'goto-line)
 (global-set-key "\C-c\C-z" 'shell)
 (global-set-key "\M-s" 'isearch-forward-regexp)
 (global-set-key "\M-r" 'isearch-backward-regexp)
