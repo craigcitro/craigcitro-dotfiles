@@ -19,7 +19,7 @@
 (auto-fill-mode t)
 (column-number-mode t)
 (setq inhibit-splash-screen t)
-(setq indent-tabs-mode nil)
+(setq-default indent-tabs-mode nil)
 (add-hook 'comint-output-filter-functions 'comint-watch-for-password-prompt)
 (display-time-mode t)
 (setq message-log-max t)
