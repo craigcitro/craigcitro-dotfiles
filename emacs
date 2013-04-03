@@ -399,6 +399,10 @@ after-make-frame-functions."
 ;; flymake
 ;;---------------------
 (require 'cc/flymake-keys "flymake-keys")
+(eval-after-load 'flymake
+  '(progn
+     (require 'flymake-cursor)
+     (setq flymake-cursor-number-of-errors-to-display 4)))
 
 ;;-------------------------
 ;; Java
