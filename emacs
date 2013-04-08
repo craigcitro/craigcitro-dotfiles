@@ -626,6 +626,7 @@ after-make-frame-functions."
 (global-set-key "\C-cs" 'sort-lines)
 (global-set-key "\C-ca" 'indent-region)
 (global-set-key "\C-c!" 'toggle-read-only)
+(global-set-key "\M-g\M-o" 'occur)
 ;; Sloppy keys
 (global-set-key "\C-x\C-g" 'keyboard-quit)
 (global-unset-key [(control x) (control o)])
