@@ -478,6 +478,7 @@ after-make-frame-functions."
 (cc/add-to-load-path-if-exists "ess")
 (when (require 'ess-site nil t)
   (add-to-list 'auto-mode-alist '("\\.R$" . r-mode))
+  (add-to-list 'auto-mode-alist '("\\.r$" . r-mode))
   (add-to-list 'auto-mode-alist '("\\.valclass$" . r-mode))
   (add-to-list 'auto-mode-alist '("Rprofile$" . r-mode))
   ;; We want to force _ back to _; ess-toggle-underscore can
