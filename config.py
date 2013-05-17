@@ -73,6 +73,7 @@ def _SetupLinks(links_to_create):
     tmux_colors = 'tmux.green.conf'
   else:
     tmux_colors = 'tmux.blue.conf'
+  tmux_colors = os.path.join(repodir, tmux_colors)
   with Chdir(homedir):
     _CreateLink(tmux_colors, '.tmux.colors.conf')
 
