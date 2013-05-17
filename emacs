@@ -325,7 +325,8 @@
 an (ignored) optional argument so it can be used as a hook in
 after-make-frame-functions."
   (menu-bar-mode -1)
-  (scroll-bar-mode -1)
+  (when (fboundp 'scroll-bar-mode)
+    (scroll-bar-mode -1))
   (tool-bar-mode -1))
 (kill-trim)
 
