@@ -18,7 +18,7 @@
 [grep]
         lineNumber = true
 [push]
-	default = simple
+	default = upstream
 [include]
 	path = .gitconfig.local
 [merge]
