@@ -1,15 +1,6 @@
 ;; -*- mode: Emacs-lisp; lexical-binding: t -*-
 ;;
 
-;;------------------------
-;; julia mode
-;;------------------------
-(add-hook 'julia-mode-hook
-          '(lambda ()
-             (setq 'julia-basic-offset 2)))
-(when (require 'julia-mode nil t)
-  (add-to-list 'auto-mode-alist '("\\.jl$" . julia-mode)))
-
 ;;---------------------
 ;; flymake
 ;;---------------------
@@ -44,18 +35,15 @@
 ;; Haskell
 ;;------------------
 ;; Generic bit
-(let ((haskell-site-file
-       (cc/find-file-or-nil "haskell-mode/haskell-site-file.el")))
-  (when haskell-site-file
-    (load haskell-site-file)
-    (add-to-list 'auto-mode-alist '("\\.hs$" . haskell-mode))
-    (add-hook 'haskell-mode-hook 'turn-on-haskell-doc-mode)
-    (add-hook 'haskell-mode-hook 'turn-on-haskell-indentation)))
+(when (require 'haskell-mode-autoloads nil t)
+  (add-to-list 'auto-mode-alist '("\\.hs$" . haskell-mode))
+  (add-hook 'haskell-mode-hook 'turn-on-haskell-doc-mode)
+  (add-hook 'haskell-mode-hook 'turn-on-haskell-indentation))
 
 ;; ghc-mod:
 ;;   https://github.com/kazu-yamamoto/ghc-mod
-(cc/add-to-load-path-if-exists "ext/Haskell/ghc-mod/share")
-(let ((cabal-path (concat (getenv "HOME") "/ext/Haskell/bin")))
+(cc/add-to-load-path-if-exists "ext/ghc-mod/share")
+(let ((cabal-path (concat (getenv "HOME") "/Library/Haskell/bin")))
   (when (file-exists-p cabal-path)
     (add-to-list 'exec-path cabal-path))
   (autoload 'ghc-init "ghc" nil t)
@@ -72,7 +60,7 @@
 ;;------------------
 (when (require 'deft nil t)
   (setq deft-extension "md")
-  (setq deft-directory "~/w/nv")
+  (setq deft-directory "~/deft")
   (setq deft-text-mode 'markdown-mode)
   (setq deft-use-filename-as-title t)
   (global-set-key "\M-\C-d" 'deft))
