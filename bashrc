@@ -456,6 +456,11 @@ if [ -e $WORK_CONFIG ]; then
   source $WORK_CONFIG
 fi
 
+EXTRA_CONFIG=$HOME"/.bashrc.extra"
+if [ -e $EXTRA_CONFIG ]; then
+  source $EXTRA_CONFIG
+fi
+
 ####################################################
 # Final config
 #
