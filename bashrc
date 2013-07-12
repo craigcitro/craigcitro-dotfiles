@@ -29,6 +29,7 @@ pathremove () {
   done
   export $PATHVARIABLE="$NEWPATH"
 }
+export -f pathremove
 
 pathprepend () {
   if [ -d $1 ]; then
@@ -37,6 +38,7 @@ pathprepend () {
     export $PATHVARIABLE="$1${!PATHVARIABLE:+:${!PATHVARIABLE}}"
   fi
 }
+export -f pathprepend
 
 pathappend () {
   if [ -d $1 ]; then
@@ -45,6 +47,17 @@ pathappend () {
     export $PATHVARIABLE="${!PATHVARIABLE:+${!PATHVARIABLE}:}$1"
   fi
 }
+export -f pathappend
+
+maybesrc () {
+  if [ -e $1 ]; then
+    if [ ! -z "$CC_BASHRC_LOGGING" ]; then
+      echo "Sourcing $1"
+    fi
+    source $1;
+  fi
+}
+export -f maybesrc
 
 if [ "$SYSTEM" == "Darwin" ]; then
   if [ "$LD_LIBRARY_PATH" = "" ]; then
@@ -96,17 +109,6 @@ fi
 
 ###############################
 ## emacs-related
-
-if [ -d "/Users/craigcitro/ext/Emacs.app" ]; then
-  pathprepend "/Users/craigcitro/ext/Emacs.app/Contents/MacOS/bin";
-  pathprepend "/Users/craigcitro/ext/Emacs.app/Contents/MacOS";
-  export PATH;
-elif [ -d "/Applications/Emacs.app/" ]; then
-  # are there other paths I have to set up? 
-  pathprepend "/Applications/Emacs.app/Contents/MacOS/bin";
-  pathprepend "/Applications/Emacs.app/Contents/MacOS";
-  export PATH;
-fi
 
 # We want everything to route through one central set of emacs
 # commands ...
@@ -190,20 +192,9 @@ HISTSIZE=100000000
 
 ###############################
 ## tab completion!
-COMPLETE_BASE='/etc/bash_completion'
-if [ -e $COMPLETE_BASE ] && ! shopt -oq posix; then
-  source $COMPLETE_BASE
-fi
-
-COMPLETE_BASE='/Users/craigcitro/ext/share/bash-completion/bash_completion'
-if [ -e $COMPLETE_BASE ]; then
-  source $COMPLETE_BASE
-fi
-
-GIT_COMPLETION='/Users/craigcitro/ext/share/git-core/git-completion.bash'
-if [ -e $GIT_COMPLETION ]; then
-  source $GIT_COMPLETION
-fi
+maybesrc '/etc/bash_completion'
+maybesrc '/usr/local/share/bash-completion/bash_completion'
+maybesrc '/usr/share/git-core/git-completion.bash'
 
 # I found this clever trick here:
 #   http://www.macosxhints.com/article.php?story=20080317085050719
@@ -296,14 +287,11 @@ alias py='/usr/bin/python2.7'
 PYTHONSTARTUP=$HOME'/.pythonrc'
 export PYTHONSTARTUP
 
-pathprepend $HOME'/ext/google_appengine' PYTHONPATH;
-
 #############
 ## Haskell
 
-pathappend $HOME'/ext/cabal/bin';
-pathappend $HOME'/ext/cabal/share/man' MANPATH;
-pathappend $HOME'/ext/Haskell/bin';
+pathappend $HOME'/Library/Haskell/share/man' MANPATH;
+pathappend $HOME'/Library/Haskell/bin';
 
 ################################################################
 ######################## Prompt stuff ##########################
@@ -451,15 +439,8 @@ export PROMPT_COMMAND=""
 # Google config
 ####################################################
 
-WORK_CONFIG=$HOME"/.bashrc.google"
-if [ -e $WORK_CONFIG ]; then
-  source $WORK_CONFIG
-fi
-
-EXTRA_CONFIG=$HOME"/.bashrc.extra"
-if [ -e $EXTRA_CONFIG ]; then
-  source $EXTRA_CONFIG
-fi
+maybesrc $HOME"/.bashrc.google"
+maybesrc $HOME"/.bashrc.extra"
 
 ####################################################
 # Final config
