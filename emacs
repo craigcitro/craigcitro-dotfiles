@@ -486,6 +486,9 @@ after-make-frame-functions."
   ;; force it to "smart _", but not off. Ugh.
   (ess-toggle-underscore 1)
   (ess-toggle-underscore nil)
+  (defun cc/ess-indentation-hook ()
+    (setq ess-indent-level 2))
+  (add-hook 'ess-mode-hook 'cc/ess-indentation-hook)
   ;; Indent 4 spaces on a continued line in parens
   (setq ess-arg-function-offset 4)
   ;; no one puts my keymappings in a corner
