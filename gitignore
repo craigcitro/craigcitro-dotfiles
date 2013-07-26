@@ -4,3 +4,4 @@ emacs.d/url/*
 tmp
 .RData
 .Rhistory
+.DS_Store
