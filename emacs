@@ -554,6 +554,13 @@ after-make-frame-functions."
   (add-hook 'lisp-mode-hook 'cc/make-mode-pedantic)
   (add-hook 'emacs-lisp-mode-hook 'cc/make-mode-pedantic))
 
+;; Trailing whitespace
+;; TODO(craigcitro): Wire this into pedantic mode.
+(defun cc/possibly-delete-trailing-whitespace ()
+  (when (eq 'markdown-mode major-mode)
+    (delete-trailing-whitespace)))
+(add-to-list 'write-file-functions 'cc/possibly-delete-trailing-whitespace)
+
 ;;==============================================================================
 ;; Utility functions
 ;;==============================================================================
