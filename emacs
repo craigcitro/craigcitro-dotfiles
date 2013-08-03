@@ -559,6 +559,9 @@ after-make-frame-functions."
 (when (require 'lisp-mode)
   (add-hook 'lisp-mode-hook 'cc/make-mode-pedantic)
   (add-hook 'emacs-lisp-mode-hook 'cc/make-mode-pedantic))
+(when (require 'ess-site nil t)
+  (add-hook 'ess-mode-hook 'cc/make-mode-pedantic))
+
 
 ;; Trailing whitespace
 ;; TODO(craigcitro): Wire this into pedantic mode.

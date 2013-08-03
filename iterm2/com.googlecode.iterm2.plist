@@ -53,6 +53,13 @@
 			<key>Text</key>
 			<string></string>
 		</dict>
+		<key>0x19-0x60000</key>
+		<dict>
+			<key>Action</key>
+			<integer>10</integer>
+			<key>Text</key>
+			<string>p</string>
+		</dict>
 		<key>0x56-0x60000</key>
 		<dict>
 			<key>Action</key>
@@ -73,6 +80,13 @@
 			<integer>22</integer>
 			<key>Text</key>
 			<string></string>
+		</dict>
+		<key>0x9-0x40000</key>
+		<dict>
+			<key>Action</key>
+			<integer>10</integer>
+			<key>Text</key>
+			<string>n</string>
 		</dict>
 	</dict>
 	<key>HiddenAFRStrokeThickness</key>
@@ -167,6 +181,8 @@
 	<string>0 252 1082 620 0 0 1440 878 </string>
 	<key>NSWindow Frame iTerm Window 1</key>
 	<string>183 68 410 326 0 0 1440 900 </string>
+	<key>NeverWarnAboutShortLivedSessions_DCC67779-07F2-4BFC-9216-F1AD7CCCEB0C</key>
+	<true/>
 	<key>New Bookmarks</key>
 	<array>
 		<dict>
@@ -242,11 +258,11 @@
 			<key>Ansi 15 Color</key>
 			<dict>
 				<key>Blue Component</key>
-				<real>0.92549020051956177</real>
+				<real>0.88644295930862427</real>
 				<key>Green Component</key>
-				<real>0.93333327770233154</real>
+				<real>0.89725327491760254</real>
 				<key>Red Component</key>
-				<real>0.93333327770233154</real>
+				<real>0.89184808731079102</real>
 			</dict>
 			<key>Ansi 2 Color</key>
 			<dict>
@@ -350,11 +366,11 @@
 			<key>Bold Color</key>
 			<dict>
 				<key>Blue Component</key>
-				<real>1</real>
+				<real>0.90094739198684692</real>
 				<key>Green Component</key>
-				<real>1</real>
+				<real>0.90094739198684692</real>
 				<key>Red Component</key>
-				<real>1</real>
+				<real>0.90094739198684692</real>
 			</dict>
 			<key>Character Encoding</key>
 			<integer>4</integer>
@@ -401,11 +417,11 @@
 			<key>Foreground Color</key>
 			<dict>
 				<key>Blue Component</key>
-				<real>1</real>
+				<real>0.89495545625686646</real>
 				<key>Green Component</key>
-				<real>1</real>
+				<real>0.89495545625686646</real>
 				<key>Red Component</key>
-				<real>1</real>
+				<real>0.89495545625686646</real>
 			</dict>
 			<key>Guid</key>
 			<string>DCC67779-07F2-4BFC-9216-F1AD7CCCEB0C</string>
