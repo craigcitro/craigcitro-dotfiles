@@ -411,6 +411,12 @@ after-make-frame-functions."
 (unless (assoc "\\.java$" auto-mode-alist)
   (add-to-list 'auto-mode-alist '("\\.java$" . java-mode)))
 
+;;-------------------------
+;; js
+;;-------------------------
+(eval-after-load 'js-mode
+  (add-hook 'js-mode-hook (lambda () (setq js-indent-level 2))))
+
 ;;------------------------
 ;; Emacs Lisp
 ;;------------------------
