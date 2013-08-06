@@ -411,6 +411,17 @@ after-make-frame-functions."
 (unless (assoc "\\.java$" auto-mode-alist)
   (add-to-list 'auto-mode-alist '("\\.java$" . java-mode)))
 
+;;---------------------
+;; yaml
+;;---------------------
+(when (require 'yaml-mode nil t)
+  (add-to-list 'auto-mode-alist '("\\.yml$" . yaml-mode))
+  (add-hook 'yaml-mode-hook
+            '(lambda ()
+               (define-key yaml-mode-map "\C-m" 'newline-and-indent))))
+
+
+
 ;;------------------------
 ;; Emacs Lisp
 ;;------------------------
