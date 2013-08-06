@@ -421,6 +421,11 @@ after-make-frame-functions."
                (define-key yaml-mode-map "\C-m" 'newline-and-indent))))
 
 
+;;-------------------------
+;; js
+;;-------------------------
+(eval-after-load 'js-mode
+  (add-hook 'js-mode-hook (lambda () (setq js-indent-level 2))))
 
 ;;------------------------
 ;; Emacs Lisp
@@ -564,6 +569,9 @@ after-make-frame-functions."
 (when (require 'lisp-mode)
   (add-hook 'lisp-mode-hook 'cc/make-mode-pedantic)
   (add-hook 'emacs-lisp-mode-hook 'cc/make-mode-pedantic))
+(when (require 'ess-site nil t)
+  (add-hook 'ess-mode-hook 'cc/make-mode-pedantic))
+
 
 ;; Trailing whitespace
 ;; TODO(craigcitro): Wire this into pedantic mode.
