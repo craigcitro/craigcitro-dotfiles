@@ -465,7 +465,7 @@ after-make-frame-functions."
 ;;------------------------
 ;; Shell scripts
 ;;------------------------
-(add-to-list 'auto-mode-alist '("bash[^/]*$" . shell-script-mode))
+(add-to-list 'auto-mode-alist '("bash[^/]*$" . shell-script-mode) t)
 ;; add rc files as shell as a last resort
 (add-to-list 'auto-mode-alist '("rc$" . shell-script-mode) t)
 (add-hook 'sh-mode-hook
