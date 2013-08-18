@@ -91,6 +91,8 @@ def Lint(filename, indent=None):
   entries = {}
   entry = []
   for line in process.stdout:
+    if line.startswith('**********'):
+      continue
     line = CleanLine(line)
     if new_entry_re.search(line):
       entries = AddEntry(entries, entry)
