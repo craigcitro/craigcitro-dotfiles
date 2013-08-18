@@ -576,7 +576,7 @@ after-make-frame-functions."
 ;; Trailing whitespace
 ;; TODO(craigcitro): Wire this into pedantic mode.
 (defun cc/possibly-delete-trailing-whitespace ()
-  (when (eq 'markdown-mode major-mode)
+  (when (memq major-mode '(markdown-mode python-mode))
     (delete-trailing-whitespace)))
 (add-to-list 'write-file-functions 'cc/possibly-delete-trailing-whitespace)
 
