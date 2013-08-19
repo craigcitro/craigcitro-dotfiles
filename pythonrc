@@ -37,10 +37,7 @@ class _SmartCompleter(_rlcompleter.Completer):
   def complete(self, text, state):
     import readline
     if not readline.get_line_buffer().strip():
-      if not state:
-        return '  '
-      else:
-        return None
+      return None if state else '  '
     return _rlcompleter.Completer.complete(self, text, state)
 
 readline.set_completer(_SmartCompleter().complete)
