@@ -405,6 +405,12 @@ after-make-frame-functions."
      (setq flymake-cursor-number-of-errors-to-display 4)))
 
 ;;-------------------------
+;; go
+;;-------------------------
+(when (require 'go-mode nil t)
+  (add-hook 'before-save-hook 'gofmt-before-save))
+
+;;-------------------------
 ;; Java
 ;;-------------------------
 ;; I shouldn't need this ...
