@@ -235,15 +235,6 @@ else
   alias du='du -h --max-depth 1'
 fi
 
-if [ "$SYSTEM" == "Darwin" ]; then
-  # wide by default on OSX
-  alias ps="ps -U $USER"
-  alias psw="ps -U $USER"
-else
-  alias ps="ps w -u $USER"
-  alias psw="ps ww -u $USER"
-fi
-
 # Maybe there's a better name for this?
 alias reup="source $HOME/.bashrc"
 
