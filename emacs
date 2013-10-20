@@ -729,7 +729,30 @@ after-make-frame-functions."
 (global-set-key [deletechar] 'backward-kill-word)
 
 ;; revert-buffer from:
-;;  http://www.stokebloke.com/wordpress/2008/04/17/emacs-refresh-f5-key/
+;;  http://www.stokebloke.com/wordpress/2008/04/17/emacs-refresh-f5-Key/
+(defun revert-buffer-keep-history (&optional IGNORE-AUTO NOCONFIRM PRESERVE-MODES)
+  (interactive)
+
+  (let ((point (point))
+        (window-start (window-start)))
+    (unwind-protect
+        (progn
+          ;; tell Emacs the modtime is fine, so we can edit the buffer
+          (clear-visited-file-modtime)
+
+          ;; insert the current contents of the file on disk
+          (widen)
+          (delete-region (point-min) (point-max))
+          (insert-file-contents (buffer-file-name))
+
+          ;; mark the buffer as not modified
+          (not-modified)
+          (set-visited-file-modtime))
+      (goto-char point)
+      (set-window-start (selected-window) window-start nil)
+      )))
+(setq revert-buffer-function 'revert-buffer-keep-history)
+
 (defun reload-buffer ()
   "Reload the current buffer with the current cursor position."
   (interactive)
