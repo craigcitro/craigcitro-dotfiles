@@ -214,8 +214,8 @@ alias c=clear
 alias cut="cut -d' '"
 alias d=date
 alias df='df -h'
-alias g='grep -n --color=always -E'
-alias gg='grep --color=always -E'
+alias grep='grep --color=always -E'
+alias g=grep
 alias h=history
 alias p=echo
 alias scp='scp -p'
