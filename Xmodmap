@@ -1,0 +1,5 @@
+! cc qwerty keyboard layout
+! Just turns caps lock into ctrl.
+
+remove mod4 = Super_L
+add Control = Super_L
