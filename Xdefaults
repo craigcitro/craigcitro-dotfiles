@@ -1,17 +1,7 @@
 ! .Xdefaults
 
-! Unfortunately, generically choosing white-on-black gives some 
-! generally unusable windows (think qgit). 
-*background: white
-*foreground: black
-
-! The one true font
-*font: 6x13
-
-! And xterm
-! XTerm*font: 6x13
-! (2011 May 31) Unfortunately, this looks bad: font hinting?
-XTerm*font: inconsolata-12
+XTerm*faceName: inconsolata
+XTerm*faceSize: 16
 XTerm*foreground: white
 XTerm*background: black
 XTerm*saveLines: 99999
