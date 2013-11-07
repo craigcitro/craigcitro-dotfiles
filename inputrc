@@ -20,6 +20,7 @@ set skip-completed-text On
 # I use this to get M-DEL to work in many cases; I don't know if
 # there's a better way.
 "\e[3~": backward-kill-word
+"\ed": kill-word
 
 # ctrl left/right
 "\e[5C": forward-word
