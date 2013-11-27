@@ -79,7 +79,9 @@ fi
 
 # My additions to $PATH
 pathprepend $HOME/ext/bin;
-pathprepend $HOME/bin; 
+pathprepend $HOME/bin;
+# For pip install --user:
+pathappend $HOME/.local/bin;
 export PATH
 
 pathprepend $HOME/ext/share/man MANPATH;
