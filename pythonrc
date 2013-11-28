@@ -1,15 +1,17 @@
 # python startup script
 
-# It's wildly convenient to know if you've got this loaded at start.
-print "Reading .pythonrc ..."
+# If we're in IPython, we don't want to mess with anything.
+def _DetectIPython():
+  try:
+    __IPYTHON__
+    return True
+  except NameError:
+    return False
+
 
 ############################################
 # set up readline the way we like
 ############################################
-
-# first version shamelessly stolen from:
-#   http://docs.python.org/tutorial/interactive.html
-#
 
 # the rlcompleter is necessary, even though we don't explicitly use
 # it: importing it actually creates the completer we use and sets it
@@ -18,34 +20,198 @@ print "Reading .pythonrc ..."
 # order to avoid (1) polluting the global namespace and (2)
 # potentially breaking something if we do want to import it at
 # runtime.
-import readline
-import codecs
 
-_original_completer = readline.get_completer()
-import rlcompleter as _rlcompleter
-readline.set_completer(_original_completer)
+if not _DetectIPython():
+  import readline
+  _original_completer = readline.get_completer()
+  import rlcompleter as _rlcompleter
+  readline.set_completer(_original_completer)
+  del readline
 
-class _SmartCompleter(_rlcompleter.Completer):
-  def _callable_postfix(self, val, word):
-    import readline
-    if ('(' in readline.get_line_buffer() or
-        not callable(val)):
-      return word
-    else:
-      return word + '('
+def _SetTabCompleter():
+  if _DetectIPython():
+    return
+  import codecs, readline
 
-  def complete(self, text, state):
-    import readline
-    if not readline.get_line_buffer().strip():
-      return None if state else '  '
-    return _rlcompleter.Completer.complete(self, text, state)
+  class _SmartCompleter(_rlcompleter.Completer):
+    def _callable_postfix(self, val, word):
+      import readline
+      if ('(' in readline.get_line_buffer() or
+          not callable(val)):
+        return word
+      else:
+        return word + '('
 
-readline.set_completer(_SmartCompleter().complete)
+    def complete(self, text, state):
+      import readline
+      if not readline.get_line_buffer().strip():
+        return None if state else '  '
+      return _rlcompleter.Completer.complete(self, text, state)
+
+  readline.set_completer(_SmartCompleter().complete)
 
 def _global_matches():
   import __main__
   c = _rlcompleter.Completer(namespace=__main__.__dict__)
   return c.global_matches('')
+
+def _detect_gnu_readline():
+  """Returns True iff we're using GNU readline."""
+  import commands, platform, readline
+  # TODO(craigcitro): Handle the case of Windows/pyreadline.
+  if platform.system() != 'Darwin':
+    return True
+  else:
+    otool_command = 'otool -L %s | grep libreadline' % (readline.__file__,)
+    dynamic_deps = commands.getoutput(otool_command)
+    if dynamic_deps:
+      return True
+    nm_command = 'nm -U %s | grep rl_complete' % (readline.__file__,)
+    static_deps = commands.getoutput(nm_command)
+    if static_deps:
+      return True
+  return False
+
+def _SetupReadline():
+  import readline
+  if _detect_gnu_readline():
+    # We have GNU readline
+    readline.parse_and_bind('tab: complete')
+  else:
+    # OSX readline-over-libedit
+    print "Detected non-GNU readline."
+    readline.parse_and_bind('bind ^I rl_complete')
+
+def _SetupHistory():
+  if _DetectIPython():
+    return
+
+  # save python command history between sessions
+  import atexit, os
+  def _GetHistoryPath():
+    history_path = os.environ.get('PYHISTORY_PATH', '~/.pyhistory')
+    return os.path.expanduser(history_path)
+
+  # TODO(craigcitro): Handle the _HiStOrY_V2_ nonsense.
+  class _readline_history_iterator(object):
+    def __init__(self):
+      self._ind = 2
+      if not _detect_gnu_readline():
+        self._ind = 1
+
+    def __getitem__(self, ind):
+      import readline
+      return readline.get_history_item(ind)
+
+    def append(self, val):
+      import readline
+      if not isinstance(val, basestring):
+        raise ValueError, "cannot set history line to non-str value %s" % (val,)
+      if '\n' in val:
+        raise ValueError, "history line must not contain newlines"
+      readline.add_history(val)
+
+    def __str__(self):
+      return "Iterator over the lines in the readline history."
+
+    def __repr__(self):
+      return self.__str__()
+
+    def __iter__(self):
+      return self
+
+    def next(self):
+      line = self[self._ind]
+      if line is None:
+        raise StopIteration
+      self._ind += 1
+      return line
+
+  def save_history(history_path=None):
+    # OSX libedit seems to screw up writing the file, dropping \040
+    # instead of ' '. (this is just the octal encoding of that
+    # character, but who knows why it ends up in the file.) we work
+    # around this in the most naive way possible: if we're using
+    # libedit, we just write out the history ourselves.
+    history_path = history_path or _GetHistoryPath()
+    import codecs, itertools, readline
+    if _detect_gnu_readline():
+      readline.write_history_file(history_path)
+      return
+
+    try:
+      f = open(history_path, 'w')
+    except IOError:
+      print "Couldn't write history to %s. Exiting without saving history." % (
+        history_path,)
+      return
+    # This line is a turd left by libedit.
+    f.write('_HiStOrY_V2_\n')
+    f.writelines(itertools.imap(
+      lambda line: codecs.raw_unicode_escape_encode(line)[0] + '\n',
+      _readline_history_iterator()))
+
+  def load_history(history_path=None):
+    history_path = history_path or _GetHistoryPath()
+    import codecs, os, readline
+    try:
+      if os.path.exists(history_path):
+        if os.environ.has_key('PY_DEBUG_PYTHONRC'):
+          print "Reading history from %s ..." % (history_path,)
+        if _detect_gnu_readline():
+          readline.read_history_file(history_path)
+        else:
+          with open(history_path) as f:
+            f.next()
+            for line in f:
+              cleaned_line = codecs.raw_unicode_escape_encode(line[:-1])[0]
+              readline.add_history(cleaned_line)
+    except Exception, e:
+      print e
+      print "Failed to import history file!"
+      if os.environ.has_key('PY_DEBUG_PYTHONRC'):
+        print "Raised exception of type %s" % (type(e),)
+        print "  Message: %s" % (e.message,)
+
+  atexit.register(save_history)
+  load_history()
+
+def _AllWarnings():
+  import warnings
+  warnings.resetwarnings()
+  warnings.filterwarnings('always')
+
+def _PprintAlias():
+  import pprint
+  return pprint.pprint
+
+if not _DetectIPython():
+  print "Reading .pythonrc ..."
+  pp = _PprintAlias()
+  _AllWarnings()
+  _SetupReadline()
+  _SetTabCompleter()
+  _SetupHistory()
+
+#####################################
+## pdb + tab-complete = happiness
+#####################################
+
+# first version of the pdb+tab happiness is taken from
+# this activestate recipe:
+#
+#  http://code.activestate.com/recipes/498182/
+#
+# It all has to occur in my .pdbrc/.pdbrc.py, unfortunately. This
+# configuration is still not nearly complete -- I need to make sure
+# that it actually uses the frame locals appropriately, and I'd really
+# like to have the pdb history be maintained separately from the rest
+# of the interpreter history. I'll probably need to figure out what
+# entry/exit hooks pdb/bdb offer to make this happen.
+
+#####################################
+## notes on readline detection
+#####################################
 
 # set tab to autocomplete, which is far superior to, uh, tab.
 # we need different versions based on what architecture we're on.
@@ -54,6 +220,19 @@ def _global_matches():
 # my work MBP. I'm not sure if this is a difference between my two
 # laptops or what; I need to investigate. In the interim, just turn it
 # off.
+#
+# Simple (broken) detection code:
+#   def _naive_detect_gnu_readline(method='path'):
+#     """Try to determine whether or not we have GNU readline.
+#
+#     None of these works very well."""
+#     if method == 'path':
+#       return readline.__file__.startswith(
+#           '/System/Library/Frameworks/Python.framework/')
+#     elif method == 'index_bug':
+#       return readline.get_history_item(0) is None
+#     elif method == 'docstring':
+#       return not ('GNU' in readline.__doc__)
 #
 # (2010 Oct 18) Unfortunately, the plot thickens. It seems that it's
 # impossible to determine what readline library you've got in place by
@@ -84,193 +263,3 @@ def _global_matches():
 # a possibility I didn't consider above: what if readline was
 # *statically* linked, not dynamically. Duh ... so try `nm -u` to see
 # what we see.
-
-# TODO(craigcitro): Handle the _HiStOrY_V2_ nonsense.
-
-def _naive_detect_gnu_readline(method='path'):
-  """Try to determine whether or not we have GNU readline.
-
-  None of these works very well."""
-  if method == 'path':
-    return readline.__file__.startswith('/System/Library/Frameworks/Python.framework/')
-  elif method == 'index_bug':
-    return readline.get_history_item(0) is None
-  elif method == 'docstring':
-    return not ('GNU' in readline.__doc__)
-
-def _detect_gnu_readline():
-  """Returns True iff we're using GNU readline."""
-  import commands
-  import platform
-  import readline
-  # TODO(craigcitro): Handle the case of Windows/pyreadline.
-  if platform.system() != 'Darwin':
-    return True
-  else:
-    otool_command = 'otool -L %s | grep libreadline' % (readline.__file__,)
-    dynamic_deps = commands.getoutput(otool_command)
-    if dynamic_deps:
-      return True
-    nm_command = 'nm -U %s | grep rl_complete' % (readline.__file__,)
-    static_deps = commands.getoutput(nm_command)
-    if static_deps:
-      return True
-  return False
-
-if _detect_gnu_readline():
-  # We have GNU readline
-  readline.parse_and_bind('tab: complete')
-else:
-  # OSX readline-over-libedit
-  print "Detected non-GNU readline."
-  readline.parse_and_bind('bind ^I rl_complete')
-
-# save python command history between sessions
-import atexit, os
-# TODO(craigcitro): Make the history_path appropriate on Windows.
-history_path = os.path.expanduser("~/.pyhistory")
-
-class _readline_history_iterator(object):
-  def __init__(self):
-    self._ind = 2
-    if not _detect_gnu_readline():
-      self._ind = 1
-
-  def __getitem__(self, ind):
-    import readline
-    return readline.get_history_item(ind)
-
-  def append(self, val):
-    import readline
-    if not isinstance(val, basestring):
-      raise ValueError, "cannot set history line to non-str value %s" % (val,)
-    if '\n' in val:
-      raise ValueError, "history line must not contain newlines"
-    readline.add_history(val)
-
-  def __str__(self):
-    return "Iterator over the lines in the readline history."
-
-  def __repr__(self):
-    return self.__str__()
-
-  def __iter__(self):
-    return self
-
-  def next(self):
-    line = self[self._ind]
-    if line is None:
-      raise StopIteration
-    self._ind += 1
-    return line
-
-def save_history(history_path=history_path):
-  # OSX libedit seems to screw up writing the file, dropping \040
-  # instead of ' '. (this is just the octal encoding of that
-  # character, but who knows why it ends up in the file.) we work
-  # around this in the most naive way possible: if we're using
-  # libedit, we just write out the history ourselves.
-  import codecs
-  import itertools
-  import readline
-  if _detect_gnu_readline():
-    readline.write_history_file(history_path)
-    return
-
-  try:
-    f = open(history_path, 'w')
-  except IOError:
-    print "Couldn't write history to %s. Exiting without saving history." % (
-      history_path,)
-    return
-  # This line is a turd left by libedit.
-  f.write('_HiStOrY_V2_\n')
-  f.writelines(itertools.imap(
-    lambda line: codecs.raw_unicode_escape_encode(line)[0] + '\n',
-    _readline_history_iterator()))
-
-def load_history(history_path=history_path):
-  try:
-    if os.path.exists(history_path):
-      if os.environ.has_key('PY_DEBUG_PYTHONRC'):
-        print "Reading history from %s ..." % (history_path,)
-      if _detect_gnu_readline():
-        readline.read_history_file(history_path)
-      else:
-        with open(history_path) as f:
-          f.next()
-          for line in f:
-            cleaned_line = codecs.raw_unicode_escape_encode(line[:-1])[0]
-            readline.add_history(cleaned_line)
-  except Exception, e:
-    print "Failed to import history file!"
-    if os.environ.has_key('PY_DEBUG_PYTHONRC'):
-      print "Raised exception of type %s" % (type(e),)
-      print "  Message: %s" % (e.message,)
-
-atexit.register(save_history)
-
-# load the command history for this session
-load_history()
-
-del os, atexit, save_history, load_history, history_path
-del _naive_detect_gnu_readline
-del readline, codecs
-
-#####################################
-## warnings
-#####################################
-# Turn on warnings
-import warnings
-warnings.resetwarnings()
-warnings.filterwarnings('always')
-del warnings
-
-#####################################
-## utility functions
-#####################################
-# Common subsets of dir(x)
-def _is_private(attribute_name):
-  """Return True if attribute_name is a private attribute."""
-  return attribute_name.startswith('_')
-
-def dp(o):
-  """Return a sorted list of all public members of an object."""
-  return sorted(list(set(dir(o)).difference(d_(o))))
-
-def d_(o):
-  """Return a sorted list of all private members of an object."""
-  return sorted(filter(_is_private, dir(o)))
-
-def dd(o):
-  """Return a sorted list of all non-callable members of an object."""
-  return sorted(list(set(dir(o)).difference(dm(o))))
-
-def dm(o):
-  """Return a sorted list of all callable members of an object."""
-  return sorted(filter(lambda name: callable(getattr(o, name)), dir(o)))
-
-# One useful combination
-def dpm(o):
-  """Return a sorted list of all public callable members of an object."""
-  return sorted(list(set(dp(o)).intersection(set(dm(o)))))
-
-import pprint
-pp = pprint.pprint
-del pprint
-
-#####################################
-## pdb + tab-complete = happiness
-#####################################
-
-# first version of the pdb+tab happiness is taken from
-# this activestate recipe:
-#
-#  http://code.activestate.com/recipes/498182/
-#
-# It all has to occur in my .pdbrc/.pdbrc.py, unfortunately. This
-# configuration is still not nearly complete -- I need to make sure
-# that it actually uses the frame locals appropriately, and I'd really
-# like to have the pdb history be maintained separately from the rest
-# of the interpreter history. I'll probably need to figure out what
-# entry/exit hooks pdb/bdb offer to make this happen.
