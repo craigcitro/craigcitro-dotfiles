@@ -67,7 +67,8 @@ if [ "$SYSTEM" == "Darwin" ]; then
   pathappend /usr/local/lib LD_LIBRARY_PATH;
   pathappend /usr/X11/lib LD_LIBRARY_PATH;
 
-  pathprepend /usr/local/bin; 
+  pathprepend /usr/local/bin;
+  pathappend /usr/texbin;
   pathappend /opt/subversion/bin;
   # add git via git-osx-installer
   pathappend /usr/local/git/bin;
