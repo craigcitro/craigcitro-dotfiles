@@ -81,6 +81,8 @@ fi
 # My additions to $PATH
 pathprepend $HOME/ext/bin;
 pathprepend $HOME/bin;
+# Go
+pathappend $HOME/ext/go/bin;
 # For pip install --user:
 pathappend $HOME/.local/bin;
 export PATH
