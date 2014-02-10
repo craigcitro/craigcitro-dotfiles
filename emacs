@@ -429,10 +429,11 @@ after-make-frame-functions."
 
 
 ;;-------------------------
-;; js
+;; js and friends
 ;;-------------------------
 (eval-after-load 'js-mode
   (add-hook 'js-mode-hook (lambda () (setq js-indent-level 2))))
+(require 'jinja2-mode nil t)
 
 ;;------------------------
 ;; Emacs Lisp
