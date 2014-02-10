@@ -282,6 +282,12 @@ PYTHONSTARTUP=$HOME'/.pythonrc'
 export PYTHONSTARTUP
 
 #############
+## Go
+
+GOPATH=$HOME'/ext/go'
+export GOPATH
+
+#############
 ## Haskell
 
 pathappend $HOME'/Library/Haskell/share/man' MANPATH;
