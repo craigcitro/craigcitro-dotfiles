@@ -80,7 +80,7 @@
 	      (:keywords quote
 			 ("extensions" "matching" "data structures trie" "tree" "dictionary" "completion" "regexp")))])
  (diff-hl .
-	  [(1 5 1)
+	  [(1 5 3)
 	   ((cl-lib
 	     (0 2)))
 	   "Highlight uncommitted changes" tar
@@ -249,7 +249,7 @@
 	    ((:url . "http://elpa.gnu.org/packages/omn-mode.html")
 	     (:keywords quote nil))])
  (org .
-      [(20140203)
+      [(20140210)
        nil "Outline-based notes management and organizer" tar nil])
  (quarter-plane .
 		[(0 1)
