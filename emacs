@@ -434,6 +434,8 @@ after-make-frame-functions."
 (eval-after-load 'js-mode
   (add-hook 'js-mode-hook (lambda () (setq js-indent-level 2))))
 (require 'jinja2-mode nil t)
+(when (require 'css-mode nil t)
+  (add-hook 'css-mode-hook (lambda () (setq css-indent-offset 2))))
 
 ;;------------------------
 ;; Emacs Lisp
