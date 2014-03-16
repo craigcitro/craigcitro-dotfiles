@@ -6,7 +6,7 @@ init-hook='import sys; sys.path.insert(0, "/Users/craigcitro/ext/google_appengin
 #load-plugins=
 
 [MESSAGES CONTROL]
-disable=R0903,W0142,W0511,R0904
+disable=R0903,W0142,W0511,R0904,R0914,R0912,R0915,C0103
 
 [REPORTS]
 #output-format=text
