@@ -101,7 +101,7 @@
      (setq org-cycle-separator-lines 0)
      (setq org-blank-before-new-entry '((heading) (plain-list-item)))
      ;; Where the org files live
-     (setq org-directory "~/w/todo")
+     (setq org-directory "~/ffh/org/todo")
      (setq org-agenda-files (list org-directory))
      (setq org-default-notes-file (concat org-directory "/todo.org"))
      (setq cc/org-default-tips-file (concat org-directory "/tips.org"))
@@ -110,14 +110,15 @@
      ;; Add contrib/ to the load path
      (cc/add-to-load-path-if-exists "org-contrib/lisp")
      ;; Agenda-related config.
-     (setq org-agenda-ndays 4)
+     (setq org-agenda-ndays 8)
      ;; Archive into a tree.
      (setq org-archive-location "%s_archive::* Archived Tasks")
      ;; org-velocity
-     (require 'org-velocity)
-     (setq org-velocity-bucket (concat org-directory "/velocity-bucket.org"))
-     (setq org-velocity-exit-on-match t)
-     (setq org-velocity-use-completion t)
+     ;; TODO(craigcitro): Turn this back on.
+     ;; (require 'org-velocity)
+     ;; (setq org-velocity-bucket (concat org-directory "/velocity-bucket.org"))
+     ;; (setq org-velocity-exit-on-match t)
+     ;; (setq org-velocity-use-completion t)
      ;; mobile org
      ;; (2012 Aug 08) Giving up on mobile-org for now.
      ;; (setq org-mobile-directory "~/w/mobile-org")
