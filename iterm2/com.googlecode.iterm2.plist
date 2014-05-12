@@ -127,6 +127,8 @@
 	<true/>
 	<key>MaxVertically</key>
 	<false/>
+	<key>NSColorPanelMode</key>
+	<string>6</string>
 	<key>NSNavLastRootDirectory</key>
 	<string>~/dotfiles/iterm2</string>
 	<key>NSNavPanelExpandedSizeForOpenMode</key>
@@ -177,10 +179,12 @@
 		<key>TB Size Mode</key>
 		<integer>1</integer>
 	</dict>
+	<key>NSWindow Frame NSColorPanel</key>
+	<string>307 284 214 309 0 0 1440 900 </string>
 	<key>NSWindow Frame Preferences</key>
-	<string>331 274 924 485 0 0 1440 900 </string>
+	<string>473 356 924 485 0 0 1440 900 </string>
 	<key>NSWindow Frame iTerm Window 0</key>
-	<string>0 418 650 454 0 0 1440 878 </string>
+	<string>0 302 650 476 0 0 1440 878 </string>
 	<key>NSWindow Frame iTerm Window 1</key>
 	<string>183 0 650 476 0 0 1440 900 </string>
 	<key>NeverWarnAboutShortLivedSessions_DCC67779-07F2-4BFC-9216-F1AD7CCCEB0C</key>
@@ -210,133 +214,133 @@
 				<key>Green Component</key>
 				<real>0.0</real>
 				<key>Red Component</key>
-				<real>0.80000001192092896</real>
+				<real>0.73333334922790527</real>
 			</dict>
 			<key>Ansi 10 Color</key>
 			<dict>
 				<key>Blue Component</key>
-				<real>0.2039216011762619</real>
+				<real>0.3333333432674408</real>
 				<key>Green Component</key>
-				<real>0.88627451658248901</real>
+				<real>1</real>
 				<key>Red Component</key>
-				<real>0.54117649793624878</real>
+				<real>0.3333333432674408</real>
 			</dict>
 			<key>Ansi 11 Color</key>
 			<dict>
 				<key>Blue Component</key>
-				<real>0.30980390310287476</real>
+				<real>0.3333333432674408</real>
 				<key>Green Component</key>
-				<real>0.91372549533843994</real>
+				<real>1</real>
 				<key>Red Component</key>
-				<real>0.98823529481887817</real>
+				<real>1</real>
 			</dict>
 			<key>Ansi 12 Color</key>
 			<dict>
 				<key>Blue Component</key>
-				<real>0.81176471710205078</real>
+				<real>1</real>
 				<key>Green Component</key>
-				<real>0.62352937459945679</real>
+				<real>0.3333333432674408</real>
 				<key>Red Component</key>
-				<real>0.44705879688262939</real>
+				<real>0.3333333432674408</real>
 			</dict>
 			<key>Ansi 13 Color</key>
 			<dict>
 				<key>Blue Component</key>
-				<real>0.65882349014282227</real>
+				<real>1</real>
 				<key>Green Component</key>
-				<real>0.49803918600082397</real>
+				<real>0.3333333432674408</real>
 				<key>Red Component</key>
-				<real>0.67843139171600342</real>
+				<real>1</real>
 			</dict>
 			<key>Ansi 14 Color</key>
 			<dict>
 				<key>Blue Component</key>
-				<real>0.88627451658248901</real>
+				<real>1</real>
 				<key>Green Component</key>
-				<real>0.88627451658248901</real>
+				<real>1</real>
 				<key>Red Component</key>
-				<real>0.2039216011762619</real>
+				<real>0.3333333432674408</real>
 			</dict>
 			<key>Ansi 15 Color</key>
 			<dict>
 				<key>Blue Component</key>
-				<real>0.88644295930862427</real>
+				<real>1</real>
 				<key>Green Component</key>
-				<real>0.89725327491760254</real>
+				<real>1</real>
 				<key>Red Component</key>
-				<real>0.89184808731079102</real>
+				<real>1</real>
 			</dict>
 			<key>Ansi 2 Color</key>
 			<dict>
 				<key>Blue Component</key>
-				<real>0.023529410362243652</real>
+				<real>0.0028488282114267349</real>
 				<key>Green Component</key>
-				<real>0.60392159223556519</real>
+				<real>0.88777929544448853</real>
 				<key>Red Component</key>
-				<real>0.30588239431381226</real>
+				<real>0.0018361535621806979</real>
 			</dict>
 			<key>Ansi 3 Color</key>
 			<dict>
 				<key>Blue Component</key>
 				<real>0.0</real>
 				<key>Green Component</key>
-				<real>0.62745100259780884</real>
+				<real>0.73333334922790527</real>
 				<key>Red Component</key>
-				<real>0.76862752437591553</real>
+				<real>0.73333334922790527</real>
 			</dict>
 			<key>Ansi 4 Color</key>
 			<dict>
 				<key>Blue Component</key>
-				<real>0.64313727617263794</real>
+				<real>0.82910943031311035</real>
 				<key>Green Component</key>
-				<real>0.39607840776443481</real>
+				<real>0.38635462522506714</real>
 				<key>Red Component</key>
-				<real>0.2039216011762619</real>
+				<real>0.077957041561603546</real>
 			</dict>
 			<key>Ansi 5 Color</key>
 			<dict>
 				<key>Blue Component</key>
-				<real>0.48235291242599487</real>
+				<real>0.73333334922790527</real>
 				<key>Green Component</key>
-				<real>0.31372550129890442</real>
+				<real>0.0</real>
 				<key>Red Component</key>
-				<real>0.45882350206375122</real>
+				<real>0.73333334922790527</real>
 			</dict>
 			<key>Ansi 6 Color</key>
 			<dict>
 				<key>Blue Component</key>
-				<real>0.60392159223556519</real>
+				<real>0.73333334922790527</real>
 				<key>Green Component</key>
-				<real>0.59607851505279541</real>
+				<real>0.73333334922790527</real>
 				<key>Red Component</key>
-				<real>0.023529410362243652</real>
+				<real>0.0</real>
 			</dict>
 			<key>Ansi 7 Color</key>
 			<dict>
 				<key>Blue Component</key>
-				<real>0.81176471710205078</real>
+				<real>0.73333334922790527</real>
 				<key>Green Component</key>
-				<real>0.84313732385635376</real>
+				<real>0.73333334922790527</real>
 				<key>Red Component</key>
-				<real>0.82745099067687988</real>
+				<real>0.73333334922790527</real>
 			</dict>
 			<key>Ansi 8 Color</key>
 			<dict>
 				<key>Blue Component</key>
-				<real>0.32549020648002625</real>
+				<real>0.3333333432674408</real>
 				<key>Green Component</key>
-				<real>0.34117650985717773</real>
+				<real>0.3333333432674408</real>
 				<key>Red Component</key>
-				<real>0.33333331346511841</real>
+				<real>0.3333333432674408</real>
 			</dict>
 			<key>Ansi 9 Color</key>
 			<dict>
 				<key>Blue Component</key>
-				<real>0.16078430414199829</real>
+				<real>0.3333333432674408</real>
 				<key>Green Component</key>
-				<real>0.16078430414199829</real>
+				<real>0.3333333432674408</real>
 				<key>Red Component</key>
-				<real>0.93725490570068359</real>
+				<real>1</real>
 			</dict>
 			<key>Automatically Log</key>
 			<false/>
@@ -368,11 +372,11 @@
 			<key>Bold Color</key>
 			<dict>
 				<key>Blue Component</key>
-				<real>0.90094739198684692</real>
+				<real>1</real>
 				<key>Green Component</key>
-				<real>0.90094739198684692</real>
+				<real>1</real>
 				<key>Red Component</key>
-				<real>0.90094739198684692</real>
+				<real>1</real>
 			</dict>
 			<key>Character Encoding</key>
 			<integer>4</integer>
@@ -385,20 +389,20 @@
 			<key>Cursor Color</key>
 			<dict>
 				<key>Blue Component</key>
-				<real>1</real>
+				<real>0.73333334922790527</real>
 				<key>Green Component</key>
-				<real>1</real>
+				<real>0.73333334922790527</real>
 				<key>Red Component</key>
-				<real>1</real>
+				<real>0.73333334922790527</real>
 			</dict>
 			<key>Cursor Text Color</key>
 			<dict>
 				<key>Blue Component</key>
-				<real>0.0</real>
+				<real>1</real>
 				<key>Green Component</key>
-				<real>0.0</real>
+				<real>1</real>
 				<key>Red Component</key>
-				<real>0.0</real>
+				<real>1</real>
 			</dict>
 			<key>Cursor Type</key>
 			<integer>2</integer>
@@ -419,11 +423,11 @@
 			<key>Foreground Color</key>
 			<dict>
 				<key>Blue Component</key>
-				<real>0.89495545625686646</real>
+				<real>0.73333334922790527</real>
 				<key>Green Component</key>
-				<real>0.89495545625686646</real>
+				<real>0.73333334922790527</real>
 				<key>Red Component</key>
-				<real>0.89495545625686646</real>
+				<real>0.73333334922790527</real>
 			</dict>
 			<key>Guid</key>
 			<string>DCC67779-07F2-4BFC-9216-F1AD7CCCEB0C</string>
@@ -973,7 +977,7 @@
 	<key>RightOption</key>
 	<integer>8</integer>
 	<key>SUAutomaticallyUpdate</key>
-	<true/>
+	<false/>
 	<key>SUEnableAutomaticChecks</key>
 	<true/>
 	<key>SUFeedURL</key>
@@ -981,7 +985,7 @@
 	<key>SUHasLaunchedBefore</key>
 	<true/>
 	<key>SULastCheckTime</key>
-	<date>2013-12-02T07:40:40Z</date>
+	<date>2014-05-12T21:49:09Z</date>
 	<key>SavePasteHistory</key>
 	<false/>
 	<key>ShowBookmarkName</key>
@@ -1023,6 +1027,6 @@
 	<key>WordCharacters</key>
 	<string>/-+\~_.:</string>
 	<key>iTerm Version</key>
-	<string>1.0.0.20131124</string>
+	<string>1.0.0.20140421</string>
 </dict>
 </plist>
