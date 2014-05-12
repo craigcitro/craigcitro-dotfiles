@@ -6,8 +6,6 @@ Originally based on epylint from the pylint distribution.
 """
 
 import argparse
-import collections
-import itertools
 import logging
 import os
 import pylint
@@ -50,14 +48,19 @@ def Lint(filename, indent=None):
          '--rcfile', os.path.expanduser('~/.pylintrc'),
          '-f', 'parseable',
          '-r', 'n',
-         ]
+        ]
   if indent is not None:
     cmd.append('--indent-string="%s"' % (' ' * indent,))
   cmd.append(relative_path)
-  # Run pylint.
-  process = subprocess.Popen(
-      cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, cwd=package_root)
-  process.wait()
+  with open('/dev/null', 'w') as devnull:
+    # Run pylint.
+    try:
+      output = subprocess.check_output(cmd, cwd=package_root, stderr=devnull)
+      return_code = 0
+    except subprocess.CalledProcessError as e:
+      return_code = e.returncode
+      output = e.output
+
 
   # The parseable line format is '%(path)s:%(line)s: [%(sigle)s%(obj)s] %(msg)s'
   header_regex = re.compile(r'\[(?P<type>[ICRWE])(?P<remainder>.*?)\]')
@@ -68,7 +71,8 @@ def Lint(filename, indent=None):
     else:
       replacement = 'Warning'
     # replace as 'Warning (W0511, funcName): Warning Text'
-    return '%s (%s%s):' % (replacement, match.group('type'), match.group('remainder'))
+    return '%s (%s%s):' % (replacement, match.group('type'),
+                           match.group('remainder'))
 
   prefix_re = re.compile(r'^%s:' % (relative_path,))
   prefix_replacement = filename + ':'
@@ -90,7 +94,7 @@ def Lint(filename, indent=None):
 
   entries = {}
   entry = []
-  for line in process.stdout:
+  for line in output.splitlines():
     if line.startswith('**********'):
       continue
     line = CleanLine(line)
@@ -98,10 +102,10 @@ def Lint(filename, indent=None):
       entries = AddEntry(entries, entry)
       entry = []
     entry.append(line)
-  else:
+  else:  # pylint:disable=useless-else-on-loop
     entries = AddEntry(entries, entry)
 
-  return process.returncode, entries
+  return return_code, entries
 
 def PrintEntries(entries):
   for line_no in sorted(entries.keys()):
