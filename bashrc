@@ -295,6 +295,8 @@ export GOPATH
 
 pathappend $HOME'/Library/Haskell/share/man' MANPATH;
 pathappend $HOME'/Library/Haskell/bin';
+pathappend $HOME'/.cabal/share/man' MANPATH;
+pathappend $HOME'/.cabal/bin';
 
 ################################################################
 ######################## Prompt stuff ##########################
