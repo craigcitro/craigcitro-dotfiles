@@ -290,6 +290,7 @@ export PYTHONSTARTUP
 
 GOPATH=$HOME'/ext/go'
 export GOPATH
+pathappend "${GOPATH}/bin"
 
 #############
 ## Haskell
