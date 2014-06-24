@@ -194,6 +194,7 @@ shopt -s histappend
 # really really large history
 HISTFILESIZE=100000000
 HISTSIZE=100000000
+unset HISTTIMEFORMAT
 
 ###############################
 ## tab completion!
