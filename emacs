@@ -407,7 +407,11 @@ after-make-frame-functions."
 ;;-------------------------
 ;; go
 ;;-------------------------
+(cc/add-to-load-path-if-exists "/usr/local/go/misc/emacs")
 (when (require 'go-mode nil t)
+  (setq gofmt-command "goimports")
+  (require 'go-mode-load)
+  (require 'flymake-go)
   (add-hook 'before-save-hook 'gofmt-before-save))
 
 ;;-------------------------
