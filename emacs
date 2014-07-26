@@ -408,6 +408,7 @@ after-make-frame-functions."
 ;; go
 ;;-------------------------
 (cc/add-to-load-path-if-exists "/usr/local/go/misc/emacs")
+(cc/add-to-load-path-if-exists "/usr/lib/google-golang/misc/emacs")
 (when (require 'go-mode nil t)
   (setq gofmt-command "goimports")
   (require 'go-mode-load)
