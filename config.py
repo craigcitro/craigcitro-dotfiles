@@ -13,7 +13,8 @@ BASIC_LINKS = [
     # Editors
     'emacs', 'emacs.d', 'vimrc',
     # Languages
-    'Rprofile', 'ghci', 'pdbrc', 'pdbrc.py', 'pythonrc',
+    'pdbrc', 'pdbrc.py', 'pythonrc', 'pylintrc',
+    'Rprofile', 'ghci',
     ]
 
 
