@@ -13,7 +13,7 @@ else
   SYSTEM='unknown'
 fi
 
-# Stolen from: 
+# Stolen from:
 #   http://www.linuxfromscratch.org/blfs/view/svn/postlfs/profile.html
 # Functions to help us manage paths. Second argument is the name of the
 # path variable to be modified (default: PATH)
@@ -63,7 +63,7 @@ if [ "$SYSTEM" == "Darwin" ]; then
   if [ "$LD_LIBRARY_PATH" = "" ]; then
     LD_LIBRARY_PATH="/usr/lib"
   fi
-  
+
   pathappend /usr/local/lib LD_LIBRARY_PATH;
   pathappend /usr/X11/lib LD_LIBRARY_PATH;
 
@@ -73,7 +73,7 @@ if [ "$SYSTEM" == "Darwin" ]; then
   # add git via git-osx-installer
   pathappend /usr/local/git/bin;
   pathappend /usr/local/git/share/man MANPATH;
-  
+
   export LD_LIBRARY_PATH
   export MANPATH
 fi
@@ -93,7 +93,7 @@ pathprepend $HOME/ext/share/man MANPATH;
 ulimit -c unlimited
 
 ###############################
-## ls configuration 
+## ls configuration
 
 if [ "$SYSTEM" == "Darwin" ]; then
   ## darwin/bsd ls formatting
@@ -243,7 +243,7 @@ fi
 # Maybe there's a better name for this?
 alias reup="source $HOME/.bashrc"
 
-# Silly commands for avoiding 'cd ../..': there's 
+# Silly commands for avoiding 'cd ../..': there's
 # probably a better way, but this is a start.
 alias u='cd ..'
 alias uu='cd ../..'
@@ -278,10 +278,8 @@ alias mrd='/bin/ls -BF1t | grep / | head -1'
 
 ################################
 # python-related aliases
-alias py='/usr/bin/python2.7'
-
-PYTHONSTARTUP=$HOME'/.pythonrc'
-export PYTHONSTARTUP
+export PYTHONSTARTUP=$HOME'/.pythonrc'
+maybesrc $(which virtualenvwrapper.sh)
 
 #############
 ## Go
@@ -322,7 +320,7 @@ LIGHT_PURPLE_COLOR="\e[1;35m"
 
 ### ANSI prompt colors
 #  note that the \[ and \] are very important -- if they aren't
-#  present, bash will incorrectly count line length and have 
+#  present, bash will incorrectly count line length and have
 #  weird wrapping issues. (see
 #    http://ubuntuforums.org/showthread.php?t=472369 )
 #
@@ -360,7 +358,7 @@ teeny2*)
   ;;
 *)
   BRACKET_COLOR="$RED_PROMPT_COLOR"
-  PROMPT_TEXT="\h \$(prompt_pwd)"  
+  PROMPT_TEXT="\h \$(prompt_pwd)"
   PROMPT_TEXT_COLOR="$PURPLE_PROMPT_COLOR"
   PROMPT_DOLLAR_COLOR="$GREEN_PROMPT_COLOR"
   ;;
@@ -369,7 +367,7 @@ NORMAL_TEXT_COLOR="$LIGHT_GRAY_PROMPT_COLOR"
 
 #################################
 ## History
-## 
+##
 ## Changes the prompt and saves history information somewhere other
 ## than just the HISTFILE; this whole section was "deeply inspired" by
 ## Ami's .bashrc, i.e. I stole it and modified it.
@@ -482,8 +480,7 @@ unset BLACK_COLOR DARK_GRAY_COLOR BLUE_COLOR \
     LIGHT_RED_PROMPT_COLOR PURPLE_PROMPT_COLOR \
     IPURPLE_PROMPT_COLOR \
     LIGHT_PURPLE_PROMPT_COLOR BROWN_PROMPT_COLOR \
-    YELLOW_PROMPT_COLOR LIGHT_GRAY_PROMPT_COLOR WHITE_PROMPT_COLOR 
+    YELLOW_PROMPT_COLOR LIGHT_GRAY_PROMPT_COLOR WHITE_PROMPT_COLOR
 
 # Done!
 export CC_BASHRC_INITIALIZED="true"
-
