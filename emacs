@@ -629,7 +629,7 @@ after-make-frame-functions."
   (let ((date (format-time-string "%Y %b %d")))
     (insert date)
     (insert ?\n)
-    (insert (make-string (length date) ?-))
+    (insert (make-string (length date) ?=))
     (insert ?\n)))
 (global-set-key "\C-c\C-b" 'insert-bare-date)
 
