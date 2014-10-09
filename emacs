@@ -364,6 +364,7 @@ after-make-frame-functions."
   (autoload 'markdown-mode "markdown-mode.el"
     "Major mode for editing Markdown files" t)
   (add-to-list 'auto-mode-alist '("\\.md$" . markdown-mode))
+  (add-to-list 'auto-mode-alist '("\\.Rmd$" . markdown-mode))
   (add-to-list 'auto-mode-alist '("\\.mdml$" . markdown-mode))
   (add-to-list 'auto-mode-alist '("\\.markdown$" . markdown-mode)))
 
