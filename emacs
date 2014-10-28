@@ -51,7 +51,7 @@
 ;; package initialization
 (package-initialize)
 (add-to-list 'package-archives
-             '("marmalade" . "http://marmalade-repo.org/packages/"))
+             '("marmalade" . "https://marmalade-repo.org/packages/"))
 
 ;; start the server if it's not already up
 (defconst default-server-name "craigcitro" "Default server name.")
