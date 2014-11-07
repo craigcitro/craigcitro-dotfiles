@@ -48,6 +48,12 @@ def _SetTabCompleter():
         return None if state else '  '
       return _rlcompleter.Completer.complete(self, text, state)
 
+    def xxx_attr_matches(self, text):
+      result = _rlcompleter.Completer.attr_matches(self, text)
+      if '._' not in text:
+        result = [x for x in result if '._' not in x]
+      return result
+
   readline.set_completer(_SmartCompleter().complete)
 
 def _global_matches():

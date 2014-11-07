@@ -6,6 +6,12 @@
           browserNLdisabled = TRUE)
 }
 
+.Last <- function() {
+  if (interactive()) {
+    try(savehistory("~/.Rhistory"))
+  }
+}
+
 if (interactive()) {
   options(warn = -1)
   require(devtools, quietly = TRUE)
