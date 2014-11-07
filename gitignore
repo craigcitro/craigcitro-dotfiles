@@ -5,3 +5,4 @@ tmp
 .RData
 .Rhistory
 .DS_Store
+.httr-oauth

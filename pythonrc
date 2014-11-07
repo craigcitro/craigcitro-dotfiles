@@ -85,7 +85,7 @@ def _SetupReadline():
     readline.parse_and_bind('tab: complete')
   else:
     # OSX readline-over-libedit
-    print "Detected non-GNU readline."
+    # print "Detected non-GNU readline."
     readline.parse_and_bind('bind ^I rl_complete')
 
 def _SetupHistory():
@@ -112,9 +112,9 @@ def _SetupHistory():
     def append(self, val):
       import readline
       if not isinstance(val, basestring):
-        raise ValueError, "cannot set history line to non-str value %s" % (val,)
+        raise ValueError("cannot set history line to non-str value %s" % (val,))
       if '\n' in val:
-        raise ValueError, "history line must not contain newlines"
+        raise ValueError("history line must not contain newlines")
       readline.add_history(val)
 
     def __str__(self):
@@ -148,8 +148,8 @@ def _SetupHistory():
     try:
       f = open(history_path, 'w')
     except IOError:
-      print "Couldn't write history to %s. Exiting without saving history." % (
-        history_path,)
+      # print "Couldn't write history to %s. Exiting without saving history." % (
+      #   history_path,)
       return
     # This line is a turd left by libedit.
     f.write('_HiStOrY_V2_\n')
@@ -163,7 +163,8 @@ def _SetupHistory():
     try:
       if os.path.exists(history_path):
         if os.environ.has_key('PY_DEBUG_PYTHONRC'):
-          print "Reading history from %s ..." % (history_path,)
+          # print "Reading history from %s ..." % (history_path,)
+          pass
         if _detect_gnu_readline():
           readline.read_history_file(history_path)
         else:
@@ -172,12 +173,13 @@ def _SetupHistory():
             for line in f:
               cleaned_line = codecs.raw_unicode_escape_encode(line[:-1])[0]
               readline.add_history(cleaned_line)
-    except Exception, e:
-      print e
-      print "Failed to import history file!"
-      if os.environ.has_key('PY_DEBUG_PYTHONRC'):
-        print "Raised exception of type %s" % (type(e),)
-        print "  Message: %s" % (e.message,)
+    except Exception as e:
+      pass
+      # print e
+      # print "Failed to import history file!"
+      # if os.environ.has_key('PY_DEBUG_PYTHONRC'):
+      #   print "Raised exception of type %s" % (type(e),)
+      #   print "  Message: %s" % (e.message,)
 
   atexit.register(save_history)
   load_history()
@@ -191,13 +193,18 @@ def _PprintAlias():
   import pprint
   return pprint.pprint
 
+import sys
 if not _DetectIPython():
-  print "Reading .pythonrc ..."
-  pp = _PprintAlias()
-  _AllWarnings()
-  _SetupReadline()
+  py2 =  sys.version_info < (3,)
+  if py2:
+    # print "Reading .pythonrc ..."
+    pp = _PprintAlias()
+    _AllWarnings()
+    _SetupReadline()
   _SetTabCompleter()
-  _SetupHistory()
+  if py2:
+    _SetupHistory()
+del sys
 
 #####################################
 ## pdb + tab-complete = happiness

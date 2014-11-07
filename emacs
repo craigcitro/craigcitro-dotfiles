@@ -51,7 +51,7 @@
 ;; package initialization
 (package-initialize)
 (add-to-list 'package-archives
-             '("marmalade" . "http://marmalade-repo.org/packages/"))
+             '("marmalade" . "https://marmalade-repo.org/packages/"))
 
 ;; start the server if it's not already up
 (defconst default-server-name "craigcitro" "Default server name.")
@@ -364,6 +364,7 @@ after-make-frame-functions."
   (autoload 'markdown-mode "markdown-mode.el"
     "Major mode for editing Markdown files" t)
   (add-to-list 'auto-mode-alist '("\\.md$" . markdown-mode))
+  (add-to-list 'auto-mode-alist '("\\.Rmd$" . markdown-mode))
   (add-to-list 'auto-mode-alist '("\\.mdml$" . markdown-mode))
   (add-to-list 'auto-mode-alist '("\\.markdown$" . markdown-mode)))
 
