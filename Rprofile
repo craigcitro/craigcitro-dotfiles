@@ -5,3 +5,9 @@
           deparse.max.lines = 2,
           browserNLdisabled = TRUE)
 }
+
+.Last <- function() {
+  if (interactive()) {
+    try(savehistory("~/.Rhistory"))
+  }
+}
