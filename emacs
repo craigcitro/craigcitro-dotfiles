@@ -771,6 +771,8 @@ after-make-frame-functions."
   (revert-buffer t (not (buffer-modified-p)) t))
 (global-set-key "\C-c\C-r" 'reload-buffer)
 
+(message "... finished reading .emacs.")
+
 ;;-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
 ;; NO OTHER CODE BELOW THIS COMMAND
 ;;-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
