@@ -132,7 +132,7 @@ export GIT_EDITOR="$(which emacsclient) -c -s ${EMACS_SERVERNAME} -t"
 # Amusingly, it's actually a bit more robust: a server can crash and
 # fail to close the socket. However, the command below will correctly
 # identify servers whose name wasn't specified at the command line ...
-if [ ! -S $(emacsclient -s ${EMACS_SERVERNAME} --eval '(print server-socket-dir)' 2>/dev/null | awk -F\" '{print $2}')"/"${EMACS_SERVERNAME} ]; then
+if [ ! -S $(emacsclient -s ${EMACS_SERVERNAME} --eval '(print server-socket-dir (lambda (s) nil))' 2>/dev/null | awk -F\" '{print $2}')"/"${EMACS_SERVERNAME} ]; then
   LOCKFILE="${HOME}/.lock-emacs-${EMACS_SERVERNAME}"
   if [ -f "${LOCKFILE}" ]; then
     echo "Emacs is currently starting up, skipping ..."
