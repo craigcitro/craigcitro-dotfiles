@@ -218,7 +218,6 @@ fi
 ################################
 # Common commands
 alias c=clear
-alias cut="cut -d' '"
 alias d=date
 alias df='df -h'
 alias grep='grep --color=always -E'
