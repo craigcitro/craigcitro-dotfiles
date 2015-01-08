@@ -4,6 +4,7 @@
 
 Originally based on epylint from the pylint distribution.
 """
+from __future__ import print_function
 
 import argparse
 import logging
@@ -110,7 +111,7 @@ def Lint(filename, indent=None):
 def PrintEntries(entries):
   for line_no in sorted(entries.keys()):
     for message in entries[line_no]:
-      print message
+      print(message)
 
 def Run(argv):
   parser = argparse.ArgumentParser()

@@ -1,6 +1,8 @@
 #!/usr/bin/env python
 # -*- mode: python -*-
 
+from __future__ import print_function
+
 import collections
 import itertools
 import logging
@@ -13,14 +15,13 @@ def Main(argv, debug=False):
 
   try:
     desired_line = int(argv[-1])
-  except IndexError, ValueError:
-    print 'Usage: line <line_number>'
+  except (IndexError, ValueError):
+    print('Usage: line <line_number>')
     return '', 1
   logging.debug('Looking for line: %d', desired_line)
 
-  negative_index = desired_line < 0
   if desired_line == 0:
-    print 'line numbers are 1-based'
+    print('line numbers are 1-based')
     return '', 1
 
   if desired_line < 0:
@@ -39,7 +40,7 @@ def Main(argv, debug=False):
 
 
 if __name__ == '__main__':
-  line, retval = Main(sys.argv)
+  chosen_line, retval = Main(sys.argv)
   if retval:
     sys.exit(retval)
-  print line.rstrip()
+  print(chosen_line.rstrip())
