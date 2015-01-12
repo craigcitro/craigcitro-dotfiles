@@ -406,17 +406,6 @@ after-make-frame-functions."
      (setq flymake-cursor-number-of-errors-to-display 4)))
 
 ;;-------------------------
-;; go
-;;-------------------------
-(cc/add-to-load-path-if-exists "/usr/local/go/misc/emacs")
-(cc/add-to-load-path-if-exists "/usr/lib/google-golang/misc/emacs")
-(when (require 'go-mode nil t)
-  (setq gofmt-command "goimports")
-  (require 'go-mode-load)
-  (require 'flymake-go)
-  (add-hook 'before-save-hook 'gofmt-before-save))
-
-;;-------------------------
 ;; Java
 ;;-------------------------
 ;; I shouldn't need this ...
