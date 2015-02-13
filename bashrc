@@ -221,7 +221,6 @@ alias c=clear
 alias d=date
 alias df='df -h'
 alias grep='grep --color=always -E'
-alias g=grep
 alias h=history
 alias scp='scp -p'
 alias sigh='echo You let out a good, long sigh of relief.'
