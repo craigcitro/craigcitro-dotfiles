@@ -4,7 +4,7 @@
           warnPartialMatchArgs = TRUE,
           warnPartialMatchAttr = TRUE,
           warnPartialMatchDollar = TRUE,
-          warn = 2,
+          warn = 1,
           useFancyQuotes = FALSE,
           menu.graphics = FALSE,
           deparse.max.lines = 2,
