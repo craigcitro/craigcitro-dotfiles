@@ -277,6 +277,7 @@ alias mrd='/bin/ls -BF1t | grep / | head -1'
 # R
 export R_HISTSIZE=100000
 export R_HISTFILE=$HOME'/.Rhistory'
+export R_PROFILE_USER=$HOME'/.Rprofile'
 alias R='R --no-save'
 
 ################################
