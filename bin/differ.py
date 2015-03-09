@@ -7,8 +7,8 @@ import tempfile
 
 def main(argv):
   diff = os.environ.get('DIFFER', 'colordiff')
-  diff_opts = argv[1]
-  args = argv[2:]
+  diff_opts = os.environ.get('CC_DIFFOPTS', '-u')
+  args = argv[1:]
   with tempfile.NamedTemporaryFile() as out:
     while args:
       if len(args) < 2:
