@@ -11,10 +11,12 @@ def main(argv):
   args = argv[2:]
   with tempfile.NamedTemporaryFile() as out:
     while args:
-      if len(args) < 3:
+      if len(args) < 2:
         break
-      _, left, right = args[:3]
-      args = args[3:]
+      if args[0] == ':':
+        args.pop(0)
+      left, right = args[:2]
+      args = args[2:]
       subprocess.call([diff, diff_opts, left, right], stdout=out, stderr=out)
 
     out.seek(0)
