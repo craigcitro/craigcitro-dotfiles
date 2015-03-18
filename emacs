@@ -51,6 +51,8 @@
 ;; package initialization
 (package-initialize)
 (add-to-list 'package-archives
+             '("melpa" . "http://melpa.org/packages/") t)
+(add-to-list 'package-archives
              '("marmalade" . "https://marmalade-repo.org/packages/"))
 
 ;; start the server if it's not already up
