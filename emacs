@@ -151,64 +151,27 @@
 ;;------------------------------------------------------------
 (require 'ido)
 (ido-mode t)
-;; (setq ido-max-directory-size 100000)
+(ido-everywhere 1)
+(setq ido-enable-flex-matching t)
 (add-to-list 'completion-ignored-extensions ".pyc")
 
 ;; \C-x\C-b is too close to \C-xb
 (global-unset-key "\C-x\C-b")
 (global-set-key "\C-x\C-b" 'ido-switch-buffer)
-;; (defun iswitchb-local-keys ()
-;;   (define-key iswitchb-mode-map "\C-r" 'iswitchb-prev-match)
-;;   (define-key iswitchb-mode-map "\C-s" 'iswitchb-next-match)
-;;   (define-key iswitchb-mode-map [right] 'iswitchb-next-match)
-;;   (define-key iswitchb-mode-map [left] 'iswitchb-prev-match)
-;;   (define-key iswitchb-mode-map [down] 'iswitchb-next-match)
-;;   (define-key iswitchb-mode-map [up] 'iswitchb-prev-match))
-;; (add-hook 'iswitchb-define-mode-map-hook 'iswitchb-local-keys)
 (setq ido-default-file-method 'selected-window)
 (setq ido-default-buffer-method 'selected-window)
 
-;; (2011 Sep 24) Experimenting with smarter iswitchb configuration.
-;; TODO(craigcitro): Use symbols instead of strings.
-(defface cc/ido-same-branch-face
-  '((t (:foreground "Green")))
-  "*Face used to highlight ido matches in the same git repo/branch.")
-(defface cc/ido-different-branch-face
-  '((t (:foreground "Red")))
-  "*Face used to highlight ido matches in the same git repo, but a
-  different branch.")
 (defface cc/ido-system-buffer-face
   '((t (:foreground "BrightBlack")))
   "*Face used to highlight system buffers in the ido matches list.")
 (defface cc/ido-this-buffer-face
   '((t (:foreground "Blue")))
   "*Face used to highlight the current buffer in the ido matches list.")
-(defun cc/parse-git-branch (&optional buf)
-  "Get the git branch from a buffer."
-  (let ((git-info (buffer-local-value 'vc-mode (or buf (current-buffer)))))
-    (if (null git-info)
-        ""
-      (substring-no-properties git-info (length " Git-")))))
-(defstruct (cc/buffer-git-info
-            (:constructor cc/make-git-info))
-  "Git-specific info about a given buffer."
-  root branch filename)
-(defun cc/make-git-info-from-buffer (&optional buf)
-  (let* ((buf (or buf (current-buffer)))
-         (filename (buffer-file-name buf)))
-    (when (and (not (cc/empty-or-nil-p filename))
-               (fboundp 'vc-git-root)
-               (vc-git-root filename))
-      (cc/make-git-info
-       :root (vc-git-root filename)
-       :branch (cc/parse-git-branch buf)
-       :filename filename))))
 (defun cc/ido-colorize-bufname (&optional buf-name)
   "Return the name of the given or current buffer, propertized with a color
    as follows:
      BrightBlack: buffer is a system buffer
-     Blue: this is the current buffer
-   Files in different git repos return nil."
+     Blue: this is the current buffer"
   (let* ((buf (or (get-buffer buf-name) (current-buffer)))
          (buf-name (buffer-name buf)))
     (cond
@@ -220,39 +183,6 @@
       (propertize buf-name 'face 'cc/ido-system-buffer-face))
      ;; buf or current buffer is not in a git repo
      (t buf-name))))
-;; (defun cc/iswitchb-colorize-bufname-crazy (&optional buf-name)
-;;   "Return the name of the given or current buffer, propertized with a color
-;;    as follows:
-;;      BrightBlack: buffer is a system buffer
-;;      Blue: this is the current buffer
-;;    When called from a buffer in a git repo:
-;;      Green: buffer is in the same repo and branch as current
-;;      Red: buffer is in the same repo and a DIFFERENT branch as current
-;;    Files in different git repos return nil."
-;;   (let* ((buf (or (get-buffer buf-name) (current-buffer)))
-;;          (buf-name (buffer-name buf)))
-;;     (let ((buf-git-info (cc/make-git-info-from-buffer buf))
-;;           (current-git-info (cc/make-git-info-from-buffer)))
-;;       (cond
-;;        ;; buf is current buffer
-;;        ((string= buf-name (buffer-name (current-buffer)))
-;;         (propertize buf-name 'face 'cc/iswitchb-this-buffer-face))
-;;        ;; system buffer
-;;        ((char-equal ?* (elt buf-name 0))
-;;         (propertize buf-name 'face 'cc/iswitchb-system-buffer-face))
-;;        ;; buf or current buffer is not in a git repo
-;;        ((or (null buf-git-info) (null current-git-info)) buf-name)
-;;        ;; current buffer is in the same git repo as buf
-;;        ((string= (cc/buffer-git-info-root buf-git-info)
-;;                  (cc/buffer-git-info-root current-git-info))
-;;         (propertize
-;;          buf-name 'face
-;;          (if (string= (cc/buffer-git-info-branch buf-git-info)
-;;                       (cc/buffer-git-info-branch current-git-info))
-;;              'cc/iswitchb-same-branch-face
-;;            'cc/iswitchb-different-branch-face)))
-;;        ;; current buffer and buf are in different repos
-;;        (t nil)))))
 (defun cc/filter-buffers ()
   (setq ido-temp-list
         (reverse (mapcar 'cc/ido-colorize-bufname ido-temp-list))))
