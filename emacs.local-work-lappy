@@ -44,26 +44,30 @@
 ;;------------------
 ;; Haskell
 ;;------------------
-;; Generic bit
-(when (require 'haskell-mode-autoloads nil t)
-  (add-to-list 'auto-mode-alist '("\\.hs$" . haskell-mode))
-  (add-hook 'haskell-mode-hook 'turn-on-haskell-doc-mode)
-  (add-hook 'haskell-mode-hook 'turn-on-haskell-indentation))
 
-;; ghc-mod:
-;;   https://github.com/kazu-yamamoto/ghc-mod
-(cc/add-to-load-path-if-exists "ext/ghc-mod/share")
-(let ((cabal-path (concat (getenv "HOME") "/Library/Haskell/bin")))
-  (when (file-exists-p cabal-path)
-    (add-to-list 'exec-path cabal-path))
-  (autoload 'ghc-init "ghc" nil t)
-  (add-hook 'haskell-mode-hook (lambda () (ghc-init) (flymake-mode)))
+;; this all broke recently, for reasons i don't understand. but then,
+;; i'm writing zero haskell right now, so i'm just disabling it.
+(when nil
+  (when (require 'haskell-mode-autoloads nil t)
+    (add-to-list 'auto-mode-alist '("\\.hs$" . haskell-mode))
+    (add-hook 'haskell-mode-hook 'turn-on-haskell-doc-mode)
+    (add-hook 'haskell-mode-hook 'turn-on-haskell-indentation))
+
+  ;; ghc-mod:
+  ;;   https://github.com/kazu-yamamoto/ghc-mod
+  (cc/add-to-load-path-if-exists "ext/ghc-mod/share")
+  (let ((cabal-path (concat (getenv "HOME") "/Library/Haskell/bin")))
+    (when (file-exists-p cabal-path)
+      (add-to-list 'exec-path cabal-path))
+    (autoload 'ghc-init "ghc" nil t)
+    (add-hook 'haskell-mode-hook (lambda () (ghc-init) (flymake-mode)))
+    )
+
+  ;; hoogle
+  (when (require 'haskell-mode nil t)
+    (setq haskell-hoogle-command "hoogle")
+    (define-key haskell-mode-map "\C-c?" 'haskell-hoogle))
   )
-
-;; hoogle
-(when (require 'haskell-mode nil t)
-  (setq haskell-hoogle-command "hoogle")
-  (define-key haskell-mode-map "\C-c?" 'haskell-hoogle))
 
 ;;------------------
 ;; deft
