@@ -308,7 +308,6 @@ after-make-frame-functions."
 ;; Python
 ;;---------------------------
 (when (require 'python)
-  (provide 'python-mode) ;; bye-bye python-mode.el
   (setq python-indent 2)
   (defun cc/python-indent-region ()
     (interactive)
