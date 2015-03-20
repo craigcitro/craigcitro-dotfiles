@@ -3,7 +3,7 @@
 ;; emacs configuration
 ;;
 
-(message "Starting .emacs ...")
+(message "Loading .emacs ...")
 ;; There's simply no way forward without basic programming
 ;; facilities.
 (require 'cl)
@@ -147,38 +147,42 @@
 (global-unset-key "\C-x>")
 
 ;;------------------------------------------------------------
-;; iswitchb
+;; ido
 ;;------------------------------------------------------------
-(iswitchb-mode t)
+(require 'ido)
+(ido-mode t)
+;; (setq ido-max-directory-size 100000)
+(add-to-list 'completion-ignored-extensions ".pyc")
+
 ;; \C-x\C-b is too close to \C-xb
 (global-unset-key "\C-x\C-b")
-(global-set-key "\C-x\C-b" 'iswitchb-buffer)
-(defun iswitchb-local-keys ()
-  (define-key iswitchb-mode-map "\C-r" 'iswitchb-prev-match)
-  (define-key iswitchb-mode-map "\C-s" 'iswitchb-next-match)
-  (define-key iswitchb-mode-map [right] 'iswitchb-next-match)
-  (define-key iswitchb-mode-map [left] 'iswitchb-prev-match)
-  (define-key iswitchb-mode-map [down] 'iswitchb-next-match)
-  (define-key iswitchb-mode-map [up] 'iswitchb-prev-match))
-(add-hook 'iswitchb-define-mode-map-hook 'iswitchb-local-keys)
-;; (2010 Oct 01) It's curious to me why I spontaneously started
-;; needing this:
-(setq iswitchb-default-method 'samewindow)
+(global-set-key "\C-x\C-b" 'ido-switch-buffer)
+;; (defun iswitchb-local-keys ()
+;;   (define-key iswitchb-mode-map "\C-r" 'iswitchb-prev-match)
+;;   (define-key iswitchb-mode-map "\C-s" 'iswitchb-next-match)
+;;   (define-key iswitchb-mode-map [right] 'iswitchb-next-match)
+;;   (define-key iswitchb-mode-map [left] 'iswitchb-prev-match)
+;;   (define-key iswitchb-mode-map [down] 'iswitchb-next-match)
+;;   (define-key iswitchb-mode-map [up] 'iswitchb-prev-match))
+;; (add-hook 'iswitchb-define-mode-map-hook 'iswitchb-local-keys)
+(setq ido-default-file-method 'selected-window)
+(setq ido-default-buffer-method 'selected-window)
 
 ;; (2011 Sep 24) Experimenting with smarter iswitchb configuration.
 ;; TODO(craigcitro): Use symbols instead of strings.
-(defface cc/iswitchb-same-branch-face
+(defface cc/ido-same-branch-face
   '((t (:foreground "Green")))
-  "*Face used to highlight iswitchb matches in the same git repo/branch.")
-(defface cc/iswitchb-different-branch-face
+  "*Face used to highlight ido matches in the same git repo/branch.")
+(defface cc/ido-different-branch-face
   '((t (:foreground "Red")))
-  "*Face used to highlight iswitchb matches in the same git repo, but a different branch.")
-(defface cc/iswitchb-system-buffer-face
+  "*Face used to highlight ido matches in the same git repo, but a
+  different branch.")
+(defface cc/ido-system-buffer-face
   '((t (:foreground "BrightBlack")))
-  "*Face used to highlight system buffers in the iswitchb matches list.")
-(defface cc/iswitchb-this-buffer-face
+  "*Face used to highlight system buffers in the ido matches list.")
+(defface cc/ido-this-buffer-face
   '((t (:foreground "Blue")))
-  "*Face used to highlight the current buffer in the iswitchb matches list.")
+  "*Face used to highlight the current buffer in the ido matches list.")
 (defun cc/parse-git-branch (&optional buf)
   "Get the git branch from a buffer."
   (let ((git-info (buffer-local-value 'vc-mode (or buf (current-buffer)))))
@@ -199,65 +203,60 @@
        :root (vc-git-root filename)
        :branch (cc/parse-git-branch buf)
        :filename filename))))
-(defun cc/iswitchb-colorize-bufname (&optional buf-name)
-  "Like the next one, but less wacky."
+(defun cc/ido-colorize-bufname (&optional buf-name)
+  "Return the name of the given or current buffer, propertized with a color
+   as follows:
+     BrightBlack: buffer is a system buffer
+     Blue: this is the current buffer
+   Files in different git repos return nil."
   (let* ((buf (or (get-buffer buf-name) (current-buffer)))
          (buf-name (buffer-name buf)))
     (cond
      ;; buf is current buffer
      ((string= buf-name (buffer-name (current-buffer)))
-      (propertize buf-name 'face 'cc/iswitchb-this-buffer-face))
+      (propertize buf-name 'face 'cc/ido-this-buffer-face))
      ;; system buffer
      ((char-equal ?* (elt buf-name 0))
-      (propertize buf-name 'face 'cc/iswitchb-system-buffer-face))
+      (propertize buf-name 'face 'cc/ido-system-buffer-face))
      ;; buf or current buffer is not in a git repo
      (t buf-name))))
-(defun cc/iswitchb-colorize-bufname-crazy (&optional buf-name)
-  "Return the name of the given or current buffer, propertized with a color
-   as follows:
-     BrightBlack: buffer is a system buffer
-     Blue: this is the current buffer
-   When called from a buffer in a git repo:
-     Green: buffer is in the same repo and branch as current
-     Red: buffer is in the same repo and a DIFFERENT branch as current
-   Files in different git repos return nil."
-  (let* ((buf (or (get-buffer buf-name) (current-buffer)))
-         (buf-name (buffer-name buf)))
-    (let ((buf-git-info (cc/make-git-info-from-buffer buf))
-          (current-git-info (cc/make-git-info-from-buffer)))
-      (cond
-       ;; buf is current buffer
-       ((string= buf-name (buffer-name (current-buffer)))
-        (propertize buf-name 'face 'cc/iswitchb-this-buffer-face))
-       ;; system buffer
-       ((char-equal ?* (elt buf-name 0))
-        (propertize buf-name 'face 'cc/iswitchb-system-buffer-face))
-       ;; buf or current buffer is not in a git repo
-       ((or (null buf-git-info) (null current-git-info)) buf-name)
-       ;; current buffer is in the same git repo as buf
-       ((string= (cc/buffer-git-info-root buf-git-info)
-                 (cc/buffer-git-info-root current-git-info))
-        (propertize
-         buf-name 'face
-         (if (string= (cc/buffer-git-info-branch buf-git-info)
-                      (cc/buffer-git-info-branch current-git-info))
-             'cc/iswitchb-same-branch-face
-           'cc/iswitchb-different-branch-face)))
-       ;; current buffer and buf are in different repos
-       (t nil)))))
+;; (defun cc/iswitchb-colorize-bufname-crazy (&optional buf-name)
+;;   "Return the name of the given or current buffer, propertized with a color
+;;    as follows:
+;;      BrightBlack: buffer is a system buffer
+;;      Blue: this is the current buffer
+;;    When called from a buffer in a git repo:
+;;      Green: buffer is in the same repo and branch as current
+;;      Red: buffer is in the same repo and a DIFFERENT branch as current
+;;    Files in different git repos return nil."
+;;   (let* ((buf (or (get-buffer buf-name) (current-buffer)))
+;;          (buf-name (buffer-name buf)))
+;;     (let ((buf-git-info (cc/make-git-info-from-buffer buf))
+;;           (current-git-info (cc/make-git-info-from-buffer)))
+;;       (cond
+;;        ;; buf is current buffer
+;;        ((string= buf-name (buffer-name (current-buffer)))
+;;         (propertize buf-name 'face 'cc/iswitchb-this-buffer-face))
+;;        ;; system buffer
+;;        ((char-equal ?* (elt buf-name 0))
+;;         (propertize buf-name 'face 'cc/iswitchb-system-buffer-face))
+;;        ;; buf or current buffer is not in a git repo
+;;        ((or (null buf-git-info) (null current-git-info)) buf-name)
+;;        ;; current buffer is in the same git repo as buf
+;;        ((string= (cc/buffer-git-info-root buf-git-info)
+;;                  (cc/buffer-git-info-root current-git-info))
+;;         (propertize
+;;          buf-name 'face
+;;          (if (string= (cc/buffer-git-info-branch buf-git-info)
+;;                       (cc/buffer-git-info-branch current-git-info))
+;;              'cc/iswitchb-same-branch-face
+;;            'cc/iswitchb-different-branch-face)))
+;;        ;; current buffer and buf are in different repos
+;;        (t nil)))))
 (defun cc/filter-buffers ()
-  (setq iswitchb-temp-buflist
-        (reverse (mapcar 'cc/iswitchb-colorize-bufname iswitchb-temp-buflist))))
-(add-hook 'iswitchb-make-buflist-hook 'cc/filter-buffers)
-
-;;------------------------------------------------------------
-;; ido-based file switching
-;;------------------------------------------------------------
-;; I'm using ido for org-mode completion, so I'm also going to
-;; try it out for finding files.
-(ido-mode 'files)
-(setq ido-max-directory-size 100000)
-(add-to-list 'completion-ignored-extensions ".pyc")
+  (setq ido-temp-list
+        (reverse (mapcar 'cc/ido-colorize-bufname ido-temp-list))))
+(add-hook 'ido-make-buffer-list-hook 'cc/filter-buffers)
 
 ;;------------------------------------------------------------
 ;; Buffer naming
@@ -518,20 +517,6 @@ after-make-frame-functions."
   (define-key inferior-ess-mode-map "\C-p" 'comint-previous-input)
   (define-key inferior-ess-mode-map "\C-n" 'comint-next-input)
   )
-
-;;------------------------
-;; magit
-;;------------------------
-;; change magit diff colors: stolen from
-;;   http://readystate4.com/2011/02/22/emacs-changing-magits-default-diff-colors/
-(eval-after-load 'magit
-  '(progn
-     (set-face-foreground 'magit-diff-add "green3")
-     (set-face-foreground 'magit-diff-del "red3")
-     (when (not window-system)
-       (set-face-background 'magit-item-highlight "black"))))
-(when (require 'magit nil t)
-  (global-set-key "\C-c\C-g" 'magit-status))
 
 ;;------------------------
 ;; ediff
