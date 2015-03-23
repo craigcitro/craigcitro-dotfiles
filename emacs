@@ -522,22 +522,19 @@ after-make-frame-functions."
 ;; Insert the current date in parentheses.
 ;; TODO: make the parentheses customizable.
 ;; TODO: take a prefix argument to insert different dates.
-(defun insert-date ()
+(defun insert-date (&optional prefix)
   "Insert the current date in parentheses into the buffer."
-  (interactive)
-  (insert (format-time-string "(%Y %b %d)"))
-  (insert " "))
+  (interactive "P")
+  (if prefix
+      (let ((date (format-time-string "%Y %b %d")))
+        (insert date)
+        (insert ?\n)
+        (insert (make-string (length date) ?=))
+        (insert ?\n))
+    (progn
+      (insert (format-time-string "(%Y %b %d)"))
+      (insert " "))))
 (global-set-key "\C-c\C-d" 'insert-date)
-;; (2010 Dec 02) HORRIBLE HACK
-(defun insert-bare-date ()
-  "Insert the current date."
-  (interactive)
-  (let ((date (format-time-string "%Y %b %d")))
-    (insert date)
-    (insert ?\n)
-    (insert (make-string (length date) ?=))
-    (insert ?\n)))
-(global-set-key "\C-c\C-b" 'insert-bare-date)
 
 (defun cc/update-alist (alist key &optional val)
   "Update alist to contain (key . val). If key is already a key
