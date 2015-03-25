@@ -497,8 +497,13 @@ after-make-frame-functions."
 
 ;; Trailing whitespace
 ;; TODO(craigcitro): Wire this into pedantic mode.
+(defvar cc/skip-delete-trailing-whitespace nil
+  "If t, skip any potential call to delete trailing whitespace.
+   Intended to be used as a buffer-local variable.")
+(make-variable-buffer-local 'cc/skip-delete-trailing-whitespace)
 (defun cc/possibly-delete-trailing-whitespace ()
-  (when (memq major-mode '(markdown-mode python-mode))
+  (when (and (memq major-mode '(markdown-mode python-mode))
+             (null cc/skip-delete-trailing-whitespace))
     (delete-trailing-whitespace)))
 (add-to-list 'write-file-functions 'cc/possibly-delete-trailing-whitespace)
 
