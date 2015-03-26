@@ -296,7 +296,10 @@ after-make-frame-functions."
 (autoload 'markdown-mode "markdown-mode.el"
   "Major mode for editing Markdown files" t)
 (when (require 'markdown-mode nil t)
-  (define-key markdown-mode-map "\M-\r" 'markdown-insert-list-item))
+  (define-key markdown-mode-map "\M-\r" 'markdown-insert-list-item)
+  (define-key markdown-mode-map "\M-=" 'markdown-demote)
+  (define-key markdown-mode-map "\M--" 'markdown-promote)
+  )
 (add-to-list 'auto-mode-alist '("\\.md$" . markdown-mode))
 (add-to-list 'auto-mode-alist '("\\.Rmd$" . markdown-mode))
 (add-to-list 'auto-mode-alist '("\\.mdml$" . markdown-mode))
