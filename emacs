@@ -290,14 +290,17 @@ after-make-frame-functions."
 ;;-------------------
 (when (require 'rst nil t)
   (add-to-list 'auto-mode-alist '("\\.rst$" . rst-mode))
-  (add-to-list 'auto-mode-alist '("\\.rest$" . rst-mode))
-  (cc/add-to-load-path-if-exists "markdown-mode")
-  (autoload 'markdown-mode "markdown-mode.el"
-    "Major mode for editing Markdown files" t)
-  (add-to-list 'auto-mode-alist '("\\.md$" . markdown-mode))
-  (add-to-list 'auto-mode-alist '("\\.Rmd$" . markdown-mode))
-  (add-to-list 'auto-mode-alist '("\\.mdml$" . markdown-mode))
-  (add-to-list 'auto-mode-alist '("\\.markdown$" . markdown-mode)))
+  (add-to-list 'auto-mode-alist '("\\.rest$" . rst-mode)))
+
+(cc/add-to-load-path-if-exists "markdown-mode")
+(autoload 'markdown-mode "markdown-mode.el"
+  "Major mode for editing Markdown files" t)
+(when (require 'markdown-mode nil t)
+  (define-key markdown-mode-map "\M-\r" 'markdown-insert-list-item))
+(add-to-list 'auto-mode-alist '("\\.md$" . markdown-mode))
+(add-to-list 'auto-mode-alist '("\\.Rmd$" . markdown-mode))
+(add-to-list 'auto-mode-alist '("\\.mdml$" . markdown-mode))
+(add-to-list 'auto-mode-alist '("\\.markdown$" . markdown-mode)))
 
 ;;------------------
 ;; Makefiles
