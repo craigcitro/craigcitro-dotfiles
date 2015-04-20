@@ -12,6 +12,9 @@
 ;; Global Settings
 ;;=======================================
 
+(defvar cc/dot-emacs-loaded nil
+  "Whether or not my .emacs finished loading successfully.")
+
 (ansi-color-for-comint-mode-on)
 (global-font-lock-mode t)
 
@@ -140,11 +143,12 @@
 (global-set-key "\C-p" 'previous-visual-line)
 
 ;; I'm not a fan of horizontal scrolling.
-(setq auto-hscroll-mode nil)
 (put 'scroll-left 'disabled t)
 (put 'scroll-right 'disabled t)
 (global-unset-key "\C-x<")
 (global-unset-key "\C-x>")
+;; I hate horizontal scroll, but sometimes I need it.
+;; (setq auto-hscroll-mode nil)
 
 ;;------------------------------------------------------------
 ;; ido
@@ -299,11 +303,9 @@ after-make-frame-functions."
   (define-key markdown-mode-map "\M-\r" 'markdown-insert-list-item)
   (define-key markdown-mode-map "\M-=" 'markdown-demote)
   (define-key markdown-mode-map "\M--" 'markdown-promote)
+  (dolist (extension '("md" "Rmd" "mdml" "markdown"))
+    (add-to-list 'auto-mode-alist `((format "\\.%s$" extension) . markdown-mode)))
   )
-(add-to-list 'auto-mode-alist '("\\.md$" . markdown-mode))
-(add-to-list 'auto-mode-alist '("\\.Rmd$" . markdown-mode))
-(add-to-list 'auto-mode-alist '("\\.mdml$" . markdown-mode))
-(add-to-list 'auto-mode-alist '("\\.markdown$" . markdown-mode)))
 
 ;;------------------
 ;; Makefiles
@@ -313,7 +315,7 @@ after-make-frame-functions."
 ;;---------------------------
 ;; Python
 ;;---------------------------
-(when (require 'python)
+(when (require 'python nil t)
   (setq python-indent 2)
   (defun cc/python-indent-region ()
     (interactive)
@@ -685,6 +687,7 @@ after-make-frame-functions."
 (global-set-key "\C-c\C-r" 'reload-buffer)
 
 (message "... finished reading .emacs.")
+(setq cc/dot-emacs-loaded t)
 
 ;;-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
 ;; NO OTHER CODE BELOW THIS COMMAND
