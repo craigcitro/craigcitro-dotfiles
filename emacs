@@ -304,7 +304,7 @@ after-make-frame-functions."
   (define-key markdown-mode-map "\M-=" 'markdown-demote)
   (define-key markdown-mode-map "\M--" 'markdown-promote)
   (dolist (extension '("md" "Rmd" "mdml" "markdown"))
-    (add-to-list 'auto-mode-alist `((format "\\.%s$" extension) . markdown-mode)))
+    (add-to-list 'auto-mode-alist `(,(format "\\.%s$" extension) . markdown-mode)))
   )
 
 ;;------------------
