@@ -200,6 +200,7 @@ maybesrc '/etc/bash_completion'
 maybesrc '/usr/local/share/bash-completion/bash_completion'
 maybesrc '/usr/share/git-core/git-completion.bash'
 maybesrc '/Users/craigcitro/ext/share/bash-completion/bash_completion'
+maybesrc '/usr/share/doc/tmux/examples/bash_completion_tmux.sh'
 
 # I found this clever trick here:
 #   http://www.macosxhints.com/article.php?story=20080317085050719
