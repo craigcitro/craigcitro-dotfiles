@@ -189,7 +189,7 @@
      (t buf-name))))
 (defun cc/filter-buffers ()
   (setq ido-temp-list
-        (reverse (mapcar 'cc/ido-colorize-bufname ido-temp-list))))
+        (mapcar 'cc/ido-colorize-bufname ido-temp-list)))
 (add-hook 'ido-make-buffer-list-hook 'cc/filter-buffers)
 
 ;;------------------------------------------------------------
