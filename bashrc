@@ -1,5 +1,3 @@
-#!/bin/bash
-##
 ## .bashrc
 
 ##################
@@ -201,7 +199,7 @@ unset HISTTIMEFORMAT
 maybesrc '/etc/bash_completion'
 maybesrc '/usr/local/share/bash-completion/bash_completion'
 maybesrc '/usr/share/git-core/git-completion.bash'
-maybesrc '/Library/Developer/CommandLineTools/usr/share/git-core/git-completion.bash'
+maybesrc '/Users/craigcitro/ext/share/bash-completion/bash_completion'
 
 # I found this clever trick here:
 #   http://www.macosxhints.com/article.php?story=20080317085050719
@@ -221,7 +219,6 @@ alias c=clear
 alias d=date
 alias df='df -h'
 alias grep='grep --color=always -E'
-alias h=history
 alias scp='scp -p'
 alias sigh='echo You let out a good, long sigh of relief.'
 alias rm="rm -i"
