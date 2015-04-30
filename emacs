@@ -451,22 +451,6 @@ after-make-frame-functions."
   )
 
 ;;------------------------
-;; ediff
-;;------------------------
-(custom-set-faces
- ;; custom-set-faces was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- '(ediff-current-diff-A ((((type tty)) (:weight light :foreground "firebrick" :background "pale green"))))
- '(ediff-current-diff-B ((((type tty)) (:weight light :foreground "firebrick" :background "pale green"))))
- '(ediff-fine-diff-A ((((type tty)) (:weight light :foreground "navy" :background "sky blue"))))
- '(ediff-fine-diff-B ((((type tty)) (:weight light :foreground "navy" :background "sky blue"))))
- '(flycheck-error ((t (:background "red" :weight normal))))
- '(flycheck-info ((t (:background "blue"))))
- '(flycheck-warning ((t (:background "color-91")))))
-
-;;------------------------
 ;; pedantic coloring
 ;;------------------------
 (defface cc/long-line-face
@@ -679,6 +663,19 @@ after-make-frame-functions."
   (revert-buffer t (not (buffer-modified-p)) t))
 (global-set-key "\C-c\C-r" 'reload-buffer)
 
+(custom-set-faces
+ ;; custom-set-faces was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ '(ediff-current-diff-A ((((type tty)) (:weight light :foreground "firebrick" :background "pale green"))))
+ '(ediff-current-diff-B ((((type tty)) (:weight light :foreground "firebrick" :background "pale green"))))
+ '(ediff-fine-diff-A ((((type tty)) (:weight light :foreground "navy" :background "sky blue"))))
+ '(ediff-fine-diff-B ((((type tty)) (:weight light :foreground "navy" :background "sky blue"))))
+ '(flycheck-error ((t (:background "red" :weight normal))))
+ '(flycheck-info ((t (:background "blue"))))
+ '(flycheck-warning ((t (:background "color-91")))))
+
 (custom-set-variables
  ;; custom-set-variables was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
@@ -696,4 +693,3 @@ after-make-frame-functions."
 
 (message "... finished reading .emacs.")
 (setq cc/dot-emacs-loaded t)
-

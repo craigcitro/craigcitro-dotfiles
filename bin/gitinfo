@@ -13,6 +13,8 @@ def GitInfo():
   path = os.getcwd()
   if path == os.path.expanduser('~') or '/.git' in path:
     return ''
+  if path.startswith('/google/'):
+    return ''
   try:
     full_branch = subprocess.check_output(
         ('git', 'symbolic-ref', 'HEAD'), stderr=subprocess.PIPE).decode('ascii')
