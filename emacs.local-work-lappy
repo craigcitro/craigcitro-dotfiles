@@ -1,8 +1,6 @@
 ;; -*- mode: Emacs-lisp; lexical-binding: t -*-
 ;;
 
-(add-hook 'after-init-hook #'global-flycheck-mode)
-
 ;;-------------------------
 ;; go
 ;;-------------------------
