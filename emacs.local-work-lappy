@@ -73,3 +73,7 @@
   (setq deft-text-mode 'markdown-mode)
   (setq deft-use-filename-as-title t)
   (global-set-key "\M-\C-d" 'deft))
+
+;; Local Variables:
+;; flycheck-disabled-checkers: (emacs-lisp-checkdoc)
+;; End:

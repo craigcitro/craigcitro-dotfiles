@@ -1,6 +1,4 @@
-;;
-;; emacs configuration
-;;
+;; emacs config
 
 (message "Loading .emacs ...")
 ;; There's simply no way forward without basic programming
@@ -693,3 +691,7 @@ after-make-frame-functions."
 
 (message "... finished reading .emacs.")
 (setq cc/dot-emacs-loaded t)
+
+;; Local Variables:
+;; flycheck-disabled-checkers: (emacs-lisp-checkdoc)
+;; End:
