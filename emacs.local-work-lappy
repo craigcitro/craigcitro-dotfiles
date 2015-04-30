@@ -1,10 +1,7 @@
 ;; -*- mode: Emacs-lisp; lexical-binding: t -*-
 ;;
 
-;;---------------------
-;; flymake
-;;---------------------
-;; (require 'cc/flymake-by-mode "flymake-by-mode")
+(add-hook 'after-init-hook #'global-flycheck-mode)
 
 ;;-------------------------
 ;; go
