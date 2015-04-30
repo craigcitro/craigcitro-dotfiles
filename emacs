@@ -1,4 +1,3 @@
-;; -*- mode: Emacs-lisp; lexical-binding: t -*-
 ;;
 ;; emacs configuration
 ;;
@@ -32,7 +31,6 @@
 (fset 'yes-or-no-p 'y-or-n-p)
 (setq x-select-enable-clipboard t)
 (setq line-move-visual nil)
-(setq tooltip-use-echo-area t)
 (setq split-width-threshold nil)
 (setq scroll-margin 2)
 (setq recenter-positions '(top middle bottom))
@@ -53,10 +51,7 @@
 
 ;; package initialization
 (package-initialize)
-(add-to-list 'package-archives
-             '("melpa" . "http://melpa.org/packages/") t)
-(add-to-list 'package-archives
-             '("marmalade" . "https://marmalade-repo.org/packages/"))
+(add-to-list 'package-archives '("melpa" . "http://melpa.org/packages/"))
 
 ;; start the server if it's not already up
 (defconst default-server-name "craigcitro" "Default server name.")
@@ -459,19 +454,17 @@ after-make-frame-functions."
 ;; ediff
 ;;------------------------
 (custom-set-faces
- '(ediff-current-diff-A
-   ((((type tty))
-     (:weight light :foreground "firebrick" :background "pale green"))))
- '(ediff-current-diff-B
-   ((((type tty))
-     (:weight light :foreground "firebrick" :background "pale green"))))
- '(ediff-fine-diff-A
-   ((((type tty))
-     (:weight light :foreground "navy" :background "sky blue"))))
- '(ediff-fine-diff-B
-   ((((type tty))
-     (:weight light :foreground "navy" :background "sky blue"))))
- )
+ ;; custom-set-faces was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ '(ediff-current-diff-A ((((type tty)) (:weight light :foreground "firebrick" :background "pale green"))))
+ '(ediff-current-diff-B ((((type tty)) (:weight light :foreground "firebrick" :background "pale green"))))
+ '(ediff-fine-diff-A ((((type tty)) (:weight light :foreground "navy" :background "sky blue"))))
+ '(ediff-fine-diff-B ((((type tty)) (:weight light :foreground "navy" :background "sky blue"))))
+ '(flycheck-error ((t (:background "red" :weight normal))))
+ '(flycheck-info ((t (:background "blue"))))
+ '(flycheck-warning ((t (:background "color-91")))))
 
 ;;------------------------
 ;; pedantic coloring
@@ -686,10 +679,21 @@ after-make-frame-functions."
   (revert-buffer t (not (buffer-modified-p)) t))
 (global-set-key "\C-c\C-r" 'reload-buffer)
 
-(message "... finished reading .emacs.")
-(setq cc/dot-emacs-loaded t)
+(custom-set-variables
+ ;; custom-set-variables was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ '(flycheck-display-errors-delay 0.2)
+ '(flycheck-highlighting-mode (quote lines))
+ '(global-flycheck-mode t)
+ '(tooltip-mode nil))
 
 ;;-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
 ;; NO OTHER CODE BELOW THIS COMMAND
 ;;-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
 (run-hooks 'after-make-frame-functions)
+
+(message "... finished reading .emacs.")
+(setq cc/dot-emacs-loaded t)
+
