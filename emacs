@@ -1,9 +1,6 @@
 ;; emacs config
 
 (message "Loading .emacs ...")
-;; There's simply no way forward without basic programming
-;; facilities.
-(require 'cl)
 
 ;;=======================================
 ;; Global Settings
@@ -27,7 +24,7 @@
 (setq vc-follow-symlinks t)
 (setq sentence-end-double-space nil)
 (fset 'yes-or-no-p 'y-or-n-p)
-(setq x-select-enable-clipboard t)
+(setq select-enable-clipboard t)
 (setq line-move-visual nil)
 (setq split-width-threshold nil)
 (setq scroll-margin 2)
@@ -98,11 +95,6 @@
 ;; Set up local path for lisp files
 (cc/add-to-load-path-if-exists ".emacs.d/lisp")
 (cc/add-to-load-path-if-exists "share/emacs/site-lisp")
-
-;; I haven't used this much yet, but it seems like it could be cool.
-;; (2010 Sep 24) Okay, this is exactly as described: you only need it
-;; every so often, but when you do, it's unreasonably good.
-(require 'browse-kill-ring)
 
 ;; select-frame is used in after-make-frame-functions, which is
 ;; annoying since I can't then run those hooks at startup. Replace it with
