@@ -16,8 +16,6 @@ files-output=no
 reports=no
 
 [BASIC]
-module-rgx=^(_?[a-z][a-z0-9_]*)|__init__|PRESUBMIT|PRESUBMIT_unittest$
-
 # Regular expression which should only match correct module level names
 const-rgx=^(_?[A-Z][A-Z0-9_]*|__[a-z0-9_]+__|_?[a-z][a-z0-9_]*)$
 
