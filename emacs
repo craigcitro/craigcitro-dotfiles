@@ -448,38 +448,11 @@ after-make-frame-functions."
   (define-key inferior-ess-mode-map "\C-n" 'comint-next-input)
   )
 
-;;------------------------
-;; pedantic coloring
-;;------------------------
-(defface cc/long-line-face
-  '((t (:foreground "red")))
-  "*Face used for long lines.")
-(defface cc/bad-whitespace-face
-  '((t (:background "red")))
-  "*Face used for tabs or trailing whitespace.")
-
-(defun cc/make-mode-pedantic (&optional mode line-width)
-  (interactive)
-  (let ((width (if (null line-width) 81 (1+ line-width))))
-    (font-lock-add-keywords
-     mode
-     `(("[ \t]+$" 0 'cc/bad-whitespace-face t)
-       ("\t+" 0 'cc/bad-whitespace-face t)
-       (,(format "^%s\\(.+\\)" (make-string width ?.)) 1 font-lock-warning-face t)
-       ))))
-(add-hook 'python-mode-hook 'cc/make-mode-pedantic)
-(add-hook 'sh-mode-hook 'cc/make-mode-pedantic)
-(eval-after-load 'markdown-mode
-  (add-hook 'markdown-mode-hook 'cc/make-mode-pedantic))
-(when (require 'lisp-mode)
-  (add-hook 'lisp-mode-hook 'cc/make-mode-pedantic)
-  (add-hook 'emacs-lisp-mode-hook 'cc/make-mode-pedantic))
-(when (require 'ess-site nil t)
-  (add-hook 'ess-mode-hook 'cc/make-mode-pedantic))
-
+;;==============================================================================
+;; Utility functions
+;;==============================================================================
 
 ;; Trailing whitespace
-;; TODO(craigcitro): Wire this into pedantic mode.
 (defvar cc/skip-delete-trailing-whitespace nil
   "If t, skip any potential call to delete trailing whitespace.
    Intended to be used as a buffer-local variable.")
@@ -489,10 +462,6 @@ after-make-frame-functions."
              (null cc/skip-delete-trailing-whitespace))
     (delete-trailing-whitespace)))
 (add-to-list 'write-file-functions 'cc/possibly-delete-trailing-whitespace)
-
-;;==============================================================================
-;; Utility functions
-;;==============================================================================
 
 ;; I'm sure this has to exist somewhere in emacs already ...
 (defun get-cursor-position-as-integer ()
