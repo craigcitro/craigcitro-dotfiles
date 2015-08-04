@@ -128,7 +128,7 @@
 	<key>MaxVertically</key>
 	<false/>
 	<key>NSNavLastRootDirectory</key>
-	<string>~/dotfiles/iterm2</string>
+	<string>~/dotfiles</string>
 	<key>NSQuotedKeystrokeBinding</key>
 	<string></string>
 	<key>NSRepeatCountBinding</key>
@@ -153,9 +153,13 @@
 	<key>NSTableView Sort Ordering KeyBingingTable</key>
 	<array/>
 	<key>NSWindow Frame Preferences</key>
-	<string>272 173 924 485 0 0 1280 777 </string>
+	<string>269 110 924 485 0 0 1440 900 </string>
 	<key>NSWindow Frame iTerm Window 0</key>
-	<string>131 37 650 476 0 0 1280 777 </string>
+	<string>353 204 650 476 0 0 1440 877 </string>
+	<key>NSWindow Frame iTerm Window 1</key>
+	<string>525 226 650 476 0 0 1440 900 </string>
+	<key>NSWindow Frame iTerm Window 2</key>
+	<string>225 22 570 451 0 0 1440 878 </string>
 	<key>NeverWarnAboutShortLivedSessions_DCC67779-07F2-4BFC-9216-F1AD7CCCEB0C</key>
 	<true/>
 	<key>New Bookmarks</key>
@@ -886,6 +890,12 @@
 			<string>/Users/craigcitro</string>
 		</dict>
 	</array>
+	<key>NoSyncNeverRemindPrefsChangesCopy</key>
+	<true/>
+	<key>NoSyncTimeOfLastPromo</key>
+	<real>456109130.49197203</real>
+	<key>NoSyncTimeOfLastPromoDownload</key>
+	<real>459493767.60572201</real>
 	<key>OnlyWhenMoreTabs</key>
 	<true/>
 	<key>OpenArrangementAtStartup</key>
@@ -952,7 +962,7 @@
 	<key>SUHasLaunchedBefore</key>
 	<true/>
 	<key>SULastCheckTime</key>
-	<date>2014-10-26T17:03:05Z</date>
+	<date>2015-07-25T05:09:04Z</date>
 	<key>SavePasteHistory</key>
 	<false/>
 	<key>ShowBookmarkName</key>
@@ -994,6 +1004,6 @@
 	<key>WordCharacters</key>
 	<string>/-+\~_.:</string>
 	<key>iTerm Version</key>
-	<string>2.0</string>
+	<string>2.1.1</string>
 </dict>
 </plist>

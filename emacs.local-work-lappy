@@ -8,7 +8,7 @@
 (cc/add-to-load-path-if-exists "/usr/lib/google-golang/misc/emacs")
 (when (require 'go-mode nil t)
   (setq gofmt-command "goimports")
-  (require 'flymake-go)
+  ;; (require 'flymake-go)
   (add-hook 'before-save-hook 'gofmt-before-save))
 
 ;;---------------------------
@@ -35,44 +35,6 @@
   (define-key inferior-python-mode-map "\C-p" 'comint-previous-input)
   (define-key inferior-python-mode-map "\C-n" 'comint-next-input)
   )
-
-;;------------------
-;; Haskell
-;;------------------
-
-;; this all broke recently, for reasons i don't understand. but then,
-;; i'm writing zero haskell right now, so i'm just disabling it.
-(when nil
-  (when (require 'haskell-mode-autoloads nil t)
-    (add-to-list 'auto-mode-alist '("\\.hs$" . haskell-mode))
-    (add-hook 'haskell-mode-hook 'turn-on-haskell-doc-mode)
-    (add-hook 'haskell-mode-hook 'turn-on-haskell-indentation))
-
-  ;; ghc-mod:
-  ;;   https://github.com/kazu-yamamoto/ghc-mod
-  (cc/add-to-load-path-if-exists "ext/ghc-mod/share")
-  (let ((cabal-path (concat (getenv "HOME") "/Library/Haskell/bin")))
-    (when (file-exists-p cabal-path)
-      (add-to-list 'exec-path cabal-path))
-    (autoload 'ghc-init "ghc" nil t)
-    (add-hook 'haskell-mode-hook (lambda () (ghc-init) (flymake-mode)))
-    )
-
-  ;; hoogle
-  (when (require 'haskell-mode nil t)
-    (setq haskell-hoogle-command "hoogle")
-    (define-key haskell-mode-map "\C-c?" 'haskell-hoogle))
-  )
-
-;;------------------
-;; deft
-;;------------------
-(when (require 'deft nil t)
-  (setq deft-extension "md")
-  (setq deft-directory "~/deft")
-  (setq deft-text-mode 'markdown-mode)
-  (setq deft-use-filename-as-title t)
-  (global-set-key "\M-\C-d" 'deft))
 
 ;; Local Variables:
 ;; flycheck-disabled-checkers: (emacs-lisp-checkdoc)

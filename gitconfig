@@ -26,4 +26,4 @@
 [mergetool.ediff]
 	cmd = export MERGED LOCAL REMOTE BASE && ~/bin/git-mergetool-ediff
 [google]
-	lastUpdateCheck = 20150506000000
+	lastUpdateCheck = 20150728000000

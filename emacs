@@ -24,7 +24,8 @@
 (setq vc-follow-symlinks t)
 (setq sentence-end-double-space nil)
 (fset 'yes-or-no-p 'y-or-n-p)
-(setq select-enable-clipboard t)
+(when (boundp 'x-select-enable-clipboard)
+  (setq x-select-enable-clipboard t))
 (setq line-move-visual nil)
 (setq split-width-threshold nil)
 (setq scroll-margin 2)
@@ -61,12 +62,6 @@
 ;;--------------------
 ;; utilities
 ;;--------------------
-(defun cc/empty-or-nil-p (x)
-  (or (null x) (string= "" x)))
-(defun cc/any (ls)
-  (reduce '(lambda (x y) (or x y)) ls))
-(defun cc/all (ls)
-  (reduce '(lambda (x y) (and x y)) ls))
 (defun cc/first-non-nil (ls)
   (cond
    ((null ls) nil)
@@ -132,8 +127,6 @@
 (put 'scroll-right 'disabled t)
 (global-unset-key "\C-x<")
 (global-unset-key "\C-x>")
-;; I hate horizontal scroll, but sometimes I need it.
-;; (setq auto-hscroll-mode nil)
 
 ;;------------------------------------------------------------
 ;; ido
@@ -152,10 +145,12 @@
 
 (defface cc/ido-system-buffer-face
   '((t (:foreground "BrightBlack")))
-  "*Face used to highlight system buffers in the ido matches list.")
+  "*Face used to highlight system buffers in the ido matches list."
+  :group 'cc/ido-faces)
 (defface cc/ido-this-buffer-face
   '((t (:foreground "Blue")))
-  "*Face used to highlight the current buffer in the ido matches list.")
+  "*Face used to highlight the current buffer in the ido matches list."
+  :group 'cc/ido-faces)
 (defun cc/ido-colorize-bufname (&optional buf-name)
   "Return the name of the given or current buffer, propertized with a color
    as follows:
@@ -173,8 +168,9 @@
      ;; buf or current buffer is not in a git repo
      (t buf-name))))
 (defun cc/filter-buffers ()
-  (setq ido-temp-list
-        (mapcar 'cc/ido-colorize-bufname ido-temp-list)))
+  (when (boundp 'ido-temp-list)
+    (setq ido-temp-list
+          (mapcar 'cc/ido-colorize-bufname ido-temp-list))))
 (add-hook 'ido-make-buffer-list-hook 'cc/filter-buffers)
 
 ;;------------------------------------------------------------
@@ -215,24 +211,17 @@
 ;; Context-dependent config
 ;;===========================================
 
-(defun in-terminal (&optional frame)
-  "Determine whether or not we seem to be in a terminal."
-  (not (display-multi-frame-p (or frame (selected-frame)))))
+;; (defun in-terminal (&optional frame)
+;;   "Determine whether or not we seem to be in a terminal."
+;;   (not (display-multi-frame-p (or frame (selected-frame)))))
 
-(defun various-mac-setup (&optional frame)
-  "Run a handful of Mac-specific configuration commands."
-  (when (eq 'darwin system-type)
-    ;; Is this necessary?
-    ;; (robust-select-frame frame)
-    ;; This is documented in the manual, but not in the description of
-    ;; this variable. Set this to nil for option as meta, and non-nil
-    ;; for command as meta. Given that I always use cmd-key-happy on any
-    ;; Mac, nil is the right choice for me.
-    (setq mac-command-key-is-meta nil)
-    ;; Set colors
-    (modify-frame-parameters frame '((foreground-color . "ivory")
-                                     (background-color . "black")))))
-(add-to-list 'after-make-frame-functions 'various-mac-setup)
+;; (defun various-mac-setup (&optional frame)
+;;   "Run a handful of Mac-specific configuration commands."
+;;   (when (eq 'darwin system-type)
+;;     ;; Set colors
+;;     (modify-frame-parameters frame '((foreground-color . "ivory")
+;;                                      (background-color . "black")))))
+;; (add-to-list 'after-make-frame-functions 'various-mac-setup)
 
 ;;===========================================
 ;; Set up the window
@@ -285,9 +274,10 @@ after-make-frame-functions."
 (autoload 'markdown-mode "markdown-mode.el"
   "Major mode for editing Markdown files" t)
 (when (require 'markdown-mode nil t)
-  (define-key markdown-mode-map "\M-\r" 'markdown-insert-list-item)
-  (define-key markdown-mode-map "\M-=" 'markdown-demote)
-  (define-key markdown-mode-map "\M--" 'markdown-promote)
+  (when (boundp 'markdown-mode-map)
+    (define-key markdown-mode-map "\M-\r" 'markdown-insert-list-item)
+    (define-key markdown-mode-map "\M-=" 'markdown-demote)
+    (define-key markdown-mode-map "\M--" 'markdown-promote))
   (dolist (extension '("md" "Rmd" "mdml" "markdown"))
     (add-to-list 'auto-mode-alist `(,(format "\\.%s$" extension) . markdown-mode)))
   )
@@ -300,15 +290,16 @@ after-make-frame-functions."
 ;;---------------------------
 ;; Python
 ;;---------------------------
-(when (require 'python nil t)
-  (setq python-indent 2)
-  (defun cc/python-indent-region ()
-    (interactive)
-    (python-indent-region (region-beginning) (region-end)))
-  (define-key python-mode-map "\C-ca" 'cc/python-indent-region)
-  (define-key inferior-python-mode-map "\C-p" 'comint-previous-input)
-  (define-key inferior-python-mode-map "\C-n" 'comint-next-input)
-  )
+;; TODO(craigcitro): Do I need any of this?
+;; (when (require 'python nil t)
+;;   (setq python-indent 2)
+;;   (defun cc/python-indent-region ()
+;;     (interactive)
+;;     (python-indent-region (region-beginning) (region-end)))
+;;   (define-key python-mode-map "\C-ca" 'cc/python-indent-region)
+;;   (define-key inferior-python-mode-map "\C-p" 'comint-previous-input)
+;;   (define-key inferior-python-mode-map "\C-n" 'comint-next-input)
+;;   )
 (add-to-list 'auto-mode-alist '("\\.?pythonrc$" . python-mode))
 (add-to-list 'auto-mode-alist '("\\.?pdbrc$" . python-mode))
 
@@ -322,11 +313,11 @@ after-make-frame-functions."
 ;;---------------------
 ;; flymake
 ;;---------------------
-(require 'cc/flymake-keys "flymake-keys")
-(eval-after-load 'flymake
-  '(progn
-     (require 'flymake-cursor)
-     (setq flymake-cursor-number-of-errors-to-display 4)))
+;; (require 'cc/flymake-keys "flymake-keys")
+;; (eval-after-load 'flymake
+;;   '(progn
+;;      (require 'flymake-cursor)
+;;      (setq flymake-cursor-number-of-errors-to-display 4)))
 
 ;;-------------------------
 ;; Java
@@ -349,11 +340,11 @@ after-make-frame-functions."
 ;;-------------------------
 ;; js and friends
 ;;-------------------------
-(eval-after-load 'js-mode
-  (add-hook 'js-mode-hook (lambda () (setq js-indent-level 2))))
-(require 'jinja2-mode nil t)
-(when (require 'css-mode nil t)
-  (add-hook 'css-mode-hook (lambda () (setq css-indent-offset 2))))
+;; (eval-after-load 'js-mode
+;;   (add-hook 'js-mode-hook (lambda () (setq js-indent-level 2))))
+;; (require 'jinja2-mode nil t)
+;; (when (require 'css-mode nil t)
+;;   (add-hook 'css-mode-hook (lambda () (setq css-indent-offset 2))))
 
 ;;------------------------
 ;; Emacs Lisp
@@ -431,13 +422,16 @@ after-make-frame-functions."
   (ess-toggle-underscore 1)
   (ess-toggle-underscore nil)
   (defun cc/ess-indentation-hook ()
-    (setq ess-indent-level 2))
+    (when (boundp 'ess-indent-level)
+      (setq ess-indent-level 2)))
   (add-hook 'ess-mode-hook 'cc/ess-indentation-hook)
   ;; Indent 4 spaces on a continued line in parens
-  (setq ess-arg-function-offset 4)
+  (when (boundp 'ess-arg-function-offset)
+    (setq ess-arg-function-offset 4))
   ;; no one puts my keymappings in a corner
-  (define-key inferior-ess-mode-map "\C-p" 'comint-previous-input)
-  (define-key inferior-ess-mode-map "\C-n" 'comint-next-input)
+  (when (boundp 'inferior-ess-mode-map)
+    (define-key inferior-ess-mode-map "\C-p" 'comint-previous-input)
+    (define-key inferior-ess-mode-map "\C-n" 'comint-next-input))
   )
 
 ;;==============================================================================
@@ -450,7 +444,7 @@ after-make-frame-functions."
    Intended to be used as a buffer-local variable.")
 (make-variable-buffer-local 'cc/skip-delete-trailing-whitespace)
 (defun cc/possibly-delete-trailing-whitespace ()
-  (when (and (memq major-mode '(markdown-mode python-mode))
+  (when (and (memq major-mode '(python-mode))
              (null cc/skip-delete-trailing-whitespace))
     (delete-trailing-whitespace)))
 (add-to-list 'write-file-functions 'cc/possibly-delete-trailing-whitespace)
@@ -547,7 +541,7 @@ after-make-frame-functions."
 
 ;; vim-inspired
 (defun join-below ()
-  """Join the next line to the current line."""
+  "Join the next line to the current line."
   (interactive)
   (delete-indentation t))
 (global-set-key "\M-^" 'join-below)
