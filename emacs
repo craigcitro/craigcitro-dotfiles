@@ -642,7 +642,8 @@ after-make-frame-functions."
  ;; If there is more than one, they won't work right.
  '(flycheck-display-errors-delay 0.2)
  '(flycheck-highlighting-mode (quote lines))
- '(global-flycheck-mode t)
+ '(global-flycheck-mode t nil (flycheck))
+ '(safe-local-variable-values (quote ((c-indent-level . 2))))
  '(tooltip-mode nil))
 
 ;;-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
