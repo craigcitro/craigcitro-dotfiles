@@ -1,11 +1,26 @@
+cc_pedantic <- function() {
+  if (is.null(getOption('cc_pedantic'))) {
+    options(
+        cc_pedantic = TRUE,
+        warnPartialMatchArgs = TRUE,
+        warnPartialMatchAttr = TRUE,
+        warnPartialMatchDollar = TRUE,
+        warn = 1
+    )
+  } else {
+    options(
+        cc_pedantic = NULL,
+        warnPartialMatchArgs = FALSE,
+        warnPartialMatchAttr = FALSE,
+        warnPartialMatchDollar = FALSE,
+        warn = 0
+    )
+  }
+}
 
 .First <- function() {
   # Set some warning/completion options.
   options(repos = c(CRAN = "http://cran.rstudio.com"),
-          warnPartialMatchArgs = TRUE,
-          warnPartialMatchAttr = TRUE,
-          warnPartialMatchDollar = TRUE,
-          warn = 1,
           useFancyQuotes = FALSE,
           menu.graphics = FALSE,
           deparse.max.lines = 2,

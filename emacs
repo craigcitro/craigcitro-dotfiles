@@ -91,11 +91,6 @@
 (cc/add-to-load-path-if-exists ".emacs.d/lisp")
 (cc/add-to-load-path-if-exists "share/emacs/site-lisp")
 
-;; I haven't used this much yet, but it seems like it could be cool.
-;; (2010 Sep 24) Okay, this is exactly as described: you only need it
-;; every so often, but when you do, it's unreasonably good.
-(require 'browse-kill-ring)
-
 ;; select-frame is used in after-make-frame-functions, which is
 ;; annoying since I can't then run those hooks at startup. Replace it with
 ;; this more robust option:
@@ -439,6 +434,11 @@ after-make-frame-functions."
     (define-key inferior-ess-mode-map "\C-n" 'comint-next-input))
   )
 
+;;==============================================================================
+;; Utility functions
+;;==============================================================================
+
+;; Trailing whitespace
 (defvar cc/skip-delete-trailing-whitespace nil
   "If t, skip any potential call to delete trailing whitespace.
    Intended to be used as a buffer-local variable.")
@@ -448,10 +448,6 @@ after-make-frame-functions."
              (null cc/skip-delete-trailing-whitespace))
     (delete-trailing-whitespace)))
 (add-to-list 'write-file-functions 'cc/possibly-delete-trailing-whitespace)
-
-;;==============================================================================
-;; Utility functions
-;;==============================================================================
 
 ;; I'm sure this has to exist somewhere in emacs already ...
 (defun get-cursor-position-as-integer ()
