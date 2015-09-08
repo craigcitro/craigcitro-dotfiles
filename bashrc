@@ -267,6 +267,8 @@ alias lth='ll -t | head'
 alias mr='cd $(/bin/ls -BF1t | grep / | head -1)'
 alias mrd='/bin/ls -BF1t | grep / | head -1'
 
+alias bazel='${HOME}/gh/bazel/output/bazel'
+
 ################################
 # Local config
 ################################
