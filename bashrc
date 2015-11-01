@@ -225,9 +225,6 @@ alias sigh='echo You let out a good, long sigh of relief.'
 alias rm="rm -i"
 alias cp="cp -i"
 alias mv="mv -i"
-alias pd=pushd
-alias po=popd
-alias di='dirs -v'
 
 if [ "$SYSTEM" == "Darwin" ]; then
   alias du='du -h -d 1'
