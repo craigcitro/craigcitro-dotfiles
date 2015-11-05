@@ -243,6 +243,8 @@ after-make-frame-functions."
 ;; Major modes and language-specific config
 ;;==============================================================================
 
+(add-to-list 'auto-mode-alist '("Dockerfile" . dockerfile-mode))
+
 ;;---------------
 ;; text
 ;;---------------
