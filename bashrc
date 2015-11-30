@@ -76,13 +76,14 @@ if [ "$SYSTEM" == "Darwin" ]; then
   export MANPATH
 fi
 
+# Path munging
+# For pip install --user:
+pathprepend $HOME/.local/bin;
 # My additions to $PATH
 pathprepend $HOME/ext/bin;
 pathprepend $HOME/bin;
 # Go
 pathappend $HOME/ext/go/bin;
-# For pip install --user:
-pathappend $HOME/.local/bin;
 export PATH
 
 pathprepend $HOME/ext/share/man MANPATH;
