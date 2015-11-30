@@ -1,5 +1,6 @@
-cc_pedantic <- function() {
-  if (is.null(getOption('cc_pedantic'))) {
+.cc_pedantic <- function() {
+  if (is.null(getOption("cc_pedantic"))) {
+    message("Turning on pedantic warnings\n")
     options(
         cc_pedantic = TRUE,
         warnPartialMatchArgs = TRUE,
@@ -8,6 +9,7 @@ cc_pedantic <- function() {
         warn = 1
     )
   } else {
+    message("Turning off pedantic warnings\n")
     options(
         cc_pedantic = NULL,
         warnPartialMatchArgs = FALSE,
@@ -20,7 +22,7 @@ cc_pedantic <- function() {
 
 .First <- function() {
   # Set some warning/completion options.
-  options(repos = c(CRAN = "http://cran.rstudio.com"),
+  options(repos = c(CRAN = "https://cran.rstudio.com"),
           useFancyQuotes = FALSE,
           menu.graphics = FALSE,
           deparse.max.lines = 2,
@@ -28,14 +30,15 @@ cc_pedantic <- function() {
   utils::rc.settings(ipck = TRUE)
   # Set our history file.
   if (interactive() && require(utils, quietly=TRUE)) {
-    try(loadhistory(Sys.getenv('R_HISTFILE')))
+    histfile <- Sys.getenv("R_HISTFILE", unset = path.expand("~/.Rhistory"))
+    try(loadhistory(histfile))
   }
   # If there's a `.Rprofile` in this directory, let's source that,
   # too.
   if (interactive()) {
-    base_r_profile = Sys.getenv('R_PROFILE_USER')
+    base_r_profile <- Sys.getenv("R_PROFILE_USER")
     if (nzchar(base_r_profile) && (getwd() != dirname(base_r_profile))) {
-      local_r_profile = file.path(getwd(), '.Rprofile')
+      local_r_profile <- file.path(getwd(), ".Rprofile")
       if (file.exists(local_r_profile)) {
         source(local_r_profile, local = TRUE)
       }
@@ -45,6 +48,7 @@ cc_pedantic <- function() {
 
 .Last <- function() {
   if (interactive() && require(utils, quietly=TRUE)) {
-    try(savehistory(Sys.getenv('R_HISTFILE')))
+    histfile <- Sys.getenv("R_HISTFILE", unset = path.expand("~/.Rhistory"))
+    try(savehistory(histfile))
   }
 }
