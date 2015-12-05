@@ -11,7 +11,7 @@ disable=R0903,W0142,W0511,R0904,R0914,R0912,R0915,C0103,I0011
 [REPORTS]
 #output-format=text
 output-format=colorized
-include-ids=yes
+#include-ids=yes
 files-output=no
 reports=no
 
