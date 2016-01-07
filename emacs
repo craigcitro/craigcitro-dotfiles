@@ -434,7 +434,9 @@ after-make-frame-functions."
   (when (boundp 'inferior-ess-mode-map)
     (define-key inferior-ess-mode-map "\C-p" 'comint-previous-input)
     (define-key inferior-ess-mode-map "\C-n" 'comint-next-input))
-  )
+  (when (boundp 'ess-fancy-comments)
+    (setq ess-fancy-comments nil))
+)
 
 ;;==============================================================================
 ;; Utility functions
