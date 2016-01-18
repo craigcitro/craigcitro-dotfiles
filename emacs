@@ -636,6 +636,7 @@ after-make-frame-functions."
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
+ '(fill-column 79)
  '(flycheck-display-errors-delay 0.2)
  '(flycheck-highlighting-mode (quote lines))
  '(global-flycheck-mode t nil (flycheck))
