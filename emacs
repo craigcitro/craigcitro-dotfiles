@@ -235,8 +235,7 @@ an (ignored) optional argument so it can be used as a hook in
 after-make-frame-functions."
   (menu-bar-mode -1)
   (when (fboundp 'scroll-bar-mode)
-    (scroll-bar-mode -1))
-  (tool-bar-mode -1))
+    (scroll-bar-mode -1)))
 (kill-trim)
 
 ;;==============================================================================
@@ -628,10 +627,7 @@ after-make-frame-functions."
  '(ediff-current-diff-A ((((type tty)) (:weight light :foreground "firebrick" :background "pale green"))))
  '(ediff-current-diff-B ((((type tty)) (:weight light :foreground "firebrick" :background "pale green"))))
  '(ediff-fine-diff-A ((((type tty)) (:weight light :foreground "navy" :background "sky blue"))))
- '(ediff-fine-diff-B ((((type tty)) (:weight light :foreground "navy" :background "sky blue"))))
- '(flycheck-error ((t (:background "red" :weight normal))))
- '(flycheck-info ((t (:background "blue"))))
- '(flycheck-warning ((t (:background "color-91")))))
+ '(ediff-fine-diff-B ((((type tty)) (:weight light :foreground "navy" :background "sky blue")))))
 
 (custom-set-variables
  ;; custom-set-variables was added by Custom.
@@ -639,9 +635,6 @@ after-make-frame-functions."
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  '(fill-column 79)
- '(flycheck-display-errors-delay 0.2)
- '(flycheck-highlighting-mode (quote lines))
- '(global-flycheck-mode t nil (flycheck))
  '(safe-local-variable-values (quote ((c-indent-level . 2))))
  '(tooltip-mode nil))
 
@@ -652,7 +645,3 @@ after-make-frame-functions."
 
 (message "... finished reading .emacs.")
 (setq cc/dot-emacs-loaded t)
-
-;; Local Variables:
-;; flycheck-disabled-checkers: (emacs-lisp-checkdoc)
-;; End:
