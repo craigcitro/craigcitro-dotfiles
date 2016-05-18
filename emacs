@@ -635,7 +635,13 @@ after-make-frame-functions."
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  '(fill-column 79)
- '(safe-local-variable-values (quote ((c-indent-level . 2))))
+ '(package-selected-packages
+   (quote
+    (yaml-mode protobuf-mode markdown-mode json-mode gitignore-mode gitconfig git-rebase-mode git-commit-mode git-blame flymake-shell flymake-json flymake-go flymake-cursor flymake-css dockerfile-mode cython-mode auto-complete)))
+ '(safe-local-variable-values
+   (quote
+    ((flycheck-disabled-checkers python-pylint python-flake8 python-pycompile go-gofmt go-vet go-build go-test r-lintr)
+     (c-indent-level . 2))))
  '(tooltip-mode nil))
 
 ;;-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
