@@ -220,7 +220,7 @@ fi
 alias c=clear
 alias d=date
 alias df='df -h'
-alias grep='grep --color=always -E'
+alias grepc='grep --color=always -E'
 alias scp='scp -p'
 alias sigh='echo You let out a good, long sigh of relief.'
 alias rm="rm -i"
@@ -297,6 +297,12 @@ pathappend $HOME'/Library/Haskell/share/man' MANPATH;
 pathappend $HOME'/Library/Haskell/bin';
 pathappend $HOME'/.cabal/share/man' MANPATH;
 pathappend $HOME'/.cabal/bin';
+
+#############
+## node
+
+export NVM_DIR="/usr/local/google/home/craigcitro/.nvm"
+[ -s "$NVM_DIR/nvm.sh" ] && . "$NVM_DIR/nvm.sh"  # This loads nvm
 
 ################################################################
 ######################## Prompt stuff ##########################

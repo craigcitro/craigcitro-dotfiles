@@ -243,6 +243,7 @@ after-make-frame-functions."
 ;;==============================================================================
 
 (add-to-list 'auto-mode-alist '("Dockerfile" . dockerfile-mode))
+(add-to-list 'auto-mode-alist '("\\.ipynb$" . json-mode))
 
 ;;---------------
 ;; text
@@ -336,6 +337,13 @@ after-make-frame-functions."
   (add-hook 'yaml-mode-hook
             '(lambda ()
                (define-key yaml-mode-map "\C-m" 'newline-and-indent))))
+
+;;---------------------
+;; go
+;;---------------------
+(when (require 'go-mode nil t)
+  (add-hook 'go-mode-hook
+            '(lambda () (set-fill-column 100))))
 
 
 ;;-------------------------
