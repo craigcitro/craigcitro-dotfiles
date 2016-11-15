@@ -430,6 +430,17 @@ function restore_bash_history () {
   # is not stream-capable.
   history -c
   TMPHIST=$(mktemp -t cc.shell.log.XXXXXX) #
+  cut -f9- -d' ' $CC_SHELL_LOG | tail -n 40000 > $TMPHIST
+  history -r $TMPHIST
+  rm -f $TMPHIST
+}
+export -f restore_bash_history
+
+function restore_full_bash_history () {
+  # Can't use history -r - or history -r <(cut...) because history -r
+  # is not stream-capable.
+  history -c
+  TMPHIST=$(mktemp -t cc.shell.log.XXXXXX) #
   cut -f9- -d' ' $CC_SHELL_LOG > $TMPHIST
   history -r $TMPHIST
   rm -f $TMPHIST
