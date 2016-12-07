@@ -298,12 +298,6 @@ pathappend $HOME'/Library/Haskell/bin';
 pathappend $HOME'/.cabal/share/man' MANPATH;
 pathappend $HOME'/.cabal/bin';
 
-#############
-## node
-
-export NVM_DIR="/usr/local/google/home/craigcitro/.nvm"
-[ -s "$NVM_DIR/nvm.sh" ] && . "$NVM_DIR/nvm.sh"  # This loads nvm
-
 ################################################################
 ######################## Prompt stuff ##########################
 
