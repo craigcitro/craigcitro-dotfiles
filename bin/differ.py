@@ -7,6 +7,11 @@ import tempfile
 
 def main(argv):
   diff = os.environ.get('DIFFER', 'colordiff')
+  with open(os.devnull, 'w') as f:
+    exists = subprocess.call([diff, '-v'], stdout=f, stderr=f)
+  if exists:
+    print 'Diff program %s not found'.format(diff)
+    return 1
   args = argv[1:]
   diff_opts = '-u' if args[0] == ':' else args.pop(0)
   with tempfile.NamedTemporaryFile() as out:
@@ -25,4 +30,4 @@ def main(argv):
 
 
 if __name__ == '__main__':
-  main(sys.argv)
+  sys.exit(main(sys.argv))
