@@ -220,7 +220,7 @@ fi
 alias c=clear
 alias d=date
 alias df='df -h'
-alias grep='grep --color=always -E'
+alias grepc='grep --color=always -E'
 alias scp='scp -p'
 alias sigh='echo You let out a good, long sigh of relief.'
 alias rm="rm -i"
@@ -420,6 +420,17 @@ function prompt_pwd () {
 export -f prompt_pwd
 
 function restore_bash_history () {
+  # Can't use history -r - or history -r <(cut...) because history -r
+  # is not stream-capable.
+  history -c
+  TMPHIST=$(mktemp -t cc.shell.log.XXXXXX) #
+  cut -f9- -d' ' $CC_SHELL_LOG | tail -n 40000 > $TMPHIST
+  history -r $TMPHIST
+  rm -f $TMPHIST
+}
+export -f restore_bash_history
+
+function restore_full_bash_history () {
   # Can't use history -r - or history -r <(cut...) because history -r
   # is not stream-capable.
   history -c

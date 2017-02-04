@@ -235,8 +235,7 @@ an (ignored) optional argument so it can be used as a hook in
 after-make-frame-functions."
   (menu-bar-mode -1)
   (when (fboundp 'scroll-bar-mode)
-    (scroll-bar-mode -1))
-  (tool-bar-mode -1))
+    (scroll-bar-mode -1)))
 (kill-trim)
 
 ;;==============================================================================
@@ -244,6 +243,7 @@ after-make-frame-functions."
 ;;==============================================================================
 
 (add-to-list 'auto-mode-alist '("Dockerfile" . dockerfile-mode))
+(add-to-list 'auto-mode-alist '("\\.ipynb$" . json-mode))
 
 ;;---------------
 ;; text
@@ -337,6 +337,13 @@ after-make-frame-functions."
   (add-hook 'yaml-mode-hook
             '(lambda ()
                (define-key yaml-mode-map "\C-m" 'newline-and-indent))))
+
+;;---------------------
+;; go
+;;---------------------
+(when (require 'go-mode nil t)
+  (add-hook 'go-mode-hook
+            '(lambda () (set-fill-column 100))))
 
 
 ;;-------------------------
@@ -628,20 +635,21 @@ after-make-frame-functions."
  '(ediff-current-diff-A ((((type tty)) (:weight light :foreground "firebrick" :background "pale green"))))
  '(ediff-current-diff-B ((((type tty)) (:weight light :foreground "firebrick" :background "pale green"))))
  '(ediff-fine-diff-A ((((type tty)) (:weight light :foreground "navy" :background "sky blue"))))
- '(ediff-fine-diff-B ((((type tty)) (:weight light :foreground "navy" :background "sky blue"))))
- '(flycheck-error ((t (:background "red" :weight normal))))
- '(flycheck-info ((t (:background "blue"))))
- '(flycheck-warning ((t (:background "color-91")))))
+ '(ediff-fine-diff-B ((((type tty)) (:weight light :foreground "navy" :background "sky blue")))))
 
 (custom-set-variables
  ;; custom-set-variables was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
- '(flycheck-display-errors-delay 0.2)
- '(flycheck-highlighting-mode (quote lines))
- '(global-flycheck-mode t nil (flycheck))
- '(safe-local-variable-values (quote ((c-indent-level . 2))))
+ '(fill-column 79)
+ '(package-selected-packages
+   (quote
+    (yaml-mode protobuf-mode markdown-mode json-mode gitignore-mode gitconfig git-rebase-mode git-commit-mode git-blame flymake-shell flymake-json flymake-go flymake-cursor flymake-css dockerfile-mode cython-mode auto-complete)))
+ '(safe-local-variable-values
+   (quote
+    ((flycheck-disabled-checkers python-pylint python-flake8 python-pycompile go-gofmt go-vet go-build go-test r-lintr)
+     (c-indent-level . 2))))
  '(tooltip-mode nil))
 
 ;;-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
@@ -651,7 +659,3 @@ after-make-frame-functions."
 
 (message "... finished reading .emacs.")
 (setq cc/dot-emacs-loaded t)
-
-;; Local Variables:
-;; flycheck-disabled-checkers: (emacs-lisp-checkdoc)
-;; End:
