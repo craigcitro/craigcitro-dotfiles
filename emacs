@@ -308,9 +308,8 @@ after-make-frame-functions."
 ;; Nick Alexander and I wrote this at SD12
 (defun bs (name)
   "Browse the structure of a Python/Cython file."
-  ;; (occur "^\( *def\\|class\\|cdef class\\).*:$"))
   (interactive "sFind name in hierarchy: ")
-  (occur (format "^ *\\(def.*%s\\|class\\).*:$" name)))
+  (occur (format "^ *\\(def +.*%s\\|class +.*%s\\).*:$" name name)))
 
 ;;---------------------
 ;; flymake
