@@ -1,5 +1,7 @@
 ;; emacs config
 
+;;; Code:
+
 (message "Loading .emacs ...")
 
 ;;=======================================
@@ -312,13 +314,12 @@ after-make-frame-functions."
   (occur (format "^ *\\(def +.*%s\\|class +.*%s\\).*:$" name name)))
 
 ;;---------------------
-;; flymake
+;; flycheck
 ;;---------------------
-;; (require 'cc/flymake-keys "flymake-keys")
-;; (eval-after-load 'flymake
-;;   '(progn
-;;      (require 'flymake-cursor)
-;;      (setq flymake-cursor-number-of-errors-to-display 4)))
+(when (require 'flycheck nil t)
+  (when (boundp 'flycheck-mode-map)
+    (define-key flycheck-mode-map "\C-x\C-k\C-n" 'flycheck-next-error)
+    (define-key flycheck-mode-map "\C-x\C-k\C-p" 'flycheck-previous-error)))
 
 ;;-------------------------
 ;; Java
@@ -360,10 +361,11 @@ after-make-frame-functions."
 (add-to-list 'auto-mode-alist '("[./-]emacs$" . emacs-lisp-mode))
 ;; A basic "step and execute" function -- am I reinventing this wheel?
 (defun cc/eval-sexp-and-advance (line-mode)
-  "Eval the top-level containing sexp. If the next line after
-  this sexp is blank, do nothing. If next line is not blank, move
-  to the end of that sexp. This command can be repeated by
-  pressing the last key in the binding.
+  "Eval the top-level containing sexp.
+
+  If the next line after this sexp is blank, do nothing. If next
+  line is not blank, move to the end of that sexp. This command
+  can be repeated by pressing the last key in the binding.
 
   With any prefix arg, steps by sexps at the current level."
   (interactive "P")
@@ -644,7 +646,7 @@ after-make-frame-functions."
  '(fill-column 79)
  '(package-selected-packages
    (quote
-    (yaml-mode protobuf-mode markdown-mode json-mode gitignore-mode gitconfig git-rebase-mode git-commit-mode git-blame flymake-shell flymake-json flymake-go flymake-cursor flymake-css dockerfile-mode cython-mode auto-complete)))
+    (py-autopep8 py-yapf flycheck flycheck-checkbashisms flycheck-clang-tidy flycheck-color-mode-line flycheck-cython yaml-mode protobuf-mode markdown-mode json-mode gitignore-mode gitconfig git-rebase-mode git-commit-mode git-blame dockerfile-mode cython-mode auto-complete)))
  '(safe-local-variable-values
    (quote
     ((flycheck-disabled-checkers python-pylint python-flake8 python-pycompile go-gofmt go-vet go-build go-test r-lintr)
