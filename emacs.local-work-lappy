@@ -8,7 +8,6 @@
 (cc/add-to-load-path-if-exists "/usr/lib/google-golang/misc/emacs")
 (when (require 'go-mode nil t)
   (setq gofmt-command "goimports")
-  ;; (require 'flymake-go)
   (add-hook 'before-save-hook 'gofmt-before-save))
 
 ;;---------------------------
@@ -18,7 +17,7 @@
   "Temporary hack for indentation woes.")
 (when (require 'python)
   (provide 'python-mode) ;; bye-bye python-mode.el
-  (setq python-indent 2)
+  ;; (setq python-indent 2)
   (unless cc/python-ignore-correction
     (defadvice python-calculate-indentation (after ad-return-value activate)
       (save-excursion
