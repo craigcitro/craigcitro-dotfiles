@@ -319,7 +319,8 @@ after-make-frame-functions."
 (when (require 'flycheck nil t)
   (when (boundp 'flycheck-mode-map)
     (define-key flycheck-mode-map "\C-x\C-k\C-n" 'flycheck-next-error)
-    (define-key flycheck-mode-map "\C-x\C-k\C-p" 'flycheck-previous-error)))
+    (define-key flycheck-mode-map "\C-x\C-k\C-p" 'flycheck-previous-error))
+  (global-flycheck-mode))
 
 ;;-------------------------
 ;; Java
