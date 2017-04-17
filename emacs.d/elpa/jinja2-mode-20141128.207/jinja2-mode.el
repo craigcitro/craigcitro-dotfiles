@@ -3,7 +3,8 @@
 ;; Copyright (C) 2011 Florian Mounier aka paradoxxxzero
 
 ;; Author: Florian Mounier aka paradoxxxzero
-;; Version: 0.1
+;; Version: 0.2
+;; Package-Version: 20141128.207
 
 ;; This program is free software: you can redistribute it and/or modify
 ;; it under the terms of the GNU General Public License as published by
@@ -293,7 +294,7 @@
 
 
 ;;;###autoload
-(define-derived-mode jinja2-mode sgml-mode  "Jinja2"
+(define-derived-mode jinja2-mode html-mode  "Jinja2"
   "Major mode for editing jinja2 files"
   :group 'jinja2
   ;; Disabling this because of this emacs bug: 

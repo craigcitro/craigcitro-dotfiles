@@ -646,7 +646,7 @@ after-make-frame-functions."
  '(fill-column 79)
  '(package-selected-packages
    (quote
-    (py-autopep8 py-yapf flycheck flycheck-checkbashisms flycheck-clang-tidy flycheck-color-mode-line flycheck-cython yaml-mode protobuf-mode markdown-mode json-mode gitignore-mode gitconfig git-rebase-mode git-commit-mode git-blame dockerfile-mode cython-mode auto-complete)))
+    (jinja2-mode py-autopep8 py-yapf flycheck flycheck-checkbashisms flycheck-clang-tidy flycheck-color-mode-line flycheck-cython yaml-mode protobuf-mode markdown-mode json-mode gitignore-mode gitconfig git-rebase-mode git-commit-mode git-blame dockerfile-mode cython-mode auto-complete)))
  '(safe-local-variable-values
    (quote
     ((flycheck-disabled-checkers python-pylint python-flake8 python-pycompile go-gofmt go-vet go-build go-test r-lintr)
