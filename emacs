@@ -191,10 +191,6 @@
   (when gconfig
     (load-file gconfig)))
 
-;; (2011 Jun 27) I have no idea why this isn't already set:
-(defun byte-compile-dest-file (filename)
-  (concat filename "c"))
-
 (defun cc/indent-region-rigidly (count start end)
   "Indent the region rigidly by count, using indent-code-rigidly."
   (indent-code-rigidly start end count))
@@ -208,22 +204,6 @@
     (cc/indent-region-rigidly count start end)))
 (global-set-key "\C-c<" 'cc/shift-left)
 (global-set-key "\C-c>" 'cc/shift-right)
-
-;;===========================================
-;; Context-dependent config
-;;===========================================
-
-;; (defun in-terminal (&optional frame)
-;;   "Determine whether or not we seem to be in a terminal."
-;;   (not (display-multi-frame-p (or frame (selected-frame)))))
-
-;; (defun various-mac-setup (&optional frame)
-;;   "Run a handful of Mac-specific configuration commands."
-;;   (when (eq 'darwin system-type)
-;;     ;; Set colors
-;;     (modify-frame-parameters frame '((foreground-color . "ivory")
-;;                                      (background-color . "black")))))
-;; (add-to-list 'after-make-frame-functions 'various-mac-setup)
 
 ;;===========================================
 ;; Set up the window
@@ -294,16 +274,6 @@ after-make-frame-functions."
 ;;---------------------------
 ;; Python
 ;;---------------------------
-;; TODO(craigcitro): Do I need any of this?
-;; (when (require 'python nil t)
-;;   (setq python-indent 2)
-;;   (defun cc/python-indent-region ()
-;;     (interactive)
-;;     (python-indent-region (region-beginning) (region-end)))
-;;   (define-key python-mode-map "\C-ca" 'cc/python-indent-region)
-;;   (define-key inferior-python-mode-map "\C-p" 'comint-previous-input)
-;;   (define-key inferior-python-mode-map "\C-n" 'comint-next-input)
-;;   )
 (add-to-list 'auto-mode-alist '("\\.?pythonrc$" . python-mode))
 (add-to-list 'auto-mode-alist '("\\.?pdbrc$" . python-mode))
 
@@ -321,13 +291,6 @@ after-make-frame-functions."
     (define-key flycheck-mode-map "\C-x\C-k\C-n" 'flycheck-next-error)
     (define-key flycheck-mode-map "\C-x\C-k\C-p" 'flycheck-previous-error))
   (global-flycheck-mode))
-
-;;-------------------------
-;; Java
-;;-------------------------
-;; I shouldn't need this ...
-(unless (assoc "\\.java$" auto-mode-alist)
-  (add-to-list 'auto-mode-alist '("\\.java$" . java-mode)))
 
 ;;---------------------
 ;; yaml
@@ -457,6 +420,7 @@ after-make-frame-functions."
    Intended to be used as a buffer-local variable.")
 (make-variable-buffer-local 'cc/skip-delete-trailing-whitespace)
 (defun cc/possibly-delete-trailing-whitespace ()
+  "Delete trailing whitespace, with an easy off switch."
   (when (and (memq major-mode '(python-mode))
              (null cc/skip-delete-trailing-whitespace))
     (delete-trailing-whitespace)))
@@ -471,26 +435,9 @@ after-make-frame-functions."
 ;; Sometimes it's nice to easily find out a keycode: to do this,
 ;; \M-: (read-event "?") or just run this function:
 (defun get-keycode ()
-  "Wrapper around read-event for when I forget it exists."
+  "Wrapper around 'read-event for when I forget it exists."
   (interactive)
   (read-event "Hit a key: "))
-
-;; Insert the current date in parentheses.
-;; TODO: make the parentheses customizable.
-;; TODO: take a prefix argument to insert different dates.
-(defun insert-date (&optional prefix)
-  "Insert the current date in parentheses into the buffer."
-  (interactive "P")
-  (if prefix
-      (let ((date (format-time-string "%Y %b %d")))
-        (insert date)
-        (insert ?\n)
-        (insert (make-string (length date) ?=))
-        (insert ?\n))
-    (progn
-      (insert (format-time-string "(%Y %b %d)"))
-      (insert " "))))
-(global-set-key "\C-c\C-d" 'insert-date)
 
 (defun cc/update-alist (alist key &optional val)
   "Update alist to contain (key . val). If key is already a key
@@ -616,7 +563,7 @@ after-make-frame-functions."
           (insert-file-contents (buffer-file-name))
 
           ;; mark the buffer as not modified
-          (not-modified)
+          (set-buffer-modified-p nil)
           (set-visited-file-modtime))
       (goto-char point)
       (set-window-start (selected-window) window-start nil)
