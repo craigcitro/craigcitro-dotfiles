@@ -1,3 +1,4 @@
-emacs.d/bookmarks
-emacs.d/ac-comphist.dat
 .DS_Store
+emacs.d/ac-comphist.dat
+emacs.d/bookmarks
+emacs.d/ido.last
