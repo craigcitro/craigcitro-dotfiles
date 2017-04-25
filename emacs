@@ -1,4 +1,6 @@
-;; emacs config
+;;; emacs --- My emacs config.
+;;; Commentary:
+;;; My config is a little heavy.
 
 ;;; Code:
 
@@ -39,7 +41,9 @@
 (setq-default require-final-newline t)
 
 (defun cc/disabled-command-message (&rest args)
-  "Show a simple message when a command has been disabled."
+  "Show a simple message when a command has been disabled.
+
+ARGS are ignored."
   (interactive)
   (message "Command %s has been disabled"
            (substring (this-command-keys) 0 -1)))
@@ -65,12 +69,14 @@
 ;; utilities
 ;;--------------------
 (defun cc/first-non-nil (ls)
+  "Return the first non-nil element of LS."
   (cond
    ((null ls) nil)
    ((null (car ls)) (cc/first-non-nil (cdr ls)))
    (t (car ls))))
 
 (defun cc/find-file-or-nil (path &optional prefix)
+  "Find PATH, possibly using PREFIX as a potential path."
   (let ((dirs (list ""
                     prefix
                     (getenv "HOME")
@@ -84,7 +90,7 @@
              dirs))))
 
 (defun cc/add-to-load-path-if-exists (path &optional prefix)
-  "Add a path to load-path if it exists."
+  "Add PATH to 'load-path if it exists, optionally looking in PREFIX."
   (let ((full-path (cc/find-file-or-nil path prefix)))
     (when (and full-path (file-exists-p full-path))
       (add-to-list 'load-path full-path))))
@@ -97,7 +103,9 @@
 ;; annoying since I can't then run those hooks at startup. Replace it with
 ;; this more robust option:
 (defun robust-select-frame (&optional frame norecord)
-  "A version of select-frame that can take no arguments."
+  "A version of 'select-frame that can take no arguments.
+
+FRAME and NORECORD are passed on to 'select-frame."
   (when frame
     (select-frame frame norecord)))
 (when (memq 'select-frame after-make-frame-functions)
@@ -154,10 +162,11 @@
   "*Face used to highlight the current buffer in the ido matches list."
   :group 'cc/ido-faces)
 (defun cc/ido-colorize-bufname (&optional buf-name)
-  "Return the name of the given or current buffer, propertized with a color
-   as follows:
-     BrightBlack: buffer is a system buffer
-     Blue: this is the current buffer"
+  "Return the name of the BUF-NAME or current buffer, propertized with a color.
+
+The color is chosen as follows:
+  BrightBlack: buffer is a system buffer
+  Blue: this is the current buffer"
   (let* ((buf (or (get-buffer buf-name) (current-buffer)))
          (buf-name (buffer-name buf)))
     (cond
@@ -170,6 +179,7 @@
      ;; buf or current buffer is not in a git repo
      (t buf-name))))
 (defun cc/filter-buffers ()
+  "Buffer filtering hook. Used in ido buffer colorization."
   (when (boundp 'ido-temp-list)
     (setq ido-temp-list
           (mapcar 'cc/ido-colorize-bufname ido-temp-list))))
@@ -192,15 +202,17 @@
     (load-file gconfig)))
 
 (defun cc/indent-region-rigidly (count start end)
-  "Indent the region rigidly by count, using indent-code-rigidly."
+  "Indent from START to END rigidly by COUNT, using indent-code-rigidly."
   (indent-code-rigidly start end count))
-(defun cc/shift-left (&optional start end moves)
+(defun cc/shift-left (&optional start end chunks)
+  "Shift left from START to END rigidly by 2*CHUNKS spaces."
   (interactive "r\np")
-  (let ((count (* -2 (if (null moves) 1 moves))))
+  (let ((count (* -2 (if (null chunks) 1 chunks))))
     (cc/indent-region-rigidly count start end)))
-(defun cc/shift-right (&optional start end moves)
+(defun cc/shift-right (&optional start end chunks)
+  "Shift right from START to END rigidly by 2*CHUNKS spaces."
   (interactive "r\np")
-  (let ((count (* 2 (if (null moves) 1 moves))))
+  (let ((count (* 2 (if (null chunks) 1 chunks))))
     (cc/indent-region-rigidly count start end)))
 (global-set-key "\C-c<" 'cc/shift-left)
 (global-set-key "\C-c>" 'cc/shift-right)
@@ -212,9 +224,10 @@
 ;; Clean up the window. Each of these sets a global option, so
 ;; there's no need to use this as a hook.
 (defun kill-trim (&optional ignored)
-  "Kill all the extras: menu, scrollbar, toolbar. Takes
-an (ignored) optional argument so it can be used as a hook in
-after-make-frame-functions."
+  "Kill all the extras: menu, scrollbar, toolbar.
+
+Ignores an optional argument (IGNORED) so it can be used as a hook in
+'after-make-frame-functions."
   (menu-bar-mode -1)
   (when (fboundp 'scroll-bar-mode)
     (scroll-bar-mode -1)))
@@ -279,7 +292,7 @@ after-make-frame-functions."
 
 ;; Nick Alexander and I wrote this at SD12
 (defun bs (name)
-  "Browse the structure of a Python/Cython file."
+  "Browse the structure of a Python/Cython file, optionally matching NAME."
   (interactive "sFind name in hierarchy: ")
   (occur (format "^ *\\(def +.*%s\\|class +.*%s\\).*:$" name name)))
 
@@ -325,13 +338,13 @@ after-make-frame-functions."
 (add-to-list 'auto-mode-alist '("[./-]emacs$" . emacs-lisp-mode))
 ;; A basic "step and execute" function -- am I reinventing this wheel?
 (defun cc/eval-sexp-and-advance (line-mode)
-  "Eval the top-level containing sexp.
+  "Eval the top level containing sexp.
 
-  If the next line after this sexp is blank, do nothing. If next
-  line is not blank, move to the end of that sexp. This command
-  can be repeated by pressing the last key in the binding.
+If the next line after this sexp is blank, do nothing. If next
+line is not blank, move to the end of that sexp. This command
+can be repeated by pressing the last key in the binding.
 
-  With any prefix arg, steps by sexps at the current level."
+With any prefix argor LINE-MODE, steps by sexps at the current level."
   (interactive "P")
   (let ((step (lambda (&optional forward-first)
                 (if line-mode
@@ -417,7 +430,8 @@ after-make-frame-functions."
 ;; Trailing whitespace
 (defvar cc/skip-delete-trailing-whitespace nil
   "If t, skip any potential call to delete trailing whitespace.
-   Intended to be used as a buffer-local variable.")
+
+Intended to be used as a buffer-local variable.")
 (make-variable-buffer-local 'cc/skip-delete-trailing-whitespace)
 (defun cc/possibly-delete-trailing-whitespace ()
   "Delete trailing whitespace, with an easy off switch."
@@ -440,10 +454,12 @@ after-make-frame-functions."
   (read-event "Hit a key: "))
 
 (defun cc/update-alist (alist key &optional val)
-  "Update alist to contain (key . val). If key is already a key
-  in alist, we replace the existing entry. If val is nil and key
-  is a list, instead call (cc/update-alist alist k v) for every
-  pair (k . v) in key (i.e. view key as a list of updates)."
+  "Update ALIST to contain (KEY . VAL).
+
+If KEY is already a key in ALIST, we replace the existing entry.
+If VAL is nil and KEY is a list, instead call (cc/update-alist
+alist k v) for every pair (k . v) in KEY (i.e. view KEY as a list
+of updates)."
   (cond
    ((null key) alist)
    ((and (null val) (listp key))
@@ -457,43 +473,34 @@ after-make-frame-functions."
 ;; MISC KEY SETTINGS
 ;; ==============================================================================
 ;; Overrides of defaults
-(global-set-key "\C-t" 'fill-paragraph)
-(global-set-key "\C-w" 'kill-ring-save)
-(global-set-key "\M-w" 'kill-region)
-(global-set-key "\C-xa" 'mark-whole-buffer)
-(global-set-key "\C-x3" 'split-window-vertically)
+;; (global-set-key "\C-t" 'fill-paragraph)
+;; (global-set-key "\C-w" 'kill-ring-save)
+;; (global-set-key "\M-w" 'kill-region)
+;; (global-set-key "\C-xa" 'mark-whole-buffer)
 (global-set-key "\C-x\C-c" 'delete-frame)
 (global-set-key "\C-x\C-y" 'save-buffers-kill-emacs)
-(global-set-key "\C-x\C-n" 'new-frame)
 ;; Handy choices
 (global-set-key (kbd "RET") 'newline-and-indent)
-(global-set-key "\C-c\C-z" 'shell)
-(global-set-key "\M-s" 'isearch-forward-regexp)
-(global-set-key "\M-r" 'isearch-backward-regexp)
-(global-set-key "\C-ct" 'transpose-chars)
-(global-set-key "\C-c\C-t" 'transpose-words)
-(global-set-key [C-backspace] 'backward-kill-word)
+;; (global-set-key "\M-s" 'isearch-forward-regexp)
+;; (global-set-key "\M-r" 'isearch-backward-regexp)
+;; (global-set-key [C-backspace] 'backward-kill-word)
+;; I did this to get M-DEL working in chromeos; maybe there's a better way?
+(global-set-key [deletechar] 'backward-kill-word)
 (global-set-key [C-delete] 'backward-kill-word)
 (global-set-key [(control :)] 'eval-expression)
 (global-set-key "\C-c#" 'comment-or-uncomment-region)
 (global-set-key "\C-cs" 'sort-lines)
-(global-set-key "\C-ca" 'indent-region)
-(global-set-key "\C-c!" 'toggle-read-only)
-(global-set-key "\M-g\M-o" 'occur)
 ;; Sloppy keys
 (global-set-key "\C-x\C-g" 'keyboard-quit)
 (global-unset-key [(control x) (control o)])
 (global-set-key "\C-x\C-o" 'other-window)
-(global-set-key "\C-xs" 'save-buffer)
+;; (global-set-key "\C-xs" 'save-buffer)
 ;; Minibuffer keys
 (define-key minibuffer-local-map "\C-p" 'previous-history-element)
 (define-key minibuffer-local-map "\C-n" 'next-history-element)
 ;; This one continually causes me trouble.
 (global-unset-key "\M-t")
 (global-set-key "\M-p" 'transpose-words)
-;; Usability-in-chrome fixes.
-(global-set-key "\C-\M-w" 'kill-region)
-(global-set-key "\C-\M-v" 'down-one-bounded-page)
 
 ;; How did these get disabled?
 (put 'upcase-region 'disabled nil)
@@ -506,16 +513,28 @@ after-make-frame-functions."
   (delete-indentation t))
 (global-set-key "\M-^" 'join-below)
 (global-set-key "\C-^" 'delete-indentation)
-(defun up-one () (interactive) (scroll-up 1))
-(defun down-one () (interactive) (scroll-down 1))
+(defun up-one ()
+  "Shift the viewable region up one line without moving the cursor."
+  (interactive)
+  (scroll-up 1))
+(defun down-one ()
+  "Shift the viewable region down one line without moving the cursor."
+  (interactive)
+  (scroll-down 1))
 (global-set-key "\M-z" 'down-one)
 (global-set-key "\C-z" 'up-one)
 (global-set-key [C-S-up] 'down-one)
 (global-set-key [C-S-down] 'up-one)
 
 ;; get that mouse scroll going:
-(defun up-slightly () (interactive) (scroll-up 5))
-(defun down-slightly () (interactive) (scroll-down 5))
+(defun up-slightly ()
+  "Scroll up a little bit."
+  (interactive)
+  (scroll-up 5))
+(defun down-slightly ()
+  "Scroll down a little bit."
+  (interactive)
+  (scroll-down 5))
 (global-set-key [mouse-4] 'down-slightly)
 (global-set-key [mouse-5] 'up-slightly)
 
@@ -531,7 +550,7 @@ after-make-frame-functions."
   (interactive)
   (forward-line (* -1 (min (/ (frame-height) 2) largest-page-movement-size))))
 (defun adjust-pageup-pagedown (&optional frame)
-  "Adjust page size based on the current frame size."
+  "Adjust page size in FRAME based on the current frame size."
   (when (> (frame-height frame) largest-page-movement-size)
     (global-set-key "\M-v" 'down-one-bounded-page)
     (global-set-key "\C-v" 'up-one-bounded-page)
@@ -542,12 +561,13 @@ after-make-frame-functions."
 (global-set-key [M-up] 'down-one-bounded-page)
 (global-set-key [M-down] 'up-one-bounded-page)
 
-;; I did this to get M-DEL working in chromeos; maybe there's a better way?
-(global-set-key [deletechar] 'backward-kill-word)
 
 ;; revert-buffer from:
 ;;  http://www.stokebloke.com/wordpress/2008/04/17/emacs-refresh-f5-Key/
 (defun revert-buffer-keep-history (&optional IGNORE-AUTO NOCONFIRM PRESERVE-MODES)
+  "Revert buffer without reloading.
+
+IGNORE-AUTO, NOCONFIRM, and PRESERVE-MODES are ignored."
   (interactive)
 
   (let ((point (point))
@@ -594,7 +614,7 @@ after-make-frame-functions."
  '(fill-column 79)
  '(package-selected-packages
    (quote
-    (jinja2-mode py-autopep8 py-yapf flycheck flycheck-checkbashisms flycheck-clang-tidy flycheck-color-mode-line flycheck-cython yaml-mode protobuf-mode markdown-mode json-mode gitignore-mode gitconfig git-rebase-mode git-commit-mode git-blame dockerfile-mode cython-mode auto-complete)))
+    (org jinja2-mode py-autopep8 py-yapf flycheck flycheck-checkbashisms flycheck-clang-tidy flycheck-color-mode-line flycheck-cython yaml-mode protobuf-mode markdown-mode json-mode gitignore-mode gitconfig git-rebase-mode git-commit-mode git-blame dockerfile-mode cython-mode auto-complete)))
  '(safe-local-variable-values
    (quote
     ((flycheck-disabled-checkers python-pylint python-flake8 python-pycompile go-gofmt go-vet go-build go-test r-lintr)
