@@ -115,22 +115,22 @@ fi
 ## emacs-related
 
 # We want everything to route through one central set of emacs
-# commands ...
+# commands.
 export EMACS_SERVERNAME='craigcitro'
 alias emacsdaemon='\emacs --daemon'
 alias emacs="emacsclient -c -s ${EMACS_SERVERNAME}"
 alias e='emacs'
 alias et='emacs -t'
-# Every editor I can find ...
+# Every EDITOR variable I can find.
 export EDITOR="emacsclient -c -s ${EMACS_SERVERNAME} -t"
 export VISUAL="emacsclient -c -s ${EMACS_SERVERNAME} -t"
 export CVSEDITOR="$(which emacsclient) -c -s ${EMACS_SERVERNAME} -t"
 export GIT_EDITOR="$(which emacsclient) -c -s ${EMACS_SERVERNAME} -t"
 # (2011 Sep 13) Here's the old version:
 # if [ "$(ps awx -U ${USER} | grep macs | grep daemon | grep ${EMACS_SERVERNAME})xxx" == "xxx" ]; then
-# Amusingly, it's actually a bit more robust: a server can crash and
-# fail to close the socket. However, the command below will correctly
-# identify servers whose name wasn't specified at the command line ...
+# Amusingly, it's actually a bit more robust: a server can crash and fail to
+# close the socket. However, the command below will correctly identify servers
+# whose name wasn't specified at the command line.
 if [ ! -S $(emacsclient -s ${EMACS_SERVERNAME} --eval '(print server-socket-dir (lambda (s) nil))' 2>/dev/null | awk -F\" '{print $2}')"/"${EMACS_SERVERNAME} ]; then
   LOCKFILE="${HOME}/.lock-emacs-${EMACS_SERVERNAME}"
   if [ -f "${LOCKFILE}" ]; then
@@ -143,20 +143,20 @@ if [ ! -S $(emacsclient -s ${EMACS_SERVERNAME} --eval '(print server-socket-dir 
   fi
 fi
 
-# this line is here in support of my .inputrc: I want
-# to be able to use \C-s and \C-r for interactive history
-# search, but I need to disable xterm's ^S = stop behavior
-# to do so.
+# This line is here in support of my .inputrc: I want to be able to use \C-s
+# and \C-r for interactive history search, but I need to disable xterm's ^S =
+# stop behavior to do so.
 #
-# It causes lots of warning messages whenever something that's *not* a
-# shell sources my .bashrc; found a fix here:
-#  http://www.perlmonks.org/?node_id=534691
+# It causes lots of warning messages whenever something that's *not* a shell
+# sources my .bashrc; found a fix here:
+#   http://www.perlmonks.org/?node_id=534691
 if [ -t 0 ]; then
   stty stop ^^
 fi
 
 ###############################
 ## other unix default stuff
+
 if [ "$TERM" = "xterm" ]; then
   export TERM=xterm-256color
 fi
