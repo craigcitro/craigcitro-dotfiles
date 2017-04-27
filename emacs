@@ -116,14 +116,18 @@ FRAME and NORECORD are passed on to 'select-frame."
 ;; It's annoying that this is only controlled by the global variable;
 ;; this is the best way around it I can find:
 (defun next-visual-line (&optional arg try-vscroll)
-  "Move down a visual line."
+  "Move down a visual line.
+
+ARG and TRY-VSCROLL are passed to 'next-line."
   (interactive)
   (progn
     (setq line-move-visual t)
     (next-line arg try-vscroll)
     (setq line-move-visual nil)))
 (defun previous-visual-line (&optional arg try-vscroll)
-  "Move up a visual line."
+  "Move up a visual line.
+
+ARG and TRY-VSCROLL are passed to 'next-line."
   (interactive)
   (progn
     (setq line-move-visual t)
@@ -202,7 +206,7 @@ The color is chosen as follows:
     (load-file gconfig)))
 
 (defun cc/indent-region-rigidly (count start end)
-  "Indent from START to END rigidly by COUNT, using indent-code-rigidly."
+  "Indent rigidly by COUNT from START to END, using 'indent-code-rigidly."
   (indent-code-rigidly start end count))
 (defun cc/shift-left (&optional start end chunks)
   "Shift left from START to END rigidly by 2*CHUNKS spaces."
@@ -402,7 +406,6 @@ With any prefix argor LINE-MODE, steps by sexps at the current level."
 (when (require 'ess-site nil t)
   (add-to-list 'auto-mode-alist '("\\.R$" . r-mode))
   (add-to-list 'auto-mode-alist '("\\.r$" . r-mode))
-  (add-to-list 'auto-mode-alist '("\\.valclass$" . r-mode))
   (add-to-list 'auto-mode-alist '("Rprofile$" . r-mode))
   ;; We want to force _ back to _; ess-toggle-underscore can
   ;; force it to "smart _", but not off. Ugh.
@@ -612,9 +615,12 @@ IGNORE-AUTO, NOCONFIRM, and PRESERVE-MODES are ignored."
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  '(fill-column 79)
+ '(org-modules
+   (quote
+    (org-bbdb org-bibtex org-docview org-gnus org-info org-irc org-mhe org-rmail org-w3m)))
  '(package-selected-packages
    (quote
-    (org jinja2-mode py-autopep8 py-yapf flycheck flycheck-checkbashisms flycheck-clang-tidy flycheck-color-mode-line flycheck-cython yaml-mode protobuf-mode markdown-mode json-mode gitignore-mode gitconfig git-rebase-mode git-commit-mode git-blame dockerfile-mode cython-mode auto-complete)))
+    (go-mode go-playground org jinja2-mode py-autopep8 py-yapf flycheck flycheck-checkbashisms flycheck-clang-tidy flycheck-color-mode-line flycheck-cython yaml-mode protobuf-mode markdown-mode json-mode gitignore-mode gitconfig git-rebase-mode git-commit-mode git-blame dockerfile-mode cython-mode auto-complete)))
  '(safe-local-variable-values
    (quote
     ((flycheck-disabled-checkers python-pylint python-flake8 python-pycompile go-gofmt go-vet go-build go-test r-lintr)
@@ -628,3 +634,4 @@ IGNORE-AUTO, NOCONFIRM, and PRESERVE-MODES are ignored."
 
 (message "... finished reading .emacs.")
 (setq cc/dot-emacs-loaded t)
+;;; emacs ends here
