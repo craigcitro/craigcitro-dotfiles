@@ -1,4 +1,6 @@
 .DS_Store
+# Various emacs bits
 emacs.d/ac-comphist.dat
 emacs.d/bookmarks
 emacs.d/ido.last
+emacs.d/elpa/archives/
