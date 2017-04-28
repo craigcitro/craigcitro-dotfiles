@@ -52,9 +52,11 @@
      (setq org-archive-location "::* Done")
      (setq org-capture-templates
            (quote (("r" "readme" entry
-                    (file+headline org-default-notes-file "Readme"))
+                    (file+headline org-default-notes-file "Readme")
+                    "* %?" :kill-buffer)
                    ("t" "todo" entry
-                    (file+headline org-default-notes-file "Incoming"))
+                    (file+headline org-default-notes-file "Incoming")
+                    "* %?" :kill-buffer)
                    )))
      ;; ido-based refile completion
      (setq org-refile-targets '((nil :maxlevel . 2)
@@ -73,8 +75,10 @@
 
 (when (require 'org-install nil t)
   ;; The only global keystrokes are for capture and links.
-  (global-set-key "\C-cr" 'org-capture)
-  (global-set-key "\M-\C-r" 'org-capture)
+  (global-set-key "\C-cr" (lambda () (interactive) (org-capture nil "r")))
+  (global-set-key "\M-\C-r" (lambda () (interactive) (org-capture nil "r")))
+  (global-set-key "\C-ct" (lambda () (interactive) (org-capture nil "t")))
+  (global-set-key "\M-\C-t" (lambda () (interactive) (org-capture nil "t")))
   (global-set-key "\C-cl" 'org-insert-link)
   (global-set-key "\M-\C-l" 'org-insert-link)
   )
