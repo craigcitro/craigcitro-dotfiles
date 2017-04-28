@@ -11,6 +11,16 @@
 ;; org-mode
 ;;------------------
 
+(defun cc/org-capture-readme ()
+  "Capture a readme."
+  (interactive)
+  (org-capture nil "r"))
+
+(defun cc/org-capture-todo ()
+  "Capture a todo."
+  (interactive)
+  (org-capture nil "t"))
+
 (defun cc/org-keys-hook ()
   "Hook for setting up org keystrokes."
   ;; Undefine C-c [ and C-c] , in favor of explicit management of the
@@ -31,6 +41,8 @@
   (org-defkey org-mode-map "\M-\C-p" 'org-backward-heading-same-level)
   (org-defkey org-mode-map "\M-\C-u" 'outline-up-heading)
   (org-defkey org-mode-map "\M-\C-k" 'org-cut-subtree)
+  ;; I set these globally, but also want to override in org mode.
+  (org-defkey org-mode-map "\M-\C-t" 'cc/org-capture-todo)
   )
 ;; We append to make sure the undefs above take effect.
 (add-hook 'org-mode-hook 'cc/org-keys-hook 'append)
@@ -75,10 +87,10 @@
 
 (when (require 'org-install nil t)
   ;; The only global keystrokes are for capture and links.
-  (global-set-key "\C-cr" (lambda () (interactive) (org-capture nil "r")))
-  (global-set-key "\M-\C-r" (lambda () (interactive) (org-capture nil "r")))
-  (global-set-key "\C-ct" (lambda () (interactive) (org-capture nil "t")))
-  (global-set-key "\M-\C-t" (lambda () (interactive) (org-capture nil "t")))
+  (global-set-key "\C-cr" 'cc/org-capture-readme)
+  (global-set-key "\M-\C-r" 'cc/org-capture-readme)
+  (global-set-key "\C-ct" 'cc/org-capture-todo)
+  (global-set-key "\M-\C-t" 'cc/org-capture-todo)
   (global-set-key "\C-cl" 'org-insert-link)
   (global-set-key "\M-\C-l" 'org-insert-link)
   )
