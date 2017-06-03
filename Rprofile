@@ -30,6 +30,8 @@
   utils::rc.settings(ipck = TRUE)
   # Definitely turn up jupyter logging.
   options(jupyter.log_level = 3)
+  # Debugging FTW.
+  options(error = traceback)
   # Set our history file.
   if (interactive() && require(utils, quietly=TRUE)) {
     histfile <- Sys.getenv("R_HISTFILE", unset = path.expand("~/.Rhistory"))
