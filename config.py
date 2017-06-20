@@ -24,9 +24,7 @@ BASIC_LINKS = [
     'vimrc',
     # Languages
     'pdbrc',
-    'pdbrc.py',
     'pythonrc',
-    'pylintrc',
     'Rprofile',
     'ghci',
 ]
