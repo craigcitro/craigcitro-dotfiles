@@ -200,6 +200,7 @@ unset HISTTIMEFORMAT
 maybesrc '/etc/bash_completion'
 maybesrc '/usr/local/share/bash-completion/bash_completion'
 maybesrc '/usr/share/git-core/git-completion.bash'
+maybesrc '/usr/local/git/current/share/git-core/git-completion.bash'
 maybesrc '/Users/craigcitro/ext/share/bash-completion/bash_completion'
 maybesrc '/usr/share/doc/tmux/examples/bash_completion_tmux.sh'
 
