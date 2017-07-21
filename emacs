@@ -615,12 +615,9 @@ IGNORE-AUTO, NOCONFIRM, and PRESERVE-MODES are ignored."
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  '(fill-column 79)
- '(org-modules
-   (quote
-    (org-bbdb org-bibtex org-docview org-gnus org-info org-irc org-mhe org-rmail org-w3m)))
  '(package-selected-packages
    (quote
-    (go-mode go-playground org jinja2-mode py-autopep8 py-yapf flycheck flycheck-checkbashisms flycheck-clang-tidy flycheck-color-mode-line flycheck-cython yaml-mode protobuf-mode markdown-mode json-mode gitignore-mode gitconfig git-rebase-mode git-commit-mode git-blame dockerfile-mode cython-mode auto-complete)))
+    (go-mode go-playground jinja2-mode py-autopep8 py-yapf flycheck flycheck-checkbashisms flycheck-clang-tidy flycheck-color-mode-line flycheck-cython yaml-mode protobuf-mode markdown-mode json-mode gitignore-mode gitconfig git-rebase-mode git-commit-mode git-blame dockerfile-mode cython-mode auto-complete)))
  '(safe-local-variable-values
    (quote
     ((flycheck-disabled-checkers python-pylint python-flake8 python-pycompile go-gofmt go-vet go-build go-test r-lintr)

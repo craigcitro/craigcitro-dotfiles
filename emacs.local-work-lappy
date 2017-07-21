@@ -1,9 +1,6 @@
 ;; -*- mode: Emacs-lisp; lexical-binding: t -*-
 ;;
 
-;; Load org.
-(require 'cc-org)
-
 ;;-------------------------
 ;; go
 ;;-------------------------
