@@ -617,7 +617,7 @@ IGNORE-AUTO, NOCONFIRM, and PRESERVE-MODES are ignored."
  '(fill-column 79)
  '(package-selected-packages
    (quote
-    (go-mode go-playground jinja2-mode py-autopep8 py-yapf flycheck flycheck-checkbashisms flycheck-clang-tidy flycheck-color-mode-line flycheck-cython yaml-mode protobuf-mode markdown-mode json-mode gitignore-mode gitconfig git-rebase-mode git-commit-mode git-blame dockerfile-mode cython-mode auto-complete)))
+    (gotest flycheck flycheck-cython flycheck-mypy js2-highlight-vars js2-mode go-mode go-playground jinja2-mode py-autopep8 py-yapf flycheck-checkbashisms flycheck-clang-tidy yaml-mode protobuf-mode markdown-mode json-mode gitignore-mode gitconfig git-rebase-mode git-commit-mode git-blame dockerfile-mode cython-mode auto-complete)))
  '(safe-local-variable-values
    (quote
     ((flycheck-disabled-checkers python-pylint python-flake8 python-pycompile go-gofmt go-vet go-build go-test r-lintr)
