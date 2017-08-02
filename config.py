@@ -26,7 +26,6 @@ BASIC_LINKS = [
     'pdbrc',
     'pdbrc.py',
     'pythonrc',
-    'pylintrc',
     'Rprofile',
     'ghci',
 ]
