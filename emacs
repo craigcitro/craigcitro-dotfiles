@@ -430,19 +430,6 @@ With any prefix argor LINE-MODE, steps by sexps at the current level."
 ;; Utility functions
 ;;==============================================================================
 
-;; Trailing whitespace
-(defvar cc/skip-delete-trailing-whitespace nil
-  "If t, skip any potential call to delete trailing whitespace.
-
-Intended to be used as a buffer-local variable.")
-(make-variable-buffer-local 'cc/skip-delete-trailing-whitespace)
-(defun cc/possibly-delete-trailing-whitespace ()
-  "Delete trailing whitespace, with an easy off switch."
-  (when (and (memq major-mode '(python-mode))
-             (null cc/skip-delete-trailing-whitespace))
-    (delete-trailing-whitespace)))
-(add-to-list 'write-file-functions 'cc/possibly-delete-trailing-whitespace)
-
 ;; I'm sure this has to exist somewhere in emacs already ...
 (defun get-cursor-position-as-integer ()
   "Return the current cursor position as an integer."
