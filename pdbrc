@@ -1,12 +1,11 @@
-import os
+import os as _os
 
 # import rlcompleter early, as it contains side effects.
 import rlcompleter as _rlcompleter
 
 # refresh the terminal
-_ = os.system("stty sane")
+_ = _os.system("stty sane")
 pdb.Pdb.complete = _rlcompleter.Completer(locals()).complete
-del os
 
 # TODO(craigcitro): Insert our own smarter completion code, which
 # knows how to screen out names known to pdb. Source it as below:
