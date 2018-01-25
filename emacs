@@ -526,11 +526,11 @@ of updates)."
 (defun up-slightly ()
   "Scroll up a little bit."
   (interactive)
-  (scroll-up 5))
+  (scroll-up 1))
 (defun down-slightly ()
   "Scroll down a little bit."
   (interactive)
-  (scroll-down 5))
+  (scroll-down 1))
 (global-set-key [mouse-4] 'down-slightly)
 (global-set-key [mouse-5] 'up-slightly)
 
@@ -607,11 +607,13 @@ IGNORE-AUTO, NOCONFIRM, and PRESERVE-MODES are ignored."
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
+ '(company-idle-delay nil)
  '(fill-column 79)
  '(flycheck-pylintrc nil)
+ '(frame-background-mode (quote dark))
  '(package-selected-packages
    (quote
-    (gotest flycheck flycheck-cython flycheck-mypy js2-highlight-vars js2-mode go-mode go-playground jinja2-mode py-autopep8 py-yapf flycheck-checkbashisms flycheck-clang-tidy yaml-mode protobuf-mode markdown-mode json-mode gitignore-mode gitconfig git-rebase-mode git-commit-mode git-blame dockerfile-mode cython-mode auto-complete)))
+    (flycheck-color-mode-line flycheck-ycmd gotest flycheck flycheck-cython flycheck-mypy js2-highlight-vars js2-mode go-mode go-playground jinja2-mode py-autopep8 py-yapf flycheck-checkbashisms flycheck-clang-tidy yaml-mode protobuf-mode markdown-mode json-mode gitignore-mode gitconfig git-rebase-mode git-commit-mode git-blame dockerfile-mode cython-mode auto-complete)))
  '(safe-local-variable-values
    (quote
     ((encoding . utf-8)
