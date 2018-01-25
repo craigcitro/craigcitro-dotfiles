@@ -380,7 +380,6 @@ function gh() {
 }
 export -f gh
 
-GIT_COLOR="$GREEN_COLOR"
 function git_prompt_info () {
   local b="$(gitinfo)"
   if [[ -n ${b} ]]; then
