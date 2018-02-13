@@ -257,6 +257,8 @@ Ignores an optional argument (IGNORED) so it can be used as a hook in
          (abbrev-mode 1)))
 ;; add this at the end
 (add-to-list 'auto-mode-alist '("config$" . conf-unix-mode) t)
+;; crontab editing should use fundamental mode
+(add-to-list 'auto-mode-alist '("^crontab$" . fundamental-mode))
 
 ;;---------------
 ;; scratch
