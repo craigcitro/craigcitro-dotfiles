@@ -7,11 +7,12 @@ import tempfile
 
 
 def main(argv):
-    diff = os.environ.get('DIFFER', 'colordiff')
+    diff = os.environ.get(
+        'DIFFER', 'git diff --no-index --color=always').split()
     with open(os.devnull, 'w') as f:
-        exists = subprocess.call([diff, '-v'], stdout=f, stderr=f)
+        exists = subprocess.call([diff[0], '--help'], stdout=f, stderr=f)
     if exists:
-        print 'Diff program %s not found'.format(diff)
+        print 'Diff program {} not found'.format(diff[0])
         return 1
     args = argv[1:]
     diff_opts = '-u' if args[0] == ':' else args.pop(0)
@@ -24,10 +25,10 @@ def main(argv):
             left, right = args[:2]
             args = args[2:]
             subprocess.call(
-                [diff, diff_opts, left, right], stdout=out, stderr=out)
+                diff + [diff_opts, left, right], stdout=out, stderr=out)
 
         out.seek(0)
-        pager = os.environ.get('PAGER', 'less -qFRX')
+        pager = os.environ.get('PAGER', 'less -qrFX')
         subprocess.call(pager.split() + [out.name])
 
 
