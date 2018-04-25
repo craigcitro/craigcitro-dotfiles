@@ -201,7 +201,7 @@ maybesrc '/etc/bash_completion'
 maybesrc '/usr/local/share/bash-completion/bash_completion'
 maybesrc '/usr/share/git-core/git-completion.bash'
 maybesrc '/usr/local/git/current/share/git-core/git-completion.bash'
-maybesrc '/Users/craigcitro/ext/share/bash-completion/bash_completion'
+maybesrc "${HOME}/ext/etc/profile.d/bash_completion.sh"
 maybesrc '/usr/share/doc/tmux/examples/bash_completion_tmux.sh'
 
 # I found this clever trick here:
