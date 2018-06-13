@@ -194,6 +194,7 @@ shopt -s histappend
 HISTFILESIZE=100000000
 HISTSIZE=100000000
 unset HISTTIMEFORMAT
+alias gh='cat ${HOME}/.shell.log | grep'
 
 ###############################
 ## tab completion!
