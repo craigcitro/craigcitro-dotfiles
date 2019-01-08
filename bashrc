@@ -482,6 +482,10 @@ alias mono='export PS1=$MONOPS1'   # Means black [and white] mono color
 alias color='export PS1=$COLOR_PS1' # Intended for color on black backgrounds
 export PS1=$COLOR_PS1 # Intended for color on black backgrounds
 
+# Colorize what I type.
+export PS1="${PS1}\[\e[1;32m\]"
+trap 'echo -ne "\e[0m"' DEBUG
+
 unset BLACK_COLOR DARK_GRAY_COLOR BLUE_COLOR \
     LIGHT_BLUE_COLOR GREEN_COLOR LIGHT_GREEN_COLOR \
     CYAN_COLOR LIGHT_CYAN_COLOR RED_COLOR \
