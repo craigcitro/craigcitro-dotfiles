@@ -15,6 +15,11 @@ XTerm*eightBitInput: false
 ! if it will break anything on linux.
 XTerm*ptySttySize: true
 
+URxvt*foreground: white
+URxvt*background: black
+URxvt*scrollBar: false
+URxvt*font: xft:inconsolata:size=12
+
 !
 ! VT100*translations: #override \
 !  Ctrl <KeyPress> BackSpace: string(0x7f)
