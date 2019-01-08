@@ -51,6 +51,9 @@ ARGS are ignored."
 
 (normal-erase-is-backspace-mode nil)
 
+;; (when (>= emacs-major-version 26)
+;;   (global-display-line-numbers-mode))
+
 ;; package initialization
 (package-initialize)
 (add-to-list 'package-archives '("melpa" . "http://melpa.org/packages/"))
@@ -338,7 +341,9 @@ Ignores an optional argument (IGNORED) so it can be used as a hook in
 ;;---------------------
 (when (require 'go-mode nil t)
   (add-hook 'go-mode-hook
-            '(lambda () (set-fill-column 100))))
+            '(lambda ()
+               (setq tab-width 2)
+               (set-fill-column 100))))
 
 
 ;;-------------------------
@@ -621,7 +626,7 @@ IGNORE-AUTO, NOCONFIRM, and PRESERVE-MODES are ignored."
  '(frame-background-mode (quote dark))
  '(package-selected-packages
    (quote
-    (flycheck-color-mode-line flycheck-ycmd gotest flycheck flycheck-cython flycheck-mypy js2-highlight-vars js2-mode go-mode go-playground jinja2-mode py-autopep8 py-yapf flycheck-checkbashisms flycheck-clang-tidy yaml-mode protobuf-mode markdown-mode json-mode gitignore-mode gitconfig git-rebase-mode git-commit-mode git-blame dockerfile-mode cython-mode auto-complete)))
+    (dockerfile-mode flycheck-color-mode-line flycheck-ycmd gotest flycheck flycheck-cython flycheck-mypy js2-highlight-vars js2-mode go-mode go-playground jinja2-mode py-autopep8 py-yapf flycheck-checkbashisms flycheck-clang-tidy yaml-mode protobuf-mode markdown-mode json-mode gitignore-mode gitconfig git-rebase-mode git-commit-mode git-blame cython-mode auto-complete)))
  '(safe-local-variable-values
    (quote
     ((sh-indent-comment . t)
