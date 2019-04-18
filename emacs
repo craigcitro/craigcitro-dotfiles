@@ -13,6 +13,9 @@
 (defvar cc/dot-emacs-loaded nil
   "Whether or not my .emacs finished loading successfully.")
 
+;; translate control sequences as text is inserted in shell mode
+(add-to-list 'comint-output-filter-functions 'ansi-color-process-output)
+;; turn on color code support in shell mode
 (ansi-color-for-comint-mode-on)
 (global-font-lock-mode t)
 
@@ -626,7 +629,8 @@ IGNORE-AUTO, NOCONFIRM, and PRESERVE-MODES are ignored."
  '(frame-background-mode (quote dark))
  '(package-selected-packages
    (quote
-    (dockerfile-mode flycheck-color-mode-line flycheck-ycmd gotest flycheck flycheck-cython flycheck-mypy js2-highlight-vars js2-mode go-mode go-playground jinja2-mode py-autopep8 py-yapf flycheck-checkbashisms flycheck-clang-tidy yaml-mode protobuf-mode markdown-mode json-mode gitignore-mode gitconfig git-rebase-mode git-commit-mode git-blame cython-mode auto-complete)))
+    (python dockerfile-mode flycheck-color-mode-line flycheck-ycmd gotest flycheck flycheck-cython flycheck-mypy js2-highlight-vars js2-mode go-mode go-playground flycheck-checkbashisms flycheck-clang-tidy yaml-mode protobuf-mode markdown-mode json-mode gitignore-mode gitconfig git-rebase-mode git-commit-mode git-blame cython-mode auto-complete)))
+ '(query-replace-lazy-highlight nil)
  '(safe-local-variable-values
    (quote
     ((sh-indent-comment . t)
