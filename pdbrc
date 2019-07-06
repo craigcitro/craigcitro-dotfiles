@@ -5,7 +5,8 @@ import rlcompleter as _rlcompleter
 
 # refresh the terminal
 _ = _os.system("stty sane")
-pdb.Pdb.complete = _rlcompleter.Completer(locals()).complete
+import pdb as _pdb
+_pdb.Pdb.complete = _rlcompleter.Completer(locals()).complete
 
 # TODO(craigcitro): Insert our own smarter completion code, which
 # knows how to screen out names known to pdb. Source it as below:
