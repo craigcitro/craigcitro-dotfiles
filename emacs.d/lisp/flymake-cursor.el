@@ -165,7 +165,7 @@ something else is using the message area."
     (flymake-cursor-cancel-error-display-timer)
     (when flymake-cursor-errors-at-point
       (if (flymake-cursor-safe-to-display)
-        (message "%s" (mapconcat 'flymake-cursor-pyflake-determine-message flymake-cursor-errors-at-point "\n"))
+        (message "%s" (mapconcat 'flymake-diagnostic-text flymake-cursor-errors-at-point "\n"))
         (flymake-cursor-show-errors-at-point-pretty-soon)))))
 
 (defun flymake-cursor-show-errors-at-point-now ()
