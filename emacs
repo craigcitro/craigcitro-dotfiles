@@ -321,15 +321,6 @@ Ignores an optional argument (IGNORED) so it can be used as a hook in
   (occur (format "^ *\\(def +.*%s\\|class +.*%s\\).*:$" name name)))
 
 ;;---------------------
-;; flycheck
-;;---------------------
-(when (require 'flycheck nil t)
-  (when (boundp 'flycheck-mode-map)
-    (define-key flycheck-mode-map "\C-x\C-k\C-n" 'flycheck-next-error)
-    (define-key flycheck-mode-map "\C-x\C-k\C-p" 'flycheck-previous-error))
-  (global-flycheck-mode))
-
-;;---------------------
 ;; yaml
 ;;---------------------
 (when (require 'yaml-mode nil t)
@@ -625,17 +616,15 @@ IGNORE-AUTO, NOCONFIRM, and PRESERVE-MODES are ignored."
  ;; If there is more than one, they won't work right.
  '(company-idle-delay nil)
  '(fill-column 79)
- '(flycheck-pylintrc nil)
  '(frame-background-mode (quote dark))
  '(package-selected-packages
    (quote
-    (python dockerfile-mode flycheck-color-mode-line flycheck-ycmd gotest flycheck flycheck-cython flycheck-mypy js2-highlight-vars js2-mode go-mode go-playground flycheck-checkbashisms flycheck-clang-tidy yaml-mode protobuf-mode markdown-mode json-mode gitignore-mode gitconfig git-rebase-mode git-commit-mode git-blame cython-mode auto-complete)))
+    (python dockerfile-mode gotest js2-highlight-vars js2-mode go-mode go-playground yaml-mode protobuf-mode markdown-mode json-mode gitignore-mode gitconfig git-rebase-mode git-commit-mode git-blame cython-mode auto-complete)))
  '(query-replace-lazy-highlight nil)
  '(safe-local-variable-values
    (quote
     ((sh-indent-comment . t)
      (encoding . utf-8)
-     (flycheck-disabled-checkers python-pylint python-flake8 python-pycompile go-gofmt go-vet go-build go-test r-lintr)
      (c-indent-level . 2))))
  '(tooltip-mode nil))
 
