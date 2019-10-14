@@ -149,6 +149,16 @@ ARG and TRY-VSCROLL are passed to 'next-line."
 (global-unset-key "\C-x>")
 
 ;;------------------------------------------------------------
+;; flymake
+;;------------------------------------------------------------
+(require 'cc/flymake-keys "flymake-keys")
+(eval-after-load 'flymake
+  '(progn
+     (require 'flymake-cursor)
+     (setq flymake-cursor-number-of-errors-to-display 4)
+     ))
+
+;;------------------------------------------------------------
 ;; ido
 ;;------------------------------------------------------------
 (require 'ido)
