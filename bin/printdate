@@ -22,4 +22,4 @@ if __name__ == '__main__':
   print(time.ctime(ts).strip())
   if len(str(math.trunc(ts))) > 10:
     print('... but you probably wanted:')
-    print(time.ctime(int(ts[:10])))
+    print(time.ctime(ts / 1000).strip())
