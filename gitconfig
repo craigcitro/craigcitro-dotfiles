@@ -29,3 +29,5 @@
 	lastUpdateCheck = 20150728000000
 [http]
 	cookiefile = /usr/local/google/home/craigcitro/.gitcookies
+[pull]
+	rebase = true
