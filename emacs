@@ -151,13 +151,22 @@ ARG and TRY-VSCROLL are passed to 'next-line."
 ;;------------------------------------------------------------
 ;; flymake
 ;;------------------------------------------------------------
-(require 'cc/flymake-keys "flymake-keys")
-(eval-after-load 'flymake
-  '(progn
-     (require 'flymake-cursor)
-     (setq flymake-cursor-number-of-errors-to-display 4)
-     (setq flymake-cursor-error-display-delay 0.6)
-     ))
+;; (require 'cc/flymake-keys "flymake-keys")
+;; (eval-after-load 'flymake
+;;   '(progn
+;;      (require 'flymake-cursor)
+;;      (setq flymake-cursor-number-of-errors-to-display 4)
+;;      (setq flymake-cursor-error-display-delay 0.6)
+;;      ))
+
+;;------------------------------------------------------------
+;; flycheck
+;;------------------------------------------------------------
+(when (require 'flycheck nil t)
+  (when (boundp 'flycheck-mode-map)
+    (define-key flycheck-mode-map "\C-x\C-k\C-n" 'flycheck-next-error)
+    (define-key flycheck-mode-map "\C-x\C-k\C-p" 'flycheck-previous-error))
+  (global-flycheck-mode))
 
 ;;------------------------------------------------------------
 ;; ido
@@ -627,10 +636,11 @@ IGNORE-AUTO, NOCONFIRM, and PRESERVE-MODES are ignored."
  ;; If there is more than one, they won't work right.
  '(company-idle-delay nil)
  '(fill-column 79)
+ '(flycheck-pylintrc "nil")
  '(frame-background-mode (quote dark))
  '(package-selected-packages
    (quote
-    (python dockerfile-mode gotest js2-highlight-vars js2-mode go-mode go-playground yaml-mode protobuf-mode markdown-mode json-mode gitignore-mode gitconfig git-rebase-mode git-commit-mode git-blame cython-mode auto-complete)))
+    (flycheck-checkbashisms flycheck-clang-tidy flycheck-mypy flycheck-ycmd flycheck python dockerfile-mode gotest js2-highlight-vars js2-mode go-mode go-playground yaml-mode protobuf-mode markdown-mode json-mode gitignore-mode gitconfig git-rebase-mode git-commit-mode git-blame cython-mode auto-complete)))
  '(query-replace-lazy-highlight nil)
  '(safe-local-variable-values
    (quote
