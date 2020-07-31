@@ -392,7 +392,7 @@ export -f git_prompt_info
 function show_last_cmd () {
   local cmd=$(history 1 | awk "length() < 5000 {print}")
   if [ ! -z "$cmd" -a "$(id -u)" -ne 0 ]; then
-    echo $(date) $(pwd|tr " " "_") $(history 1)
+    echo $(date -R) $(pwd|tr " " "_") $(history 1)
   fi
 }
 export -f show_last_cmd
