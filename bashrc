@@ -283,7 +283,6 @@ alias R='R --no-save'
 ################################
 # python-related aliases
 export PYTHONSTARTUP=$HOME'/.pythonrc'
-maybesrc $(which virtualenvwrapper.sh)
 
 #############
 ## Go
