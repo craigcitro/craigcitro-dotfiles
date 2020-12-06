@@ -347,7 +347,7 @@ LIGHT_PURPLE_PROMPT_COLOR="\[\e[1;35m\]"
 #############################################################
 
 case $HOSTNAME in
-dhcp*.google.com|cc-mbp*|tars.*|tars|craigcitro-macbookpro*|penguin)
+tars.*|tars|penguin)
   BRACKET_COLOR="$BLUE_PROMPT_COLOR"
   PROMPT_TEXT="\$(prompt_pwd)"
   PROMPT_TEXT_COLOR="$RED_PROMPT_COLOR"
@@ -357,6 +357,12 @@ teeny2*)
   BRACKET_COLOR="$CYAN_PROMPT_COLOR"
   PROMPT_TEXT="\$(prompt_pwd)"
   PROMPT_TEXT_COLOR="$RED_PROMPT_COLOR"
+  PROMPT_DOLLAR_COLOR="$CYAN_PROMPT_COLOR"
+  ;;
+craigcitro-macbookpro**)
+  BRACKET_COLOR="$RED_PROMPT_COLOR"
+  PROMPT_TEXT="\$(prompt_pwd)"
+  PROMPT_TEXT_COLOR="$PURPLE_PROMPT_COLOR"
   PROMPT_DOLLAR_COLOR="$CYAN_PROMPT_COLOR"
   ;;
 *)
