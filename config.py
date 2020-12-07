@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 """Basic script to do some machine config."""
 
 import contextlib
@@ -33,35 +33,35 @@ BASIC_LINKS = [
 @contextlib.contextmanager
 def Chdir(path):
     current_dir = os.getcwd()
-    print ' +++ Changing directory to %s +++' % path
+    print(f' +++ Changing directory to {path} +++')
     os.chdir(path)
     yield
-    print ' --- Returning to directory to %s ---' % current_dir
-    print
+    print(f' --- Returning to directory to {current_dir} ---')
+    print()
     os.chdir(current_dir)
 
 
 def _CreateLink(filename, linkname, indent='    '):
     """Link filename to linkname, returning True on success."""
-    print '%s== Symlinking %s to %s' % (indent, filename, linkname)
+    print(f'{indent}== Symlinking {filename} to {linkname}')
     if os.path.exists(linkname):
-        print '%sFile %s already exists, skipping.' % (indent, linkname)
+        print(f'{indent}File {linkname} already exists, skipping.')
         return True
     if os.path.lexists(linkname):
-        print '%s>> Removing broken symlink %s <<' % (indent, linkname)
+        print(f'{indent}>> Removing broken symlink {linkname} <<')
         os.remove(linkname)
     try:
         subprocess.check_call(['ln', '-s', filename, linkname])
-    except subprocess.CalledProcessError, e:
-        print '%sERROR creating symbolic link: %s' % (indent, e)
+    except subprocess.CalledProcessError as e:
+        print(f'{indent}ERROR creating symbolic link: {e}')
         return False
     return True
 
 
 def _SetupLinks(links_to_create):
-    print
-    print 'Creating symbolic links ...'
-    print
+    print()
+    print('Creating symbolic links ...')
+    print()
     repodir = os.getcwd()
     homedir = os.path.expanduser('~')
     # Link the dotfiles
