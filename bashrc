@@ -179,7 +179,7 @@ export MANPATH
 ## Play with shopt
 #######################
 # correct spelling in cd
-shopt -s cdspell
+# shopt -s cdspell
 # keep LINES and COLUMNS up to date
 shopt -s checkwinsize
 # include dot names in globs
