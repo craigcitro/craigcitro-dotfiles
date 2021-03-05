@@ -151,22 +151,22 @@ ARG and TRY-VSCROLL are passed to 'next-line."
 ;;------------------------------------------------------------
 ;; flymake
 ;;------------------------------------------------------------
-;; (require 'cc/flymake-keys "flymake-keys")
-;; (eval-after-load 'flymake
-;;   '(progn
-;;      (require 'flymake-cursor)
-;;      (setq flymake-cursor-number-of-errors-to-display 4)
-;;      (setq flymake-cursor-error-display-delay 0.6)
-;;      ))
+(require 'cc/flymake-keys "flymake-keys")
+(eval-after-load 'flymake
+  '(progn
+     (require 'flymake-cursor)
+     (setq flymake-cursor-number-of-errors-to-display 4)
+     (setq flymake-cursor-error-display-delay 0.6)
+     ))
 
 ;;------------------------------------------------------------
 ;; flycheck
 ;;------------------------------------------------------------
-(when (require 'flycheck nil t)
-  (when (boundp 'flycheck-mode-map)
-    (define-key flycheck-mode-map "\C-x\C-k\C-n" 'flycheck-next-error)
-    (define-key flycheck-mode-map "\C-x\C-k\C-p" 'flycheck-previous-error))
-  (global-flycheck-mode))
+;; (when (require 'flycheck nil t)
+;;   (when (boundp 'flycheck-mode-map)
+;;     (define-key flycheck-mode-map "\C-x\C-k\C-n" 'flycheck-next-error)
+;;     (define-key flycheck-mode-map "\C-x\C-k\C-p" 'flycheck-previous-error))
+;;   (global-flycheck-mode))
 
 ;;------------------------------------------------------------
 ;; ido
