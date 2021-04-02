@@ -1,0 +1,2 @@
+;;; Generated package description from flycheck-clang-tidy-20201115.1232/flycheck-clang-tidy.el  -*- no-byte-compile: t -*-
+(define-package "flycheck-clang-tidy" "20201115.1232" "Flycheck syntax checker using clang-tidy" '((flycheck "0.30")) :commit "f9ae7306bd6ca08b689b36c1e8f6f6b91d61db5f" :authors '((nil . "Sebastian Nagel<sebastian.nagel@ncoding.at>")) :maintainer '("tastytea" . "tastytea@tastytea.de") :keywords '("convenience" "languages" "tools") :url "https://github.com/ch1bo/flycheck-clang-tidy")
