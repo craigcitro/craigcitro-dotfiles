@@ -117,10 +117,7 @@ fi
 # We want everything to route through one central set of emacs
 # commands.
 export EMACS_SERVERNAME='craigcitro'
-alias emacsdaemon='\emacs --daemon'
-alias emacs="emacsclient -c -s ${EMACS_SERVERNAME}"
-alias e='emacs'
-alias et='emacs -t'
+alias et='emacsclient -c -s ${EMACS_SERVERNAME} -t'
 # Every EDITOR variable I can find.
 export EDITOR="emacsclient -c -s ${EMACS_SERVERNAME} -t"
 export VISUAL="emacsclient -c -s ${EMACS_SERVERNAME} -t"
@@ -222,12 +219,7 @@ fi
 alias c=clear
 alias d=date
 alias df='df -h'
-alias grepc='grep --color=always -E'
 alias scp='scp -p'
-alias sigh='echo You let out a good, long sigh of relief.'
-alias rm="rm -i"
-alias cp="cp -i"
-alias mv="mv -i"
 
 if [ "$SYSTEM" == "Darwin" ]; then
   alias du='du -h -d 1'
@@ -262,12 +254,6 @@ alias puuuuuuuuu='pushd ../../../../../../../../..'
 # (2010 Oct 23) This isn't the perfect alias, but I type this *all*
 # the time ...
 alias lth='ll -t | head'
-
-# i find i use this alot:
-alias mr='cd $(/bin/ls -BF1t | grep / | head -1)'
-alias mrd='/bin/ls -BF1t | grep / | head -1'
-
-alias bazel='${HOME}/gh/bazel/output/bazel'
 
 ################################
 # Local config
