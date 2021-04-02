@@ -637,16 +637,14 @@ IGNORE-AUTO, NOCONFIRM, and PRESERVE-MODES are ignored."
  '(company-idle-delay nil)
  '(fill-column 79)
  '(flycheck-pylintrc "nil")
- '(frame-background-mode (quote dark))
+ '(frame-background-mode 'dark)
  '(package-selected-packages
-   (quote
-    (flycheck-checkbashisms flycheck-clang-tidy flycheck-mypy flycheck-ycmd flycheck python dockerfile-mode gotest js2-highlight-vars js2-mode go-mode go-playground yaml-mode protobuf-mode markdown-mode json-mode gitignore-mode gitconfig git-rebase-mode git-commit-mode git-blame cython-mode auto-complete)))
+   '(flycheck-checkbashisms flycheck-clang-tidy flycheck-mypy flycheck-ycmd flycheck python dockerfile-mode gotest js2-highlight-vars js2-mode go-mode go-playground yaml-mode markdown-mode json-mode gitignore-mode gitconfig git-rebase-mode git-commit-mode git-blame cython-mode auto-complete))
  '(query-replace-lazy-highlight nil)
  '(safe-local-variable-values
-   (quote
-    ((sh-indent-comment . t)
+   '((sh-indent-comment . t)
      (encoding . utf-8)
-     (c-indent-level . 2))))
+     (c-indent-level . 2)))
  '(tooltip-mode nil))
 
 ;;-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
