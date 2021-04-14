@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 
 import os
 import subprocess
@@ -12,7 +12,7 @@ def main(argv):
     with open(os.devnull, 'w') as f:
         exists = subprocess.call([diff[0], '--help'], stdout=f, stderr=f)
     if exists:
-        print 'Diff program {} not found'.format(diff[0])
+        print(f'Diff program {diff[0]} not found')
         return 1
     args = argv[1:]
     diff_opts = '-u' if args[0] == ':' else args.pop(0)
