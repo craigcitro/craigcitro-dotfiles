@@ -638,8 +638,7 @@ IGNORE-AUTO, NOCONFIRM, and PRESERVE-MODES are ignored."
  '(fill-column 79)
  '(flycheck-pylintrc "nil")
  '(frame-background-mode 'dark)
- '(package-selected-packages
-   '(flycheck-checkbashisms flycheck-clang-tidy flycheck-mypy flycheck-ycmd flycheck python dockerfile-mode gotest js2-highlight-vars js2-mode go-mode go-playground yaml-mode markdown-mode json-mode gitignore-mode gitconfig git-rebase-mode git-commit-mode git-blame cython-mode auto-complete))
+ '(package-selected-packages '(dockerfile-mode yaml-mode markdown-mode))
  '(query-replace-lazy-highlight nil)
  '(safe-local-variable-values
    '((sh-indent-comment . t)

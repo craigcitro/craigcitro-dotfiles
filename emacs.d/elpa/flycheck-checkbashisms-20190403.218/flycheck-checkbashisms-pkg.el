@@ -1,2 +1,0 @@
-;;; -*- no-byte-compile: t -*-
-(define-package "flycheck-checkbashisms" "20190403.218" "checkbashisms checker for flycheck" '((emacs "24") (flycheck "0.25")) :commit "2e386775f1a0eb5d80e5d70e98474ee32ecafb24" :keywords '("convenience" "tools" "sh" "unix") :authors '(("Cuong Le" . "cuong.manhle.vn@gmail.com")) :maintainer '("Cuong Le" . "cuong.manhle.vn@gmail.com") :url "https://github.com/cuonglm/flycheck-checkbashisms")
