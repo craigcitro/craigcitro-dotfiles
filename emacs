@@ -54,6 +54,10 @@ ARGS are ignored."
 
 (normal-erase-is-backspace-mode nil)
 
+;; Work around a broken TLS 1.3 in emacs:
+;; https://debbugs.gnu.org/cgi/bugreport.cgi?bug=34341
+(setq gnutls-algorithm-priority "NORMAL:-VERS-TLS1.3") 
+
 ;; (when (>= emacs-major-version 26)
 ;;   (global-display-line-numbers-mode))
 
@@ -637,13 +641,14 @@ IGNORE-AUTO, NOCONFIRM, and PRESERVE-MODES are ignored."
  '(company-idle-delay nil)
  '(fill-column 79)
  '(flycheck-pylintrc "nil")
- '(frame-background-mode 'dark)
- '(package-selected-packages '(dockerfile-mode yaml-mode markdown-mode))
+ '(frame-background-mode (quote dark))
+ '(package-selected-packages (quote (lean-mode dockerfile-mode yaml-mode markdown-mode)))
  '(query-replace-lazy-highlight nil)
  '(safe-local-variable-values
-   '((sh-indent-comment . t)
+   (quote
+    ((sh-indent-comment . t)
      (encoding . utf-8)
-     (c-indent-level . 2)))
+     (c-indent-level . 2))))
  '(tooltip-mode nil))
 
 ;;-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
