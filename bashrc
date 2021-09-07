@@ -260,6 +260,10 @@ alias lth='ll -t | head'
 ################################
 
 ################################
+# lean
+pathappend $HOME/.elan/bin;
+
+################################
 # R
 export R_HISTSIZE=100000
 export R_HISTFILE=$HOME'/.Rhistory'
