@@ -77,6 +77,8 @@ if [ "$SYSTEM" == "Darwin" ]; then
 fi
 
 # Path munging
+# lean
+pathappend $HOME/.elan/bin;
 # For pip install --user:
 pathprepend $HOME/.local/bin;
 # My additions to $PATH
