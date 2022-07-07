@@ -483,6 +483,35 @@ export PS1=$COLOR_PS1 # Intended for color on black backgrounds
 export PS1="${PS1}\[\e[1;32m\]"
 trap 'echo -ne "\e[0m"' DEBUG
 
+# Include start & end times. Inspired by https://stackoverflow.com/a/58140726/8755609.
+export BASHTIME="$HOME/tmp/bashtime/${USER}"
+mkdir -p "$BASHTIME"
+export PROMPT_START_TIME_FILE="${BASHTIME}/bash.${BASHPID}"
+function log_and_print_current_time() {
+    date -Ins |tr ',\012' '. '
+    date +%s%3N > "$PROMPT_START_TIME_FILE"
+}
+function maybe_print_execution_time_line() {
+    [[ -f "$PROMPT_START_TIME_FILE" ]] || return
+    date -Ins |tr ',\012' '. '
+    read start < "$PROMPT_START_TIME_FILE"
+    rm -f "$PROMPT_START_TIME_FILE"
+    DELTA=$(( ($(date +%s%3N) - $start) ))
+    HOURS=$(( DELTA / 3600000 )); DELTA=$(( DELTA % 3600000 ))
+    MINUTES=$(( DELTA / 60000 )); DELTA=$(( DELTA % 60000 ))
+    SECONDS=$(( DELTA / 1000 )); MILLIS=$(( DELTA % 1000 ))
+    FORMATTED=""
+    (( $HOURS > 0 )) && FORMATTED+="${HOURS}h"
+    (( $MINUTES > 0 )) && FORMATTED+="${MINUTES}m"
+    (( $SECONDS > 0 )) && FORMATTED+="${SECONDS}s"
+    (( $MILLIS > 0 )) && FORMATTED+="${MILLIS}ms"
+    echo "Execution time: ${FORMATTED}"
+}
+if [[ "${CC_BASHRC_INITIALIZED}" != "true" ]]; then
+  export PS0="$PS0\[\e[1;30m\]\$(log_and_print_current_time)\[\e[0m\]\n"
+  export PS1="\[\e[1;30m\]\$(maybe_print_execution_time_line)\[\e[0m\]\n${PS1}"
+fi
+
 unset BLACK_COLOR DARK_GRAY_COLOR BLUE_COLOR \
     LIGHT_BLUE_COLOR GREEN_COLOR LIGHT_GREEN_COLOR \
     CYAN_COLOR LIGHT_CYAN_COLOR RED_COLOR \
@@ -499,3 +528,4 @@ unset BLACK_COLOR DARK_GRAY_COLOR BLUE_COLOR \
 
 # Done!
 export CC_BASHRC_INITIALIZED="true"
+
