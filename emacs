@@ -287,10 +287,10 @@ Ignores an optional argument (IGNORED) so it can be used as a hook in
 (add-to-list 'auto-mode-alist '("\\.txt$" . paragraph-indent-text-mode))
 ;; Set auto-fill and abbreviation for text
 (setq text-mode-hook
-      '(lambda nil
-         (setq fill-column 78)
-         (auto-fill-mode 1)
-         (abbrev-mode 1)))
+      (lambda nil
+        (setq fill-column 78)
+        (auto-fill-mode 1)
+        (abbrev-mode 1)))
 ;; add this at the end
 (add-to-list 'auto-mode-alist '("config$" . conf-unix-mode) t)
 ;; crontab editing should use fundamental mode
@@ -351,17 +351,17 @@ Ignores an optional argument (IGNORED) so it can be used as a hook in
   (add-to-list 'auto-mode-alist '("\\.yml$" . yaml-mode))
   (add-to-list 'auto-mode-alist '("\\.yaml$" . yaml-mode))
   (add-hook 'yaml-mode-hook
-            '(lambda ()
-               (define-key yaml-mode-map "\C-m" 'newline-and-indent))))
+            (lambda ()
+              (define-key yaml-mode-map "\C-m" 'newline-and-indent))))
 
 ;;---------------------
 ;; go
 ;;---------------------
 (when (require 'go-mode nil t)
   (add-hook 'go-mode-hook
-            '(lambda ()
-               (setq tab-width 2)
-               (set-fill-column 100))))
+            (lambda ()
+              (setq tab-width 2)
+              (set-fill-column 100))))
 
 
 ;;-------------------------
@@ -432,9 +432,9 @@ With any prefix argor LINE-MODE, steps by sexps at the current level."
 ;; add rc files as shell as a last resort
 (add-to-list 'auto-mode-alist '("rc$" . shell-script-mode) t)
 (add-hook 'sh-mode-hook
-          '(lambda ()
-             (setq sh-basic-offset 2)
-             (setq sh-indentation 2)))
+          (lambda ()
+            (setq sh-basic-offset 2)
+            (setq sh-indentation 2)))
 
 ;;------------------------
 ;; ess-mode
