@@ -9,8 +9,6 @@
 
 (define-minor-mode cc/flymake-keys-minor-mode
   "Minor mode with my flymake-related keybindings."
-  nil
-  nil
   :keymap cc/flymake-keys-keymap)
 
 (defun cc/flymake-keys-on ()
