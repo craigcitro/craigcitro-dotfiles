@@ -72,7 +72,14 @@ if [ "$SYSTEM" == "Darwin" ]; then
   pathappend /usr/local/git/bin;
   pathappend /usr/local/git/share/man MANPATH;
 
+  # homebrew M1
+  pathappend /opt/homebrew/include CPATH;
+  pathappend /opt/homebrew/lib LD_LIBRARY_PATH;
+  pathappend /opt/homebrew/lib LIBRARY_PATH;
+
+  export CPATH
   export LD_LIBRARY_PATH
+  export LIBRARY_PATH
   export MANPATH
 fi
 
@@ -81,6 +88,9 @@ fi
 pathappend $HOME/.elan/bin;
 # For pip install --user:
 pathprepend $HOME/.local/bin;
+# Homebrew
+pathprepend /opt/homebrew/bin;
+pathappend /opt/homebrew/sbin;
 # My additions to $PATH
 pathprepend $HOME/ext/bin;
 pathprepend $HOME/bin;
@@ -198,6 +208,7 @@ alias gh='cat ${HOME}/.shell.log | grep'
 ###############################
 ## tab completion!
 maybesrc '/etc/bash_completion'
+maybesrc '/opt/homebrew/share/bash-completion/bash_completion'
 maybesrc '/usr/local/share/bash-completion/bash_completion'
 maybesrc '/usr/share/git-core/git-completion.bash'
 maybesrc '/usr/local/git/current/share/git-core/git-completion.bash'
@@ -260,10 +271,6 @@ alias lth='ll -t | head'
 ################################
 # Local config
 ################################
-
-################################
-# lean
-pathappend $HOME/.elan/bin;
 
 ################################
 # R
@@ -339,7 +346,7 @@ LIGHT_PURPLE_PROMPT_COLOR="\[\e[1;35m\]"
 #############################################################
 
 case $HOSTNAME in
-tars.*|tars|penguin|themini.*)
+penguin|themini.*|cc7.lan)
   BRACKET_COLOR="$BLUE_PROMPT_COLOR"
   PROMPT_TEXT="\$(prompt_pwd)"
   PROMPT_TEXT_COLOR="$RED_PROMPT_COLOR"
