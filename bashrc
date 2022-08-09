@@ -57,6 +57,13 @@ maybesrc () {
 }
 export -f maybesrc
 
+# Path munging
+# lean
+pathappend $HOME/.elan/bin;
+# For pip install --user:
+pathprepend $HOME/.local/bin;
+
+# Mac-specific
 if [ "$SYSTEM" == "Darwin" ]; then
   if [ "$LD_LIBRARY_PATH" = "" ]; then
     LD_LIBRARY_PATH="/usr/lib"
@@ -67,39 +74,35 @@ if [ "$SYSTEM" == "Darwin" ]; then
 
   pathprepend /usr/local/bin;
   pathappend /usr/texbin;
-  pathappend /opt/subversion/bin;
   # add git via git-osx-installer
   pathappend /usr/local/git/bin;
   pathappend /usr/local/git/share/man MANPATH;
+  pathappend /usr/local/git/current/share/man MANPATH;
 
-  # homebrew M1
-  pathappend /opt/homebrew/include CPATH;
-  pathappend /opt/homebrew/lib LD_LIBRARY_PATH;
-  pathappend /opt/homebrew/lib LIBRARY_PATH;
+  if [[ $(command -v brew) ]]; then
+    BREWPREFIX=$(brew --prefix)
+    pathappend ${BREWPREFIX}/include CPATH;
+    pathappend ${BREWPREFIX}/lib LD_LIBRARY_PATH;
+    pathappend ${BREWPREFIX}/lib LIBRARY_PATH;
+    pathprepend ${BREWPREFIX}/bin;
+    pathappend ${BREWPREFIX}/sbin;
+  else
+    echo 'Consider installing homebrew.'
+  fi
 
   export CPATH
   export LD_LIBRARY_PATH
   export LIBRARY_PATH
   export MANPATH
+  export PATH
 fi
 
-# Path munging
-# lean
-pathappend $HOME/.elan/bin;
-# For pip install --user:
-pathprepend $HOME/.local/bin;
-# Homebrew
-pathprepend /opt/homebrew/bin;
-pathappend /opt/homebrew/sbin;
 # My additions to $PATH
 pathprepend $HOME/ext/bin;
 pathprepend $HOME/bin;
-# Go
-pathappend $HOME/ext/go/bin;
-pathprepend /opt/homebrew/bin;
-export PATH
-
 pathprepend $HOME/ext/share/man MANPATH;
+export PATH
+export MANPATH
 
 # As Ami says, "Mmmm ... core files are so yummy!"
 ulimit -c unlimited
@@ -209,7 +212,7 @@ alias gh='cat ${HOME}/.shell.log | grep'
 ###############################
 ## tab completion!
 maybesrc '/etc/bash_completion'
-maybesrc '/opt/homebrew/share/bash-completion/bash_completion'
+[[ $(command -v brew) ]] && maybesrc '/opt/homebrew/share/bash-completion/bash_completion'
 maybesrc '/usr/local/share/bash-completion/bash_completion'
 maybesrc '/usr/share/git-core/git-completion.bash'
 maybesrc '/usr/local/git/current/share/git-core/git-completion.bash'
@@ -234,12 +237,7 @@ alias c=clear
 alias d=date
 alias df='df -h'
 alias scp='scp -p'
-
-if [ "$SYSTEM" == "Darwin" ]; then
-  alias du='du -h -d 1'
-else
-  alias du='du -h --max-depth 1'
-fi
+alias du='du -h -d 1'
 
 # Maybe there's a better name for this?
 alias reup="source $HOME/.bashrc"
@@ -290,14 +288,6 @@ export PYTHONSTARTUP=$HOME'/.pythonrc'
 GOPATH=$HOME'/ext/go'
 export GOPATH
 pathappend "${GOPATH}/bin"
-
-#############
-## Haskell
-
-pathappend $HOME'/Library/Haskell/share/man' MANPATH;
-pathappend $HOME'/Library/Haskell/bin';
-pathappend $HOME'/.cabal/share/man' MANPATH;
-pathappend $HOME'/.cabal/bin';
 
 ################################################################
 ######################## Prompt stuff ##########################
@@ -491,35 +481,6 @@ export PS1=$COLOR_PS1 # Intended for color on black backgrounds
 export PS1="${PS1}\[\e[1;32m\]"
 trap 'echo -ne "\e[0m"' DEBUG
 
-# Include start & end times. Inspired by https://stackoverflow.com/a/58140726/8755609.
-export BASHTIME="$HOME/tmp/bashtime/${USER}"
-mkdir -p "$BASHTIME"
-export PROMPT_START_TIME_FILE="${BASHTIME}/bash.${BASHPID}"
-function log_and_print_current_time() {
-    date -Ins |tr ',\012' '. '
-    date +%s%3N > "$PROMPT_START_TIME_FILE"
-}
-function maybe_print_execution_time_line() {
-    [[ -f "$PROMPT_START_TIME_FILE" ]] || return
-    date -Ins |tr ',\012' '. '
-    read start < "$PROMPT_START_TIME_FILE"
-    rm -f "$PROMPT_START_TIME_FILE"
-    DELTA=$(( ($(date +%s%3N) - $start) ))
-    HOURS=$(( DELTA / 3600000 )); DELTA=$(( DELTA % 3600000 ))
-    MINUTES=$(( DELTA / 60000 )); DELTA=$(( DELTA % 60000 ))
-    SECONDS=$(( DELTA / 1000 )); MILLIS=$(( DELTA % 1000 ))
-    FORMATTED=""
-    (( $HOURS > 0 )) && FORMATTED+="${HOURS}h"
-    (( $MINUTES > 0 )) && FORMATTED+="${MINUTES}m"
-    (( $SECONDS > 0 )) && FORMATTED+="${SECONDS}s"
-    (( $MILLIS > 0 )) && FORMATTED+="${MILLIS}ms"
-    echo "Execution time: ${FORMATTED}"
-}
-if [[ "${CC_BASHRC_INITIALIZED}" != "true" ]]; then
-  export PS0="$PS0\[\e[1;30m\]\$(log_and_print_current_time)\[\e[0m\]\n"
-  export PS1="\[\e[1;30m\]\$(maybe_print_execution_time_line)\[\e[0m\]\n${PS1}"
-fi
-
 unset BLACK_COLOR DARK_GRAY_COLOR BLUE_COLOR \
     LIGHT_BLUE_COLOR GREEN_COLOR LIGHT_GREEN_COLOR \
     CYAN_COLOR LIGHT_CYAN_COLOR RED_COLOR \
@@ -534,6 +495,36 @@ unset BLACK_COLOR DARK_GRAY_COLOR BLUE_COLOR \
     LIGHT_PURPLE_PROMPT_COLOR BROWN_PROMPT_COLOR \
     YELLOW_PROMPT_COLOR LIGHT_GRAY_PROMPT_COLOR WHITE_PROMPT_COLOR
 
+if [[ "${SYSTEM}" == "Linux" ]]; then
+  # Include start & end times. Inspired by https://stackoverflow.com/a/58140726/8755609.
+  export BASHTIME="$HOME/tmp/bashtime/${USER}"
+  mkdir -p "$BASHTIME"
+  export PROMPT_START_TIME_FILE="${BASHTIME}/bash.${BASHPID}"
+  function log_and_print_current_time() {
+      date -Ins |tr ',\012' '. '
+      date +%s%3N > "$PROMPT_START_TIME_FILE"
+  }
+  function maybe_print_execution_time_line() {
+      [[ -f "$PROMPT_START_TIME_FILE" ]] || return
+      date -Ins |tr ',\012' '. '
+      read start < "$PROMPT_START_TIME_FILE"
+      rm -f "$PROMPT_START_TIME_FILE"
+      DELTA=$(( ($(date +%s%3N) - $start) ))
+      HOURS=$(( DELTA / 3600000 )); DELTA=$(( DELTA % 3600000 ))
+      MINUTES=$(( DELTA / 60000 )); DELTA=$(( DELTA % 60000 ))
+      SECONDS=$(( DELTA / 1000 )); MILLIS=$(( DELTA % 1000 ))
+      FORMATTED=""
+      (( $HOURS > 0 )) && FORMATTED+="${HOURS}h"
+      (( $MINUTES > 0 )) && FORMATTED+="${MINUTES}m"
+      (( $SECONDS > 0 )) && FORMATTED+="${SECONDS}s"
+      (( $MILLIS > 0 )) && FORMATTED+="${MILLIS}ms"
+      echo "Execution time: ${FORMATTED}"
+  }
+  if [[ "${CC_BASHRC_INITIALIZED}" != "true" ]]; then
+    export PS0="$PS0\[\e[1;30m\]\$(log_and_print_current_time)\[\e[0m\]\n"
+    export PS1="\[\e[1;30m\]\$(maybe_print_execution_time_line)\[\e[0m\]\n${PS1}"
+  fi
+fi
+
 # Done!
 export CC_BASHRC_INITIALIZED="true"
-
