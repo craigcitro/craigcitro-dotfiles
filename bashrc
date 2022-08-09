@@ -96,6 +96,7 @@ pathprepend $HOME/ext/bin;
 pathprepend $HOME/bin;
 # Go
 pathappend $HOME/ext/go/bin;
+pathprepend /opt/homebrew/bin;
 export PATH
 
 pathprepend $HOME/ext/share/man MANPATH;
