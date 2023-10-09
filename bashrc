@@ -79,6 +79,9 @@ if [ "$SYSTEM" == "Darwin" ]; then
   pathappend /usr/local/git/share/man MANPATH;
   pathappend /usr/local/git/current/share/man MANPATH;
 
+  # There's a chicken-and-egg problem here: we can't use `brew --prefix`
+  # until `brew` is on our path.
+  pathprepend /opt/homebrew/bin;
   if [[ $(command -v brew) ]]; then
     BREWPREFIX=$(brew --prefix)
     pathappend ${BREWPREFIX}/include CPATH;
