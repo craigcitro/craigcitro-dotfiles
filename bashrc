@@ -503,13 +503,13 @@ if [[ "${SYSTEM}" == "Linux" ]]; then
   export BASHTIME="$HOME/tmp/bashtime/${USER}"
   mkdir -p "$BASHTIME"
   export PROMPT_START_TIME_FILE="${BASHTIME}/bash.${BASHPID}"
-  function log_and_print_current_time() {
-      date -Ins |tr ',\012' '. '
+  function log_current_time() {
+      # date -Ins |tr ',\012' '. '
       date +%s%3N > "$PROMPT_START_TIME_FILE"
   }
   function maybe_print_execution_time_line() {
       [[ -f "$PROMPT_START_TIME_FILE" ]] || return
-      date -Ins |tr ',\012' '. '
+      # date -Ins |tr ',\012' '. '
       read start < "$PROMPT_START_TIME_FILE"
       rm -f "$PROMPT_START_TIME_FILE"
       DELTA=$(( ($(date +%s%3N) - $start) ))
@@ -521,10 +521,10 @@ if [[ "${SYSTEM}" == "Linux" ]]; then
       (( $MINUTES > 0 )) && FORMATTED+="${MINUTES}m"
       (( $SECONDS > 0 )) && FORMATTED+="${SECONDS}s"
       (( $MILLIS > 0 )) && FORMATTED+="${MILLIS}ms"
-      echo "Execution time: ${FORMATTED}"
+      echo "$(date -Ins |tr ',\012' '.') Execution time: ${FORMATTED}"
   }
   if [[ "${CC_BASHRC_INITIALIZED}" != "true" ]]; then
-    export PS0="$PS0\[\e[1;30m\]\$(log_and_print_current_time)\[\e[0m\]\n"
+    export PS0="$PS0\$(log_current_time)"
     export PS1="\[\e[1;30m\]\$(maybe_print_execution_time_line)\[\e[0m\]\n${PS1}"
   fi
 fi
