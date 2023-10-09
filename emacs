@@ -446,8 +446,8 @@ With any prefix argor LINE-MODE, steps by sexps at the current level."
   (add-to-list 'auto-mode-alist '("Rprofile$" . r-mode))
   ;; We want to force _ back to _; ess-toggle-underscore can
   ;; force it to "smart _", but not off. Ugh.
-  (ess-toggle-underscore 1)
-  (ess-toggle-underscore nil)
+  ;; (ess-toggle-underscore 1)
+  ;; (ess-toggle-underscore nil)
   (defun cc/ess-indentation-hook ()
     (when (boundp 'ess-indent-level)
       (setq ess-indent-level 2)))
@@ -641,15 +641,16 @@ IGNORE-AUTO, NOCONFIRM, and PRESERVE-MODES are ignored."
  '(company-idle-delay nil)
  '(fill-column 79)
  '(flycheck-pylintrc "nil")
- '(frame-background-mode (quote dark))
- '(package-selected-packages (quote (lean-mode dockerfile-mode yaml-mode markdown-mode)))
+ '(frame-background-mode 'dark)
+ '(package-selected-packages
+   '(cython-mode lean-mode dockerfile-mode yaml-mode markdown-mode))
  '(query-replace-lazy-highlight nil)
  '(safe-local-variable-values
-   (quote
-    ((sh-indent-comment . t)
+   '((sh-indent-comment . t)
      (encoding . utf-8)
-     (c-indent-level . 2))))
- '(tooltip-mode nil))
+     (c-indent-level . 2)))
+ '(tooltip-mode nil)
+ '(warning-minimum-level :error))
 
 ;;-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
 ;; NO OTHER CODE BELOW THIS COMMAND
