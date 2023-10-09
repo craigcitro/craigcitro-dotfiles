@@ -27,7 +27,7 @@ def GitInfo():
     info += '!'
   ahead_re = re.compile(r'\* %s.*\[ahead' % branch)
   branch_out = subprocess.check_output(
-      ('git', 'branch', '-v')).decode('ascii').splitlines()
+      ('git', 'branch', '-v')).decode('utf8').splitlines()
   if any(ahead_re.match(line) for line in branch_out):
     info += '+'
   return '{%s}' % info
