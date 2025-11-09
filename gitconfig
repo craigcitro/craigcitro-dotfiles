@@ -1,6 +1,6 @@
 [user]
         name = Craig Citro
-        email = craigcitro@google.com
+        email = craigcitro@gmail.com
 [alias]
         stat = status
         st = status
@@ -31,3 +31,5 @@
 	cookiefile = /usr/local/google/home/craigcitro/.gitcookies
 [pull]
 	rebase = true
+[init]
+	defaultBranch = main
