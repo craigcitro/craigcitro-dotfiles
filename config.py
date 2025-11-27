@@ -18,6 +18,7 @@ BASIC_LINKS = [
     'inputrc',
     'screenrc',
     'tmux.conf',
+    'zshrc',
     # Editors
     'emacs',
     'emacs.d',
