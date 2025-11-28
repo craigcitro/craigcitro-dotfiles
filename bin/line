@@ -6,7 +6,7 @@ import logging
 import sys
 
 
-def Main(argv, debug=False):
+def main(argv, debug=False):
   if debug:
     logging.getLogger().setLevel(logging.DEBUG)
 
@@ -37,7 +37,7 @@ def Main(argv, debug=False):
 
 
 if __name__ == '__main__':
-  chosen_line, retval = Main(sys.argv)
+  chosen_line, retval = main(sys.argv)
   if retval:
     sys.exit(retval)
   print(chosen_line.rstrip())
