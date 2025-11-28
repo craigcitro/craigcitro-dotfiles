@@ -7,7 +7,7 @@ import os
 import subprocess
 import sys
 
-def GetTerminalWidth():
+def _get_terminal_width():
   if os.environ.get('COLUMNS'):
     return int(os.environ['COLUMNS'])
   elif sys.stdout.isatty():
@@ -16,10 +16,10 @@ def GetTerminalWidth():
   else:
     return 80
 
-def PrintCols(width):
+def _print_cols(width):
   print(''.join('%10s' % x for x in range(1, 1 + (width // 10))))
   digits = itertools.cycle('1234567890')
   print(''.join(next(digits) for _ in range(width)))
 
 if __name__ == '__main__':
-  PrintCols(GetTerminalWidth())
+  _print_cols(_get_terminal_width())
