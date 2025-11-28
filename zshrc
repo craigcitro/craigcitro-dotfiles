@@ -86,6 +86,19 @@ alias less='less -qFRX'
 
 typeset -U path
 
+pathappend() {
+  if [[ -d $1 ]]; then
+    path+=($1)
+  fi
+}
+pathprepend() {
+  if [[ -d $1 ]]; then
+    path=($1 $path)
+  fi
+}
+pathprepend $HOME/.local/bin;
+pathprepend $HOME/bin;
+
 # TODO(craigcitro): look at this
 # fix man paths
 # pathappend '/usr/local/share/man' MANPATH;
