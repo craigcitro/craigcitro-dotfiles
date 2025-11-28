@@ -67,9 +67,6 @@ remacs () {
     fi
   fi
 }
-if [[ "$SYSTEM" != "Linux" || ${DEVBOX:-0} != "0" ]]; then
-  remacs
-fi
 
 ###############################
 ## other unix default stuff
