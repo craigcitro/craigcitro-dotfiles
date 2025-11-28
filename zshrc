@@ -13,6 +13,11 @@ else
 fi
 
 ###############################
+## mac configuration
+
+
+
+###############################
 ## ls configuration
 
 if [[ "$SYSTEM" == "Darwin" ]]; then
@@ -146,6 +151,9 @@ unsetopt autocd
 #################################
 # prompt
 
+# I solemnly swear I am up to no good.
+autoload -Uz colors && colors
+setopt prompt_subst
 # I don't want the prompt to auto-refresh.
 export NO_PROMPT_AUTO_REFRESH=1
 
@@ -188,7 +196,6 @@ maybe_print_execution_time_line() {
   print -P "%F{239}[%m] $(date '+%Y %b %d %a %H:%M:%S')${FORMATTED}%f"
 }
 precmd_functions+=(maybe_print_execution_time_line)
-
 
 #
 # git status in prompt
@@ -291,7 +298,7 @@ prompt_pwd() {
   echo "${abbrev}"
 }
 
-export PS1='%F{201}$(prompt_pwd)%f$CC_LAST_GIT_PROMPT%(?.. %F{red}exit:%?%f) %# %F{green}'
+export PS1='%F{032}$(prompt_pwd)%f$CC_LAST_GIT_PROMPT%(?.. %F{red}exit:%?%f) %# %F{green}'
 preexec.cc_reset_term_color() {
   echo -ne "\e[0m"
 }
