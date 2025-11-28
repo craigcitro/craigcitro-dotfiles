@@ -3,6 +3,7 @@
 
 import contextlib
 import os
+import platform
 import socket
 import subprocess
 
@@ -30,9 +31,29 @@ BASIC_LINKS = [
     'ghci',
 ]
 
+BREW_PACKAGES = [
+    'bat',
+    'colordiff',
+    'direnv',
+    'emacs',
+    'fzf',
+    'pstree',
+    'python3',
+    'ripgrep',
+    'tmux',
+]
+
+
+def _setup_packages():
+    if platform.system() == 'Darwin':
+        subprocess.run(
+            ['brew', 'install'] + BREW_PACKAGES,
+            check=True,
+            text=True,
+        )
 
 @contextlib.contextmanager
-def Chdir(path):
+def chdir(path):
     current_dir = os.getcwd()
     print(f' +++ Changing directory to {path} +++')
     os.chdir(path)
@@ -42,7 +63,7 @@ def Chdir(path):
     os.chdir(current_dir)
 
 
-def _CreateLink(filename, linkname, indent='    '):
+def _create_link(filename, linkname, indent='    '):
     """Link filename to linkname, returning True on success."""
     print(f'{indent}== Symlinking {filename} to {linkname}')
     if os.path.exists(linkname):
@@ -59,38 +80,36 @@ def _CreateLink(filename, linkname, indent='    '):
     return True
 
 
-def _SetupLinks(links_to_create):
+def _setup_links(links_to_create):
     print()
     print('Creating symbolic links ...')
     print()
     repodir = os.getcwd()
     homedir = os.path.expanduser('~')
     # Link the dotfiles
-    with Chdir(homedir):
+    with chdir(homedir):
         for f in links_to_create:
             filename = os.path.join(repodir, f)
             linkname = '.' + f
-            if not _CreateLink(filename, linkname):
+            if not _create_link(filename, linkname):
                 break
     # Now the binaries
     binary_dest_dir = os.path.join(homedir, 'bin')
     if not os.path.exists(binary_dest_dir):
         os.mkdir(binary_dest_dir)
-    with Chdir(binary_dest_dir):
+    with chdir(binary_dest_dir):
         binary_src_dir = os.path.join(repodir, 'bin')
         for binary in os.listdir(binary_src_dir):
             filename = os.path.join(binary_src_dir, binary)
-            if not _CreateLink(filename, binary):
+            if not _create_link(filename, binary):
                 break
     # Don't forget a tmux colors file
-    if 'google.com' in socket.gethostname():
-        tmux_colors = 'tmux.green.conf'
-    else:
-        tmux_colors = 'tmux.blue.conf'
+    tmux_colors = 'tmux.blue.conf'
     tmux_colors = os.path.join(repodir, tmux_colors)
-    with Chdir(homedir):
-        _CreateLink(tmux_colors, '.tmux.colors.conf')
+    with chdir(homedir):
+        _create_link(tmux_colors, '.tmux.colors.conf')
 
 
 if __name__ == '__main__':
-    _SetupLinks(BASIC_LINKS)
+    _setup_packages()
+    _setup_links(BASIC_LINKS)
